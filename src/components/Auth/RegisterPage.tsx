@@ -1,142 +1,63 @@
-import React, { useState } from "react";
-import { register } from "../../services/authService";
-import { useNavigate } from "react-router-dom";
-import { AxiosError } from "axios";
-import { motion } from "framer-motion";
+import React, { useState } from 'react';
+import { register } from '../../services/authService';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterPage: React.FC = () => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [role, setRole] = useState("user"); // Default role is 'user'
-    const [errors, setErrors] = useState<{
-        username?: string;
-        password?: string;
-        confirmPassword?: string;
-        general?: string;
-    }>({});
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [role, setRole] = useState('user'); // Par défaut, le rôle est 'user'
     const navigate = useNavigate();
-
-    const validateForm = () => {
-        let formErrors: {
-            username?: string;
-            password?: string;
-            confirmPassword?: string;
-        } = {};
-
-        if (!username) {
-            formErrors.username = "Username is required";
-        }
-
-        if (!password) {
-            formErrors.password = "Password is required";
-        }
-
-        if (!confirmPassword) {
-            formErrors.confirmPassword = "Password confirmation is required";
-        } else if (password !== confirmPassword) {
-            formErrors.confirmPassword = "Passwords do not match";
-        }
-
-        setErrors(formErrors);
-
-        return Object.keys(formErrors).length === 0;
-    };
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (!validateForm()) {
-            return;
-        }
-
         try {
             await register({ username, password, role });
-            navigate("/login"); // Redirect to login page after successful registration
+            navigate('/login'); // Redirection vers la page de connexion après inscription réussie
         } catch (error) {
-            if (error instanceof AxiosError) {
-                if (error.response?.status === 400) {
-                    setErrors({ general: "Registration failed: Invalid credentials" });
-                } else {
-                    setErrors({ general: "Registration failed" });
-                }
-            } else {
-                console.error("Registration error", error);
-            }
+            console.error('Erreur d\'inscription', error);
         }
     };
 
     return (
-        <motion.form
-            onSubmit={handleRegister}
-            className="max-w-md mx-auto mt-10 p-6 bg-background rounded-lg shadow-neumorphic"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-        >
-            <h2 className="text-2xl font-bold mb-4 text-text">Sign Up</h2>
-            {errors.general && (
-                <div className="mb-4 text-error">{errors.general}</div>
-            )}
+        <form onSubmit={handleRegister} className="max-w-md mx-auto mt-10 p-4 bg-white shadow-md rounded-md">
+            <h2 className="text-2xl font-bold mb-4">Inscription</h2>
             <div className="mb-4">
-                <label htmlFor="username" className="block mb-2 text-text">
-                    Username
-                </label>
+                <label className="block mb-2">Nom d'utilisateur</label>
                 <input
                     type="text"
                     value={username}
-                    id="username"
                     onChange={(e) => setUsername(e.target.value)}
-                    className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primaryLight ${errors.username ? "border-error" : ""
-                        }`}
+                    className="w-full p-2 border border-gray-300 rounded-md"
                     required
                 />
-                {errors.username && (
-                    <div className="text-error">{errors.username}</div>
-                )}
             </div>
             <div className="mb-4">
-                <label htmlFor="password" className="block mb-2 text-text">
-                    Password
-                </label>
+                <label className="block mb-2">Mot de passe</label>
                 <input
                     type="password"
-                    id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primaryLight ${errors.password ? "border-error" : ""
-                        }`}
+                    className="w-full p-2 border border-gray-300 rounded-md"
                     required
                 />
-                {errors.password && (
-                    <div className="text-error">{errors.password}</div>
-                )}
             </div>
             <div className="mb-4">
-                <label htmlFor="confirmPassword" className="block mb-2 text-text">
-                    Confirm Password
-                </label>
-                <input
-                    type="password"
-                    id="confirmPassword"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primaryLight ${errors.confirmPassword ? "border-error" : ""
-                        }`}
+                <label className="block mb-2">Rôle</label>
+                <select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md"
                     required
-                />
-                {errors.confirmPassword && (
-                    <div className="text-error">{errors.confirmPassword}</div>
-                )}
+                >
+                    <option value="user">Utilisateur</option>
+                    <option value="moderator">Modérateur</option>
+                    <option value="admin">Administrateur</option>
+                </select>
             </div>
-            <motion.button
-                type="submit"
-                className="w-full p-3 text-white rounded-lg bg-primary shadow-neumorphic hover:bg-primaryDark focus:outline-none transition-transform transform hover:scale-105"
-                whileTap={{ scale: 0.95 }}
-            >
-                Sign Up
-            </motion.button>
-        </motion.form>
+            <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded-md">
+                Inscription
+            </button>
+        </form>
     );
 };
 
