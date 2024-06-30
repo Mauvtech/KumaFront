@@ -1,12 +1,13 @@
 import axios from "axios";
 import { isTokenExpired, logout } from "./authService";
 
+
 export const api = axios.create({
-  baseURL: "http://localhost:3001/api",
+  baseURL: process.env.REACT_APP_PROD_API_URL,
 });
 
 export const publicApi = axios.create({
-    baseURL: "http://localhost:3001/api",
+  baseURL: process.env.REACT_APP_PROD_API_URL,
 });
 
 // Intercepteur pour ajouter le token aux requêtes
