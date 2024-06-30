@@ -39,7 +39,7 @@ export const promoteUser = async (
   navigate: (path: string) => void
 ) => {
   try {
-    const response = await api.post(`/users/${userId}/promote`);
+    const response = await api.post(`/users/promote/admin/${userId}`);
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>, navigate);

@@ -230,17 +230,6 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
             <button type="button" className="w-full p-2 mt-2 bg-gray-500 text-white rounded-md" onClick={onCancel}>
                 Annuler
             </button>
-            <div className="mt-4">
-                <h3 className="text-xl font-bold">Données du formulaire:</h3>
-                <pre>{JSON.stringify({
-                    term: updatedTerm.term,
-                    definition: updatedTerm.definition,
-                    grammaticalCategory: updatedTerm.grammaticalCategory === 'Autre' ? newCategory : (updatedTerm.grammaticalCategory as Category).name,
-                    theme: updatedTerm.theme === 'Autre' ? newTheme : (updatedTerm.theme as Theme).name,
-                    language: updatedTerm.language === 'Autre' ? newLanguage.name : (updatedTerm.language as Language).name,
-                    languageCode: updatedTerm.language === 'Autre' ? newLanguage.code : (updatedTerm.language as Language).code,
-                }, null, 2)}</pre>
-            </div>
         </form>
     );
 };

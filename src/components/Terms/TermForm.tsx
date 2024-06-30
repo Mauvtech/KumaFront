@@ -241,10 +241,6 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
             <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded-md" disabled={loading}>
                 {loading ? 'Chargement...' : termId ? 'Modifier' : 'Ajouter'}
             </button>
-            <div className="mt-4">
-                <h3 className="text-xl font-bold">Données du formulaire:</h3>
-                <pre>{JSON.stringify({ term, definition, grammaticalCategory: grammaticalCategory === 'Autre' ? newCategory : grammaticalCategory, theme: theme === 'Autre' ? newTheme : theme, language: language === 'Autre' ? newLanguage : language, languageCode: language === 'Autre' ? languageCode : '' }, null, 2)}</pre>
-            </div>
         </form>
     );
 };

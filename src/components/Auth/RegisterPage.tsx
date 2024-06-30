@@ -41,19 +41,6 @@ const RegisterPage: React.FC = () => {
                     required
                 />
             </div>
-            <div className="mb-4">
-                <label className="block mb-2">Rôle</label>
-                <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                    required
-                >
-                    <option value="user">Utilisateur</option>
-                    <option value="moderator">Modérateur</option>
-                    <option value="admin">Administrateur</option>
-                </select>
-            </div>
             <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded-md">
                 Inscription
             </button>
