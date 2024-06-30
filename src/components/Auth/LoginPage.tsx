@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
-import { login } from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/authContext';
+import { login as loginService } from '../../services/authService';
 
 const LoginPage: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const data = await login({ username, password });
-            navigate('/'); // Redirection après connexion réussie
+            const userData = await loginService({ username, password });
+            if (userData) {
+                login(userData);
+                navigate('/');
+            } else {
+                console.error('Login failed');
+            }
         } catch (error) {
             console.error('Erreur de connexion', error);
         }

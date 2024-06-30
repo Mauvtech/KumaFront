@@ -1,9 +1,47 @@
-import axios from "axios";
+// src/services/userService.ts
+import api from "./api";
+import { AxiosError } from "axios";
+import { handleAuthError } from "../utils/handleAuthError";
+import { ErrorResponse } from "../utils/types";
 
-const API_URL = "http://localhost:3001/users";
+export const getUserProfile = async (navigate: (path: string) => void) => {
+  try {
+    const response = await api.get("/users/me");
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+  }
+};
 
-export const getUserProfile = (token: string) => {
-  return axios.get(`${API_URL}/me`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export const getUsers = async (navigate: (path: string) => void) => {
+  try {
+    const response = await api.get("/users");
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+  }
+};
+
+export const banUser = async (
+  userId: string,
+  navigate: (path: string) => void
+) => {
+  try {
+    const response = await api.post(`/users/${userId}/ban`);
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+  }
+};
+
+export const promoteUser = async (
+  userId: string,
+  navigate: (path: string) => void
+) => {
+  try {
+    const response = await api.post(`/users/${userId}/promote`);
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+  }
 };

@@ -1,37 +1,47 @@
-import axios, { AxiosError } from "axios";
+// src/services/termService.ts
+import api from "./api";
+import { AxiosError } from "axios";
 import { handleAuthError } from "../utils/handleAuthError";
 import { ErrorResponse } from "../utils/types";
-
-const API_URL = "http://localhost:3001/api/terms";
 
 export const addTerm = async (
   termData: {
     term: string;
     definition: string;
     grammaticalCategory: string;
-    themes: string[];
+    theme: string;
   },
-  token: string,
   navigate: (path: string) => void
 ) => {
   try {
-    const response = await axios.post(API_URL, termData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await api.post("/terms", termData);
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>, navigate);
   }
 };
 
-export const getAllTerms = async (
-  token: string,
-  navigate: (path: string) => void
-) => {
+export const getAllTerms = async (navigate: (path: string) => void) => {
   try {
-    const response = await axios.get(API_URL, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await api.get("/terms");
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+  }
+};
+
+export const getApprovedTerms = async (navigate: (path: string) => void) => {
+  try {
+    const response = await api.get("/terms/approved");
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+  }
+};
+
+export const getPendingTerms = async (navigate: (path: string) => void) => {
+  try {
+    const response = await api.get("/terms/pending");
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>, navigate);
@@ -40,13 +50,10 @@ export const getAllTerms = async (
 
 export const getTermById = async (
   id: string,
-  token: string,
   navigate: (path: string) => void
 ) => {
   try {
-    const response = await axios.get(`${API_URL}/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await api.get(`/terms/${id}`);
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>, navigate);
@@ -59,15 +66,12 @@ export const updateTerm = async (
     term: string;
     definition: string;
     grammaticalCategory: string;
-    themes: string[];
+    theme: string;
   },
-  token: string,
   navigate: (path: string) => void
 ) => {
   try {
-    const response = await axios.put(`${API_URL}/${id}`, termData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await api.put(`/terms/${id}`, termData);
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>, navigate);
@@ -76,13 +80,10 @@ export const updateTerm = async (
 
 export const deleteTerm = async (
   id: string,
-  token: string,
   navigate: (path: string) => void
 ) => {
   try {
-    const response = await axios.delete(`${API_URL}/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await api.delete(`/terms/${id}`);
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>, navigate);
@@ -91,19 +92,16 @@ export const deleteTerm = async (
 
 export const approveTerm = async (
   id: string,
-  token: string,
+  approveData: {
+    grammaticalCategory: string;
+    theme: string;
+    language: string;
+    languageCode: string;
+  },
   navigate: (path: string) => void
 ) => {
   try {
-    console.log("id", id);
-    console.log("token", token);
-    const response = await axios.post(
-      `${API_URL}/${id}/approve`,
-      {},
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    const response = await api.post(`/terms/${id}/approve`, approveData);
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>, navigate);
@@ -112,19 +110,10 @@ export const approveTerm = async (
 
 export const rejectTerm = async (
   id: string,
-  token: string,
   navigate: (path: string) => void
 ) => {
   try {
-        console.log("id", id);
-        console.log("token", token);
-    const response = await axios.post(
-      `${API_URL}/${id}/reject`,
-      {},
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    const response = await api.post(`/terms/${id}/reject`);
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>, navigate);
