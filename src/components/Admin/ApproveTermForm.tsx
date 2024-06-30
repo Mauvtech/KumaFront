@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { approveTerm } from '../../services/termService';
-import { getCategories, addCategory } from '../../services/categoryService';
-import { getThemes, addTheme } from '../../services/themeService';
-import { getLanguages, addLanguage } from '../../services/languageService';
-import { useAuth } from '../../contexts/authContext';
+import { getCategories } from '../../services/categoryService';
+import { getThemes } from '../../services/themeService';
+import { getLanguages } from '../../services/languageService';
+import { approveCategory } from '../../services/categoryService';
+import { approveTheme } from '../../services/themeService';
+import { approveLanguage } from '../../services/languageService';
 import { useNavigate } from 'react-router-dom';
 
 interface Category {
@@ -26,9 +28,9 @@ interface Term {
     _id: string;
     term: string;
     definition: string;
-    grammaticalCategory: string;
-    theme: string;
-    language: string;
+    grammaticalCategory: string | Category;
+    theme: string | Theme;
+    language: string | Language;
     languageCode: string;
     status: string;
 }
@@ -48,14 +50,13 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
     const [languageOptions, setLanguageOptions] = useState<Language[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const { user } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCategoriesThemesLanguages = async () => {
             try {
-                const categoriesData = await getCategories();
-                const themesData = await getThemes();
+                const categoriesData = await getCategories(navigate);
+                const themesData = await getThemes(navigate);
                 const languagesData = await getLanguages(navigate);
                 setCategories([...categoriesData, { _id: 'other', name: 'Autre' }]);
                 setThemeOptions([...themesData, { _id: 'other', name: 'Autre' }]);
@@ -74,21 +75,30 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
         setError(null);
 
         const approveData = {
-            grammaticalCategory: updatedTerm.grammaticalCategory === 'Autre' ? newCategory : updatedTerm.grammaticalCategory,
-            theme: updatedTerm.theme === 'Autre' ? newTheme : updatedTerm.theme,
-            language: updatedTerm.language === 'Autre' ? newLanguage.name : updatedTerm.language,
-            languageCode: updatedTerm.language === 'Autre' ? newLanguage.code : updatedTerm.languageCode,
+            grammaticalCategory: typeof updatedTerm.grammaticalCategory === 'string' && updatedTerm.grammaticalCategory === 'Autre' ? newCategory : (updatedTerm.grammaticalCategory as Category).name,
+            theme: typeof updatedTerm.theme === 'string' && updatedTerm.theme === 'Autre' ? newTheme : (updatedTerm.theme as Theme).name,
+            language: typeof updatedTerm.language === 'string' && updatedTerm.language === 'Autre' ? newLanguage.name : (updatedTerm.language as Language).name,
+            languageCode: typeof updatedTerm.language === 'string' && updatedTerm.language === 'Autre' ? newLanguage.code : (updatedTerm.language as Language).code,
         };
 
         try {
-            if (updatedTerm.grammaticalCategory === 'Autre' && newCategory) {
-                await addCategory(newCategory);
+            if (typeof updatedTerm.grammaticalCategory !== 'string' && updatedTerm.grammaticalCategory.name === 'Autre' && newCategory) {
+                const newCategoryId = categories.find(cat => cat.name === newCategory)?._id;
+                if (newCategoryId) {
+                    await approveCategory(newCategoryId);
+                }
             }
-            if (updatedTerm.theme === 'Autre' && newTheme) {
-                await addTheme(newTheme, navigate);
+            if (typeof updatedTerm.theme !== 'string' && updatedTerm.theme.name === 'Autre' && newTheme) {
+                const newThemeId = themeOptions.find(theme => theme.name === newTheme)?._id;
+                if (newThemeId) {
+                    await approveTheme(newThemeId);
+                }
             }
-            if (updatedTerm.language === 'Autre' && newLanguage.name) {
-                await addLanguage(newLanguage.name, newLanguage.code, navigate);
+            if (typeof updatedTerm.language !== 'string' && updatedTerm.language.name === 'Autre' && newLanguage.name) {
+                const newLanguageId = languageOptions.find(lang => lang.name === newLanguage.name && lang.code === newLanguage.code)?._id;
+                if (newLanguageId) {
+                    await approveLanguage(newLanguageId);
+                }
             }
 
             await approveTerm(term._id, approveData, navigate);
@@ -138,7 +148,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                 <select
                     id="grammaticalCategory"
                     name="grammaticalCategory"
-                    value={updatedTerm.grammaticalCategory}
+                    value={typeof updatedTerm.grammaticalCategory === 'string' ? updatedTerm.grammaticalCategory : (updatedTerm.grammaticalCategory as Category).name}
                     onChange={handleChange}
                     className="w-full p-2 border border-gray-300 rounded-md"
                     required
@@ -162,7 +172,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                 <select
                     id="theme"
                     name="theme"
-                    value={updatedTerm.theme}
+                    value={typeof updatedTerm.theme === 'string' ? updatedTerm.theme : (updatedTerm.theme as Theme).name}
                     onChange={handleChange}
                     className="w-full p-2 border border-gray-300 rounded-md"
                     required
@@ -186,7 +196,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                 <select
                     id="language"
                     name="language"
-                    value={updatedTerm.language}
+                    value={typeof updatedTerm.language === 'string' ? updatedTerm.language : (updatedTerm.language as Language).name}
                     onChange={handleChange}
                     className="w-full p-2 border border-gray-300 rounded-md"
                     required
@@ -220,6 +230,17 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
             <button type="button" className="w-full p-2 mt-2 bg-gray-500 text-white rounded-md" onClick={onCancel}>
                 Annuler
             </button>
+            <div className="mt-4">
+                <h3 className="text-xl font-bold">Données du formulaire:</h3>
+                <pre>{JSON.stringify({
+                    term: updatedTerm.term,
+                    definition: updatedTerm.definition,
+                    grammaticalCategory: updatedTerm.grammaticalCategory === 'Autre' ? newCategory : (updatedTerm.grammaticalCategory as Category).name,
+                    theme: updatedTerm.theme === 'Autre' ? newTheme : (updatedTerm.theme as Theme).name,
+                    language: updatedTerm.language === 'Autre' ? newLanguage.name : (updatedTerm.language as Language).name,
+                    languageCode: updatedTerm.language === 'Autre' ? newLanguage.code : (updatedTerm.language as Language).code,
+                }, null, 2)}</pre>
+            </div>
         </form>
     );
 };

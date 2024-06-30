@@ -1,9 +1,12 @@
 import axios from "axios";
 import { isTokenExpired, logout } from "./authService";
-import { useNavigate } from "react-router-dom";
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: "http://localhost:3001/api",
+});
+
+export const publicApi = axios.create({
+    baseURL: "http://localhost:3001/api",
 });
 
 // Intercepteur pour ajouter le token aux requêtes

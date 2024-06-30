@@ -1,5 +1,5 @@
 // src/services/termService.ts
-import api from "./api";
+import {api, publicApi } from "./api";
 import { AxiosError } from "axios";
 import { handleAuthError } from "../utils/handleAuthError";
 import { ErrorResponse } from "../utils/types";
@@ -32,7 +32,7 @@ export const getAllTerms = async (navigate: (path: string) => void) => {
 
 export const getApprovedTerms = async (navigate: (path: string) => void) => {
   try {
-    const response = await api.get("/terms/approved");
+    const response = await publicApi.get("/terms/approved");
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>, navigate);
@@ -53,7 +53,7 @@ export const getTermById = async (
   navigate: (path: string) => void
 ) => {
   try {
-    const response = await api.get(`/terms/${id}`);
+    const response = await publicApi.get(`/terms/${id}`);
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>, navigate);

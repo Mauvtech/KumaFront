@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './components/Terms/HomePage';
 import ProfilePage from './components/User/ProfilePage';
-import ModerationPage from './components/Terms/ModerationPage';
 import DashboardPage from './components/Admin/DashboardPage';
 import LoginPage from './components/Auth/LoginPage';
 import RegisterPage from './components/Auth/RegisterPage';
@@ -12,6 +11,7 @@ import { AuthProvider } from './contexts/authContext';
 import UsersPage from './components/Admin/UsersPage';
 import TermsPage from './components/Admin/TermsPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import TermDetails from './components/Terms/TermDetails';
 
 const App: React.FC = () => {
   return (
@@ -20,6 +20,7 @@ const App: React.FC = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/terms/:id" element={<TermDetails />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
@@ -27,10 +28,6 @@ const App: React.FC = () => {
           <Route
             path="/profile"
             element={<ProtectedRoute element={<ProfilePage />} />}
-          />
-          <Route
-            path="/moderation"
-            element={<ProtectedRoute element={<ModerationPage />} roles={['moderator', 'admin']} />}
           />
           <Route
             path="/dashboard"
@@ -42,7 +39,7 @@ const App: React.FC = () => {
           />
           <Route
             path="/terms"
-            element={<ProtectedRoute element={<TermsPage />} roles={['admin']} />}
+            element={<ProtectedRoute element={<TermsPage />} roles={['admin','moderator']} />}
           />
           <Route
             path="/new-term"
