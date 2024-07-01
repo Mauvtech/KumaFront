@@ -32,7 +32,15 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
     const [languageOptions, setLanguageOptions] = useState<{ _id: string, name: string, code: string }[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [rawValues, setRawValues] = useState({});
     const navigate = useNavigate();
+
+    const updateRawValues = (updatedValues: Partial<typeof rawValues>) => {
+        setRawValues((prevValues) => ({
+            ...prevValues,
+            ...updatedValues,
+        }));
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -88,7 +96,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
             grammaticalCategory: grammaticalCategory === 'Autre' ? newCategory : grammaticalCategory,
             theme: theme === 'Autre' ? newTheme : theme,
             language: language === 'Autre' ? newLanguage : language,
-            languageCode: language === 'Autre' ? '' : languageCode,
+            languageCode: language === 'Autre' ? languageCode : "",
         };
 
         console.log("Term Data: ", termData); // Log the term data
@@ -114,6 +122,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
         if (value !== 'Autre') {
             setNewCategory('');
         }
+        updateRawValues({ grammaticalCategory: value });
     };
 
     const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -122,6 +131,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
         if (value !== 'Autre') {
             setNewTheme('');
         }
+        updateRawValues({ theme: value });
     };
 
     const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -129,9 +139,12 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
         setLanguage(value);
         if (value !== 'Autre') {
             setNewLanguage('');
-            setLanguageCode(languageOptions.find(lang => lang.name === value)?.code || '');
+            const selectedLanguage = languageOptions.find(lang => lang.name === value);
+            setLanguageCode(selectedLanguage ? selectedLanguage.code : '');
+            updateRawValues({ language: value, languageCode: selectedLanguage ? selectedLanguage.code : '' });
         } else {
             setLanguageCode('');
+            updateRawValues({ language: value, languageCode: '' });
         }
     };
 
@@ -145,7 +158,10 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                     type="text"
                     id="term"
                     value={term}
-                    onChange={(e) => setTerm(e.target.value)}
+                    onChange={(e) => {
+                        setTerm(e.target.value);
+                        updateRawValues({ term: e.target.value });
+                    }}
                     className="w-full p-2 border border-gray-300 rounded-md"
                     required
                 />
@@ -155,7 +171,10 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                 <textarea
                     id="definition"
                     value={definition}
-                    onChange={(e) => setDefinition(e.target.value)}
+                    onChange={(e) => {
+                        setDefinition(e.target.value);
+                        updateRawValues({ definition: e.target.value });
+                    }}
                     className="w-full p-2 border border-gray-300 rounded-md"
                     required
                 />
@@ -178,7 +197,10 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                         type="text"
                         placeholder="Nouvelle catégorie grammaticale"
                         value={newCategory}
-                        onChange={(e) => setNewCategory(e.target.value)}
+                        onChange={(e) => {
+                            setNewCategory(e.target.value);
+                            updateRawValues({ newCategory: e.target.value });
+                        }}
                         className="w-full p-2 mt-2 border border-gray-300 rounded-md"
                     />
                 )}
@@ -201,7 +223,10 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                         type="text"
                         placeholder="Nouveau thème"
                         value={newTheme}
-                        onChange={(e) => setNewTheme(e.target.value)}
+                        onChange={(e) => {
+                            setNewTheme(e.target.value);
+                            updateRawValues({ newTheme: e.target.value });
+                        }}
                         className="w-full p-2 mt-2 border border-gray-300 rounded-md"
                     />
                 )}
@@ -225,14 +250,20 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                             type="text"
                             placeholder="Nouvelle langue"
                             value={newLanguage}
-                            onChange={(e) => setNewLanguage(e.target.value)}
+                            onChange={(e) => {
+                                setNewLanguage(e.target.value);
+                                updateRawValues({ newLanguage: e.target.value });
+                            }}
                             className="w-full p-2 mt-2 border border-gray-300 rounded-md"
                         />
                         <input
                             type="text"
                             placeholder="Code de la nouvelle langue"
                             value={languageCode}
-                            onChange={(e) => setLanguageCode(e.target.value)}
+                            onChange={(e) => {
+                                setLanguageCode(e.target.value);
+                                updateRawValues({ languageCode: e.target.value });
+                            }}
                             className="w-full p-2 mt-2 border border-gray-300 rounded-md"
                         />
                     </>
@@ -241,6 +272,10 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
             <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded-md" disabled={loading}>
                 {loading ? 'Chargement...' : termId ? 'Modifier' : 'Ajouter'}
             </button>
+            <div className="mt-4">
+                <h3 className="text-lg font-bold">Raw Values</h3>
+                <pre className="bg-gray-100 p-2 rounded-md">{JSON.stringify(rawValues, null, 2)}</pre>
+            </div>
         </form>
     );
 };

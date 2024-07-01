@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { approveTerm } from '../../services/termService';
 import { getCategories } from '../../services/categoryService';
 import { getThemes } from '../../services/themeService';
-import { getLanguages } from '../../services/languageService';
+import { getAllLanguages } from '../../services/languageService';
 import { approveCategory } from '../../services/categoryService';
 import { approveTheme } from '../../services/themeService';
 import { approveLanguage } from '../../services/languageService';
@@ -57,7 +57,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
             try {
                 const categoriesData = await getCategories(navigate);
                 const themesData = await getThemes(navigate);
-                const languagesData = await getLanguages(navigate);
+                const languagesData = await getAllLanguages(navigate);
                 setCategories([...categoriesData, { _id: 'other', name: 'Autre' }]);
                 setThemeOptions([...themesData, { _id: 'other', name: 'Autre' }]);
                 setLanguageOptions([...languagesData, { _id: 'other', name: 'Autre', code: '' }]);
@@ -230,6 +230,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
             <button type="button" className="w-full p-2 mt-2 bg-gray-500 text-white rounded-md" onClick={onCancel}>
                 Annuler
             </button>
+
         </form>
     );
 };
