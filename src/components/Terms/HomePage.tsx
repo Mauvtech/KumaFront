@@ -31,6 +31,7 @@ interface Language {
 export interface Term {
     _id: string;
     term: string;
+    translation: string;
     definition: string;
     grammaticalCategory: Category;
     theme: Theme;
@@ -150,25 +151,27 @@ const HomePage: React.FC = () => {
                 <p className="text-center text-gray-500">Aucun terme approuvé trouvé.</p>
             ) : (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {currentTerms.map((term) => (
-                            <li key={term._id} className="mb-4 p-4 border border-gray-200 rounded-md transition transform hover:scale-105">
-                                <Link to={`/terms/${term._id}`}>
-                                    <h3 className="text-xl font-bold">{term.term}</h3>
-                                </Link>
-                                <p>{term.definition}</p>
-                                {term.language && (
-                                    <p>Langue: {term.language.name} (Code: {term.language.code})</p>
-                                )}
-                                <div className="mt-2">
-                                    <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full mr-2">
-                                        {term.grammaticalCategory.name}
-                                    </span>
-                                    <span className="inline-block bg-green-200 text-green-800 text-xs px-2 rounded-full">
-                                        {term.theme.name}
-                                    </span>
-                                </div>
-                            </li>
-                        ))}
+                    {currentTerms.map((term) => (
+                        <Link to={`/terms/${term._id}`}> <li key={term._id} className="mb-4 p-4 border border-gray-200 rounded-md transition transform hover:scale-105">
+
+                            <h3 className="text-xl font-bold">{term.term}</h3>
+                            <p className="text-gray-500">{term.translation}</p>
+                            <p>{term.definition}</p>
+                            {term.language && (
+                                <p>Langue: {term.language.name} (Code: {term.language.code})</p>
+                            )}
+                            <div className="mt-2">
+                                <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full mr-2">
+                                    {term.grammaticalCategory.name}
+                                </span>
+                                <span className="inline-block bg-green-200 text-green-800 text-xs px-2 rounded-full">
+                                    {term.theme.name}
+                                </span>
+                            </div>
+
+                        </li>
+                        </Link>
+                    ))}
                 </ul>
             )}
             <Pagination termsPerPage={termsPerPage} totalTerms={filteredTerms.length} paginate={paginate} />

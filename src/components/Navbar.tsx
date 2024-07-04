@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/authContext';
 import { FaUser, FaSpinner, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaHome, FaChevronDown, FaPlus, FaTachometerAlt, FaListAlt } from 'react-icons/fa';
@@ -7,9 +7,11 @@ const Navbar: React.FC = () => {
     const { user, loading, logout } = useAuth();
     const navigate = useNavigate();
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     const handleLogout = () => {
         logout();
+        toggleDropdown();
         navigate('/login');
     };
 
@@ -17,9 +19,18 @@ const Navbar: React.FC = () => {
         setDropdownOpen(!dropdownOpen);
     };
 
+    const handleClickOutside = (event: MouseEvent) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+            setDropdownOpen(false);
+        }
+    };
+
     useEffect(() => {
-        console.log('User:', user); // Debugging
-    });
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     return (
         <nav className="bg-blue-600 p-4">
@@ -52,7 +63,7 @@ const Navbar: React.FC = () => {
                                     Gérer les Termes
                                 </Link>
                             )}
-                            <div className="relative">
+                            <div className="relative" ref={dropdownRef}>
                                 <button
                                     onClick={toggleDropdown}
                                     className="text-white flex items-center focus:outline-none"
@@ -64,6 +75,7 @@ const Navbar: React.FC = () => {
                                 {dropdownOpen && (
                                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-20">
                                         <Link
+                                            onClick={toggleDropdown}
                                             to="/profile"
                                             className="block px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center"
                                         >

@@ -9,6 +9,7 @@ interface TermFormProps {
     termId?: string;
     initialData?: {
         term: string;
+        translation: string;
         definition: string;
         grammaticalCategory: string;
         theme: string;
@@ -20,6 +21,7 @@ interface TermFormProps {
 const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
     const [term, setTerm] = useState(initialData?.term || '');
     const [definition, setDefinition] = useState(initialData?.definition || '');
+    const [translation, setTranslation] = useState(initialData?.translation || '');
     const [grammaticalCategory, setGrammaticalCategory] = useState(initialData?.grammaticalCategory || '');
     const [theme, setTheme] = useState(initialData?.theme || '');
     const [language, setLanguage] = useState(initialData?.language || '');
@@ -92,6 +94,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
 
         const termData = {
             term,
+            translation,
             definition,
             grammaticalCategory: grammaticalCategory === 'Autre' ? newCategory : grammaticalCategory,
             theme: theme === 'Autre' ? newTheme : theme,
@@ -161,6 +164,20 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                     onChange={(e) => {
                         setTerm(e.target.value);
                         updateRawValues({ term: e.target.value });
+                    }}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                    required
+                />
+            </div>
+            <div className="mb-4">
+                <label className="block mb-2" htmlFor="translation">Traduction</label>
+                <input
+                    type="text"
+                    id="translation"
+                    value={translation}
+                    onChange={(e) => {
+                        setTranslation(e.target.value);
+                        updateRawValues({ translation: e.target.value });
                     }}
                     className="w-full p-2 border border-gray-300 rounded-md"
                     required
@@ -272,10 +289,6 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
             <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded-md" disabled={loading}>
                 {loading ? 'Chargement...' : termId ? 'Modifier' : 'Ajouter'}
             </button>
-            <div className="mt-4">
-                <h3 className="text-lg font-bold">Raw Values</h3>
-                <pre className="bg-gray-100 p-2 rounded-md">{JSON.stringify(rawValues, null, 2)}</pre>
-            </div>
         </form>
     );
 };

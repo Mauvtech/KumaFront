@@ -34,6 +34,7 @@ const TermDetails: React.FC = () => {
         <div className="max-w-4xl mx-auto mt-10 p-4 bg-white shadow-md rounded-md">
             <h2 className="text-2xl font-bold mb-4">{term.term}</h2>
             <p><strong>Définition: </strong>{term.definition}</p>
+            <p><strong>Traduction: </strong>{term.translation}</p>
             <p><strong>Catégorie grammaticale: </strong>{term.grammaticalCategory.name}</p>
             <p><strong>Thème: </strong>{term.theme.name}</p>
             <p><strong>Langue: </strong>{term.language.name} (Code: {term.language.code})</p>
