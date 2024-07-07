@@ -1,5 +1,4 @@
-// src/services/termService.ts
-import {api, publicApi } from "./api";
+import { api, publicApi } from "./api";
 import { AxiosError } from "axios";
 import { handleAuthError } from "../utils/handleAuthError";
 import { ErrorResponse } from "../utils/types";
@@ -114,6 +113,58 @@ export const rejectTerm = async (
 ) => {
   try {
     const response = await api.post(`/terms/${id}/reject`);
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+  }
+};
+
+// New functions for upvotes, downvotes, comments, and tags
+
+export const upvoteTerm = async (
+  id: string,
+  navigate: (path: string) => void
+) => {
+  try {
+    const response = await api.post(`/terms/${id}/upvote`);
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+  }
+};
+
+export const downvoteTerm = async (
+  id: string,
+  navigate: (path: string) => void
+) => {
+  try {
+    const response = await api.post(`/terms/${id}/downvote`);
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+  }
+};
+
+export const addComment = async (
+  id: string,
+  commentData: { comment: string },
+  navigate: (path: string) => void
+) => {
+  try {
+    const response = await api.post(`/terms/${id}/comment`, commentData);
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+  }
+};
+
+export const addTag = async (
+  id: string,
+  tagData: { tag: string },
+  navigate: (path: string) => void
+) => {
+  try {
+    const response = await api.post(`/terms/${id}/tag`, tagData);
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>, navigate);

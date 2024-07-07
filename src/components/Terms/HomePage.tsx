@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { getApprovedTerms } from '../../services/termService';
+import { getApprovedTerms, upvoteTerm, downvoteTerm } from '../../services/termService';
 import { getCategories } from '../../services/categoryService';
 import { getThemes } from '../../services/themeService';
 import { getLanguages } from '../../services/languageService';
@@ -8,6 +8,9 @@ import { AxiosError } from 'axios';
 import { handleAuthError } from '../../utils/handleAuthError';
 import FilterButtons from '../FilterButtons';
 import { ErrorResponse } from '../../utils/types';
+import { useAuth } from '../../contexts/authContext';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 interface Category {
     _id: string;
@@ -37,9 +40,13 @@ export interface Term {
     theme: Theme;
     language: Language;
     status: string;
+    upvotedBy: string[];
+    downvotedBy: string[];
+    userVote?: 'upvote' | 'downvote' | null;
 }
 
 const HomePage: React.FC = () => {
+    const { user } = useAuth();
     const [terms, setTerms] = useState<Term[]>([]);
     const [filteredTerms, setFilteredTerms] = useState<Term[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -119,6 +126,15 @@ const HomePage: React.FC = () => {
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
+    const handleUpvote = async (id: string) => {
+        try {
+            await upvoteTerm(id, navigate);
+            fetchApprovedTerms();
+        } catch (error) {
+            console.error('Erreur lors de l\'upvote', error);
+        }
+    };
+
     return (
         <div className="max-w-6xl mx-auto mt-10 p-4 bg-white shadow-md rounded-md">
             <h2 className="text-2xl font-bold mb-4">Liste des Termes Approuvés</h2>
@@ -151,27 +167,40 @@ const HomePage: React.FC = () => {
                 <p className="text-center text-gray-500">Aucun terme approuvé trouvé.</p>
             ) : (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {currentTerms.map((term) => (
-                        <Link to={`/terms/${term._id}`}> <li key={term._id} className="mb-4 p-4 border border-gray-200 rounded-md transition transform hover:scale-105">
+                    {currentTerms.map((term) => {
+                        const userVote = user ? (term.upvotedBy.includes(user._id) ? 'upvote' : term.downvotedBy.includes(user._id) ? 'downvote' : null) : null;
+                        return (
+                            <li key={term._id} className="mb-4 p-4 border border-gray-200 rounded-md transition transform hover:scale-105">
+                                <Link to={`/terms/${term._id}`}>
+                                    <h3 className="text-xl font-bold">{term.term}</h3>
+                                    <p className="text-gray-500">{term.translation}</p>
+                                    <p>{term.definition}</p>
+                                    {term.language && (
+                                        <p>Langue: {term.language.name} (Code: {term.language.code})</p>
+                                    )}
+                                    <div className="mt-2">
+                                        <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full mr-2">
+                                            {term.grammaticalCategory.name}
+                                        </span>
+                                        <span className="inline-block bg-green-200 text-green-800 text-xs px-2 rounded-full">
+                                            {term.theme.name}
+                                        </span>
+                                    </div></Link>
 
-                            <h3 className="text-xl font-bold">{term.term}</h3>
-                            <p className="text-gray-500">{term.translation}</p>
-                            <p>{term.definition}</p>
-                            {term.language && (
-                                <p>Langue: {term.language.name} (Code: {term.language.code})</p>
-                            )}
-                            <div className="mt-2">
-                                <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full mr-2">
-                                    {term.grammaticalCategory.name}
-                                </span>
-                                <span className="inline-block bg-green-200 text-green-800 text-xs px-2 rounded-full">
-                                    {term.theme.name}
-                                </span>
-                            </div>
-
-                        </li>
-                        </Link>
-                    ))}
+                                {user && (
+                                    <div className="mt-4 flex justify-between items-center">
+                                        <button
+                                            onClick={() => handleUpvote(term._id)}
+                                            className="text-3xl"
+                                            style={{ color: userVote === 'upvote' ? 'green' : 'black' }}
+                                        >
+                                            {userVote === 'upvote' ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                                        </button>
+                                    </div>
+                                )}
+                            </li>
+                        );
+                    })}
                 </ul>
             )}
             <Pagination termsPerPage={termsPerPage} totalTerms={filteredTerms.length} paginate={paginate} />
