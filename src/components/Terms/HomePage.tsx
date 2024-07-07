@@ -40,6 +40,7 @@ export interface Term {
     theme: Theme;
     language: Language;
     status: string;
+    comments?: Array<{ author: string; text: string; createdAt: Date }>;
     upvotedBy: string[];
     downvotedBy: string[];
     userVote?: 'upvote' | 'downvote' | null;

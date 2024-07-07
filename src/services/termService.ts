@@ -146,12 +146,12 @@ export const downvoteTerm = async (
 };
 
 export const addComment = async (
-  id: string,
-  commentData: { comment: string },
+  termId: string,
+  commentData: { text: string; createdAt: Date },
   navigate: (path: string) => void
 ) => {
   try {
-    const response = await api.post(`/terms/${id}/comment`, commentData);
+    const response = await api.post(`/terms/${termId}/comment`, commentData);
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>, navigate);
