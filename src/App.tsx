@@ -12,6 +12,7 @@ import UsersPage from './components/Admin/UsersPage';
 import TermsPage from './components/Admin/TermsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import TermDetails from './components/Terms/TermDetails';
+import UpdateProfile from './components/User/UpdateProfile';
 
 const App: React.FC = () => {
   return (
@@ -45,6 +46,7 @@ const App: React.FC = () => {
             path="/new-term"
             element={<ProtectedRoute element={<TermForm />} />}
           />
+          <Route path="/update-profile" element={<ProtectedRoute element={<UpdateProfile/>}/>} />
         </Routes>
       </Router>
     </AuthProvider>

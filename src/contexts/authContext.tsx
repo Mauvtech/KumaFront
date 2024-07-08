@@ -9,6 +9,7 @@ interface User {
 }
 
 interface AuthContextType {
+  setUser: (user: User | null) => void;
   user: User | null;
   loading: boolean;
   login: (userData: User) => void;
@@ -41,6 +42,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     authLogout();
     setUser(null);
+    window.localStorage.removeItem('user');
     setLoading(false);
   };
 
@@ -55,7 +57,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ setUser, user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

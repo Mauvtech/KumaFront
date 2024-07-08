@@ -35,6 +35,12 @@ const ProfilePage: React.FC = () => {
             <h2 className="text-2xl font-bold mb-4">Profil de l'utilisateur</h2>
             <p><strong>Nom d'utilisateur:</strong> {userProfile.username}</p>
             <p><strong>Rôle:</strong> {userProfile.role}</p>
+            <button
+                onClick={() => navigate('/update-profile')}
+                className="mt-4 p-2 bg-blue-500 text-white rounded-md"
+            >
+                Modifier le profil
+            </button>
         </div>
     );
 };

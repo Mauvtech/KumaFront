@@ -22,6 +22,18 @@ export const getUsers = async (navigate: (path: string) => void) => {
   }
 };
 
+export const updateUserProfile = async (
+  userData: { username?: string; password?: string },
+  navigate: (path: string) => void
+) => {
+  try {
+    const response = await api.put("/users/me", userData);
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+  }
+};
+
 export const banUser = async (
   userId: string,
   navigate: (path: string) => void
