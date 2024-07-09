@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { getApprovedTerms, upvoteTerm, downvoteTerm } from '../../services/termService';
+import { getApprovedTerms, upvoteTerm } from '../../services/termService';
 import { getCategories } from '../../services/categoryService';
 import { getThemes } from '../../services/themeService';
 import { getLanguages } from '../../services/languageService';
@@ -137,14 +137,14 @@ const HomePage: React.FC = () => {
     };
 
     return (
-        <div className="max-w-6xl mx-auto mt-10 p-4 bg-white shadow-md rounded-md">
-            <h2 className="text-2xl font-bold mb-4">Liste des Termes Approuvés</h2>
+        <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
+            <h2 className="text-3xl font-bold mb-6 text-gray-800">Liste des Termes Approuvés</h2>
             <input
                 type="text"
                 placeholder="Rechercher un terme ou une définition..."
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                className="w-full p-3 mb-6 bg-gray-200 border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-400"
             />
             <FilterButtons
                 title="Catégories"
@@ -167,17 +167,17 @@ const HomePage: React.FC = () => {
             {terms.length === 0 ? (
                 <p className="text-center text-gray-500">Aucun terme approuvé trouvé.</p>
             ) : (
-                <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {currentTerms.map((term) => {
                         const userVote = user ? (term.upvotedBy.includes(user._id) ? 'upvote' : term.downvotedBy.includes(user._id) ? 'downvote' : null) : null;
                         return (
-                            <li key={term._id} className="mb-4 p-4 border border-gray-200 rounded-md transition transform hover:scale-105">
+                            <li key={term._id} className="mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff] transition-transform transform hover:scale-105">
                                 <Link to={`/terms/${term._id}`}>
-                                    <h3 className="text-xl font-bold">{term.term}</h3>
-                                    <p className="text-gray-500">{term.translation}</p>
-                                    <p>{term.definition}</p>
+                                    <h3 className="text-xl font-bold text-gray-800">{term.term}</h3>
+                                    <p className="text-gray-600">{term.translation}</p>
+                                    <p className="text-gray-800">{term.definition}</p>
                                     {term.language && (
-                                        <p>Langue: {term.language.name} (Code: {term.language.code})</p>
+                                        <p className="text-gray-800">Langue: {term.language.name} (Code: {term.language.code})</p>
                                     )}
                                     <div className="mt-2">
                                         <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full mr-2">
@@ -186,8 +186,8 @@ const HomePage: React.FC = () => {
                                         <span className="inline-block bg-green-200 text-green-800 text-xs px-2 rounded-full">
                                             {term.theme.name}
                                         </span>
-                                    </div></Link>
-
+                                    </div>
+                                </Link>
                                 {user && (
                                     <div className="mt-4 flex justify-between items-center">
                                         <button
@@ -229,7 +229,7 @@ const Pagination: React.FC<PaginationProps> = ({ termsPerPage, totalTerms, pagin
                     <li key={number}>
                         <button
                             onClick={() => paginate(number)}
-                            className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                            className="px-3 py-2 leading-tight text-gray-500 bg-gray-100 border border-gray-300 hover:bg-gray-200 hover:text-gray-700 rounded-lg shadow-lg"
                         >
                             {number}
                         </button>

@@ -19,29 +19,29 @@ const RegisterPage: React.FC = () => {
     };
 
     return (
-        <form onSubmit={handleRegister} className="max-w-md mx-auto mt-10 p-4 bg-white shadow-md rounded-md">
-            <h2 className="text-2xl font-bold mb-4">Inscription</h2>
+        <form onSubmit={handleRegister} className="max-w-md mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">Inscription</h2>
             <div className="mb-4">
-                <label className="block mb-2">Nom d'utilisateur</label>
+                <label className="block mb-2 text-gray-800">Nom d'utilisateur</label>
                 <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 />
             </div>
             <div className="mb-4">
-                <label className="block mb-2">Mot de passe</label>
+                <label className="block mb-2 text-gray-800">Mot de passe</label>
                 <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 />
             </div>
-            <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded-md">
+            <button type="submit" className="w-full p-3 text-white rounded-lg bg-gray-400 shadow-[3px_3px_6px_#b3b3b3,-3px_-3px_6px_#ffffff] hover:bg-gray-500 focus:outline-none">
                 Inscription
             </button>
         </form>

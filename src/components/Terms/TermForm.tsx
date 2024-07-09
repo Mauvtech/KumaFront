@@ -54,7 +54,6 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                 setThemeOptions([...themesData, { _id: 'other', name: 'Autre' }]);
                 setLanguageOptions(Array.isArray(languagesData) ? [...languagesData, { _id: 'other', name: 'Autre', code: '' }] : []);
 
-                // Set initial values based on the first available option
                 if (categoriesData.length > 0 && !initialData?.grammaticalCategory) {
                     setGrammaticalCategory(categoriesData[0].name);
                 }
@@ -152,11 +151,11 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-4 bg-white shadow-md rounded-md">
+        <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
             <h2 className="text-2xl font-bold mb-4">{termId ? 'Modifier Terme' : 'Ajouter Terme'}</h2>
             {error && <div className="mb-4 text-red-500">{error}</div>}
             <div className="mb-4">
-                <label className="block mb-2" htmlFor="term">Terme</label>
+                <label className="block mb-2 text-gray-800" htmlFor="term">Terme</label>
                 <input
                     type="text"
                     id="term"
@@ -165,12 +164,12 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                         setTerm(e.target.value);
                         updateRawValues({ term: e.target.value });
                     }}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 />
             </div>
             <div className="mb-4">
-                <label className="block mb-2" htmlFor="translation">Traduction</label>
+                <label className="block mb-2 text-gray-800" htmlFor="translation">Traduction</label>
                 <input
                     type="text"
                     id="translation"
@@ -179,12 +178,12 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                         setTranslation(e.target.value);
                         updateRawValues({ translation: e.target.value });
                     }}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 />
             </div>
             <div className="mb-4">
-                <label className="block mb-2" htmlFor="definition">Définition</label>
+                <label className="block mb-2 text-gray-800" htmlFor="definition">Définition</label>
                 <textarea
                     id="definition"
                     value={definition}
@@ -192,17 +191,17 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                         setDefinition(e.target.value);
                         updateRawValues({ definition: e.target.value });
                     }}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 />
             </div>
             <div className="mb-4">
-                <label className="block mb-2" htmlFor="grammaticalCategory">Catégorie grammaticale</label>
+                <label className="block mb-2 text-gray-800" htmlFor="grammaticalCategory">Catégorie grammaticale</label>
                 <select
                     id="grammaticalCategory"
                     value={grammaticalCategory}
                     onChange={handleCategoryChange}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 >
                     {categories.map(category => (
@@ -218,17 +217,17 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                             setNewCategory(e.target.value);
                             updateRawValues({ newCategory: e.target.value });
                         }}
-                        className="w-full p-2 mt-2 border border-gray-300 rounded-md"
+                        className="w-full p-3 mt-2 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                     />
                 )}
             </div>
             <div className="mb-4">
-                <label className="block mb-2" htmlFor="theme">Thème</label>
+                <label className="block mb-2 text-gray-800" htmlFor="theme">Thème</label>
                 <select
                     id="theme"
                     value={theme}
                     onChange={handleThemeChange}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 >
                     {themeOptions.map(theme => (
@@ -244,17 +243,17 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                             setNewTheme(e.target.value);
                             updateRawValues({ newTheme: e.target.value });
                         }}
-                        className="w-full p-2 mt-2 border border-gray-300 rounded-md"
+                        className="w-full p-3 mt-2 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                     />
                 )}
             </div>
             <div className="mb-4">
-                <label className="block mb-2" htmlFor="language">Langue</label>
+                <label className="block mb-2 text-gray-800" htmlFor="language">Langue</label>
                 <select
                     id="language"
                     value={language}
                     onChange={handleLanguageChange}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 >
                     {languageOptions.map(language => (
@@ -271,7 +270,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                                 setNewLanguage(e.target.value);
                                 updateRawValues({ newLanguage: e.target.value });
                             }}
-                            className="w-full p-2 mt-2 border border-gray-300 rounded-md"
+                            className="w-full p-3 mt-2 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                         />
                         <input
                             type="text"
@@ -281,14 +280,19 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                                 setLanguageCode(e.target.value);
                                 updateRawValues({ languageCode: e.target.value });
                             }}
-                            className="w-full p-2 mt-2 border border-gray-300 rounded-md"
+                            className="w-full p-3 mt-2 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                         />
                     </>
                 )}
             </div>
-            <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded-md" disabled={loading}>
+            <button
+                type="submit"
+                className="w-full p-3 text-white rounded-lg bg-gray-400 shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-gray-500 focus:outline-none"
+                disabled={loading}
+            >
                 {loading ? 'Chargement...' : termId ? 'Modifier' : 'Ajouter'}
             </button>
+
         </form>
     );
 };

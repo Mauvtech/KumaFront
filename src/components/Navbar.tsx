@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/authContext';
-import { FaUser, FaSpinner, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaHome, FaChevronDown, FaPlus, FaTachometerAlt, FaListAlt } from 'react-icons/fa';
+import { FaUser, FaSpinner, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaPlus, FaTachometerAlt, FaListAlt, FaCommentDots, FaChevronDown } from 'react-icons/fa';
 
 const Navbar: React.FC = () => {
     const { user, loading, logout } = useAuth();
@@ -33,32 +33,32 @@ const Navbar: React.FC = () => {
     }, []);
 
     return (
-        <nav className="bg-blue-600 p-4">
+        <nav className="bg-gray-100 p-4 shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]">
             <div className="container mx-auto flex justify-between items-center">
-                <Link to="/" className="text-white text-xl font-bold flex items-center">
-                    <FaHome className="mr-2" />
-                    WikiLang
+                <Link to="/" className="text-gray-700 text-xl font-bold flex items-center">
+                    <FaCommentDots className="mr-2" />
+                    KUMA
                 </Link>
                 <div className="flex items-center">
                     {loading ? (
-                        <div className="text-white flex items-center">
+                        <div className="text-gray-700 flex items-center">
                             <FaSpinner className="animate-spin mr-2" />
                             Chargement...
                         </div>
                     ) : user ? (
                         <>
-                            <Link to="/new-term" className="text-white mr-4 flex items-center">
+                            <Link to="/new-term" className="text-gray-700 mr-4 flex items-center">
                                 <FaPlus className="mr-2" />
                                 Nouveau Terme
                             </Link>
                             {user.role === 'admin' && (
-                                <Link to="/dashboard" className="text-white mr-4 flex items-center">
+                                <Link to="/dashboard" className="text-gray-700 mr-4 flex items-center">
                                     <FaTachometerAlt className="mr-2" />
                                     Dashboard
                                 </Link>
                             )}
                             {(user.role === 'admin' || user.role === 'moderator') && (
-                                <Link to="/terms" className="text-white mr-4 flex items-center">
+                                <Link to="/terms" className="text-gray-700 mr-4 flex items-center">
                                     <FaListAlt className="mr-2" />
                                     Gérer les Termes
                                 </Link>
@@ -66,7 +66,7 @@ const Navbar: React.FC = () => {
                             <div className="relative" ref={dropdownRef}>
                                 <button
                                     onClick={toggleDropdown}
-                                    className="text-white flex items-center focus:outline-none"
+                                    className="text-gray-700 flex items-center focus:outline-none"
                                 >
                                     <FaUser className="mr-2" />
                                     <span>{user.username}</span>
@@ -95,11 +95,11 @@ const Navbar: React.FC = () => {
                         </>
                     ) : (
                         <>
-                            <Link to="/login" className="text-white mr-4 flex items-center">
+                            <Link to="/login" className="text-gray-700 mr-4 flex items-center">
                                 <FaSignInAlt className="mr-2" />
                                 Connexion
                             </Link>
-                            <Link to="/register" className="text-white flex items-center">
+                            <Link to="/register" className="text-gray-700 flex items-center">
                                 <FaUserPlus className="mr-2" />
                                 Inscription
                             </Link>

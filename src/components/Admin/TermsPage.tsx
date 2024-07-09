@@ -54,52 +54,54 @@ const TermsPage: React.FC = () => {
     }
 
     return (
-        <div className="max-w-6xl mx-auto mt-10 p-4 bg-white shadow-md rounded-md">
+        <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-200 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
             <h2 className="text-2xl font-bold mb-4">Gestion des Termes</h2>
             {selectedTerm ? (
                 <ApproveTermForm term={selectedTerm} onCancel={() => setSelectedTerm(null)} />
             ) : (
-                <table className="min-w-full bg-white">
-                    <thead>
-                        <tr>
-                            <th className="py-2 px-4 border-b">Terme</th>
-                            <th className="py-2 px-4 border-b">Définition</th>
-                            <th className="py-2 px-4 border-b">Catégorie Grammaticale</th>
-                            <th className="py-2 px-4 border-b">Thème</th>
-                            <th className="py-2 px-4 border-b">Langue</th>
-                            <th className="py-2 px-4 border-b">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {terms.map(term => (
-                            <tr key={term._id}>
-                                <td className="py-2 px-4 border-b cursor-pointer" onClick={() => setSelectedTerm(term)}>{term.term}</td>
-                                <td className="py-2 px-4 border-b">{term.definition}</td>
-                                <td className="py-2 px-4 border-b">{term.grammaticalCategory?.name}</td>
-                                <td className="py-2 px-4 border-b">{term.theme?.name}</td>
-                                <td className="py-2 px-4 border-b">{term.language?.name}</td>
-                                <td className="py-2 px-4 border-b">
-                                    {term.status === 'pending' && (
-                                        <>
-                                            <button
-                                                onClick={() => setSelectedTerm(term)}
-                                                className="bg-blue-500 text-white px-2 py-1 rounded-md mr-2"
-                                            >
-                                                Modifier
-                                            </button>
-                                            <button
-                                                onClick={() => handleReject(term._id)}
-                                                className="bg-red-500 text-white px-2 py-1 rounded-md"
-                                            >
-                                                Rejeter
-                                            </button>
-                                        </>
-                                    )}
-                                </td>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full bg-gray-200 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
+                        <thead>
+                            <tr>
+                                <th className="py-2 px-4 border-b text-left">Terme</th>
+                                <th className="py-2 px-4 border-b text-left">Définition</th>
+                                <th className="py-2 px-4 border-b text-left">Catégorie Grammaticale</th>
+                                <th className="py-2 px-4 border-b text-left">Thème</th>
+                                <th className="py-2 px-4 border-b text-left">Langue</th>
+                                <th className="py-2 px-4 border-b text-left">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {terms.map(term => (
+                                <tr key={term._id} className="hover:bg-gray-300 transition-colors duration-300">
+                                    <td className="py-2 px-4 border-b cursor-pointer" onClick={() => setSelectedTerm(term)}>{term.term}</td>
+                                    <td className="py-2 px-4 border-b">{term.definition}</td>
+                                    <td className="py-2 px-4 border-b">{term.grammaticalCategory?.name}</td>
+                                    <td className="py-2 px-4 border-b">{term.theme?.name}</td>
+                                    <td className="py-2 px-4 border-b">{term.language?.name}</td>
+                                    <td className="py-2 px-4 border-b">
+                                        {term.status === 'pending' && (
+                                            <div className="flex space-x-2">
+                                                <button
+                                                    onClick={() => setSelectedTerm(term)}
+                                                    className="bg-blue-500 text-white px-2 py-1 rounded-md shadow-[2px_2px_5px_#d1d9e6,-2px_-2px_5px_#ffffff]"
+                                                >
+                                                    Modifier
+                                                </button>
+                                                <button
+                                                    onClick={() => handleReject(term._id)}
+                                                    className="bg-red-500 text-white px-2 py-1 rounded-md shadow-[2px_2px_5px_#d1d9e6,-2px_-2px_5px_#ffffff]"
+                                                >
+                                                    Rejeter
+                                                </button>
+                                            </div>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
     );
