@@ -281,7 +281,6 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
             </button>
             <div className="mt-6 p-3 bg-gray-200 rounded-lg shadow-inner">
                 <h3 className="text-xl font-bold mb-2">Approve Data</h3>
-                <pre>{JSON.stringify(approveData, null, 2)}</pre>
             </div>
         </form>
     );
