@@ -98,7 +98,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
             grammaticalCategory: grammaticalCategory === 'Other' ? newCategory : grammaticalCategory,
             theme: theme === 'Other' ? newTheme : theme,
             language: language === 'Other' ? newLanguage : language,
-            languageCode: language === 'Other' ? languageCode : "",
+            languageCode: language === 'Other' ? languageCode : '',
         };
 
         console.log("Term Data: ", termData); // Log the term data
