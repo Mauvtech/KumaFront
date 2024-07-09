@@ -138,7 +138,7 @@ const HomePage: React.FC = () => {
 
     return (
         <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
-            <h2 className="text-3xl font-bold mb-6 text-gray-800">Liste des Termes Approuvés</h2>
+            <h2 className="text-3xl font-bold mb-6 text-gray-800">The Words World</h2>
             <input
                 type="text"
                 placeholder="Rechercher un terme ou une définition..."
@@ -147,25 +147,25 @@ const HomePage: React.FC = () => {
                 className="w-full p-3 mb-6 bg-gray-200 border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-400"
             />
             <FilterButtons
-                title="Catégories"
+                title="Categories"
                 options={categories.map(cat => cat.name)}
                 selectedOption={selectedCategory}
                 onSelectOption={(option) => setSelectedCategory(option === selectedCategory ? '' : option)}
             />
             <FilterButtons
-                title="Thèmes"
+                title="Themes"
                 options={themes.map(theme => theme.name)}
                 selectedOption={selectedTheme}
                 onSelectOption={(option) => setSelectedTheme(option === selectedTheme ? '' : option)}
             />
             <FilterButtons
-                title="Langues"
+                title="Languages"
                 options={languages.map(lang => lang.name)}
                 selectedOption={selectedLanguage}
                 onSelectOption={(option) => setSelectedLanguage(option === selectedLanguage ? '' : option)}
             />
             {terms.length === 0 ? (
-                <p className="text-center text-gray-500">Aucun terme approuvé trouvé.</p>
+                <p className="text-center text-gray-500">No terms found.</p>
             ) : (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {currentTerms.map((term) => {
@@ -177,7 +177,7 @@ const HomePage: React.FC = () => {
                                     <p className="text-gray-600">{term.translation}</p>
                                     <p className="text-gray-800">{term.definition}</p>
                                     {term.language && (
-                                        <p className="text-gray-800">Langue: {term.language.name} (Code: {term.language.code})</p>
+                                        <p className="text-gray-800">Language {term.language.name} (Code {term.language.code})</p>
                                     )}
                                     <div className="mt-2">
                                         <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full mr-2">

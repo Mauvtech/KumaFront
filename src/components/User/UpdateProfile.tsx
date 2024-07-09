@@ -21,8 +21,8 @@ const UpdateProfile: React.FC = () => {
             setUser(updatedUser); // Mettre à jour le contexte utilisateur avec les nouvelles informations
             logout();
         } catch (error) {
-            console.error('Erreur lors de la mise à jour du profil', error);
-            setError('Une erreur est survenue lors de la mise à jour du profil.');
+            console.error('Error while uploading profile', error);
+            setError('Erreh while uploading profile.');
         } finally {
             setLoading(false);
         }
@@ -30,10 +30,10 @@ const UpdateProfile: React.FC = () => {
 
     return (
         <form onSubmit={handleUpdateProfile} className="max-w-md mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">Mettre à jour le profil</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">Upload profile</h2>
             {error && <div className="mb-4 text-red-500">{error}</div>}
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800" htmlFor="username">Nom d'utilisateur</label>
+                <label className="block mb-2 text-gray-800" htmlFor="username">Username</label>
                 <input
                     type="text"
                     id="username"
@@ -43,7 +43,7 @@ const UpdateProfile: React.FC = () => {
                 />
             </div>
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800" htmlFor="password">Mot de passe</label>
+                <label className="block mb-2 text-gray-800" htmlFor="password">Password</label>
                 <input
                     type="password"
                     id="password"

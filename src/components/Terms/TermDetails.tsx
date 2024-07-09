@@ -52,7 +52,7 @@ const TermDetails: React.FC = () => {
     };
 
     if (!term) {
-        return <p>Chargement...</p>;
+        return <p>Loading...</p>;
     }
 
     return (
@@ -70,11 +70,11 @@ const TermDetails: React.FC = () => {
                 </span>
             </div>
             <div className="mb-4 p-4 bg-gray-100 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
-                <p className="font-semibold text-gray-800">Définition</p>
+                <p className="font-semibold text-gray-800">Definition</p>
                 <p>{term.definition}</p>
             </div>
             <div className="mb-4 p-4 bg-gray-100 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
-                <p className="font-semibold text-gray-800">Traduction</p>
+                <p className="font-semibold text-gray-800">Translation</p>
                 <p>{term.translation}</p>
             </div>
             <button onClick={() => navigate(-1)} className="mt-4 p-3 bg-gray-400 text-white rounded-lg shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-gray-500 focus:outline-none">
@@ -82,7 +82,7 @@ const TermDetails: React.FC = () => {
             </button>
             {user && (
                 <div className="mt-8">
-                    <h3 className="text-xl font-bold mb-4">Ajouter un commentaire</h3>
+                    <h3 className="text-xl font-bold mb-4">Add comment</h3>
                     {error && <div className="mb-4 text-red-500">{error}</div>}
                     <textarea
                         value={commentText}
@@ -110,7 +110,7 @@ const TermDetails: React.FC = () => {
                         </div>
                     ))
                 ) : (
-                    <p className="text-gray-500">Aucun commentaire pour ce terme.</p>
+                    <p className="text-gray-500">No comments. Be the first!</p>
                 )}
             </div>
         </div>

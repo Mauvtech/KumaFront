@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/authContext';
-import { FaUser, FaSpinner, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaPlus, FaTachometerAlt, FaListAlt, FaCommentDots, FaChevronDown } from 'react-icons/fa';
+import { FaUser, FaSpinner, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaPlus, FaTachometerAlt, FaListAlt, FaCommentDots, FaChevronDown, FaBars, FaTimes } from 'react-icons/fa';
 
 const Navbar: React.FC = () => {
     const { user, loading, logout } = useAuth();
     const navigate = useNavigate();
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const menuRef = useRef<HTMLDivElement>(null);
 
     const handleLogout = () => {
         logout();
-        toggleDropdown();
+        setDropdownOpen(false);
+        setMenuOpen(false);
         navigate('/login');
     };
 
@@ -19,7 +22,14 @@ const Navbar: React.FC = () => {
         setDropdownOpen(!dropdownOpen);
     };
 
+    const toggleMenu = () => {
+        setMenuOpen(!menuOpen);
+    };
+
     const handleClickOutside = (event: MouseEvent) => {
+        if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+            setMenuOpen(false);
+        }
         if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
             setDropdownOpen(false);
         }
@@ -33,37 +43,40 @@ const Navbar: React.FC = () => {
     }, []);
 
     return (
-        <nav className="bg-gray-100 p-4 shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]">
+        <nav className="bg-gray-200 p-4 shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
             <div className="container mx-auto flex justify-between items-center">
                 <Link to="/" className="text-gray-700 text-xl font-bold flex items-center">
                     <FaCommentDots className="mr-2" />
                     KUMA
                 </Link>
-                <div className="flex items-center">
+                <button className="md:hidden text-gray-700" onClick={toggleMenu}>
+                    {menuOpen ? <FaTimes /> : <FaBars />}
+                </button>
+                <div ref={menuRef} className={`md:flex ${menuOpen ? 'block' : 'hidden'} md:items-center md:space-x-4 absolute md:relative top-0 left-0 w-full md:w-auto bg-gray-200 md:bg-transparent p-4 md:p-0 shadow-lg md:shadow-none z-10`}>
                     {loading ? (
-                        <div className="text-gray-700 flex items-center">
+                        <div className="text-gray-700 flex items-center mt-4 md:mt-0">
                             <FaSpinner className="animate-spin mr-2" />
-                            Chargement...
+                            Loading...
                         </div>
                     ) : user ? (
                         <>
-                            <Link to="/new-term" className="text-gray-700 mr-4 flex items-center">
+                            <Link to="/new-term" className="text-gray-700 flex items-center mt-4 md:mt-0">
                                 <FaPlus className="mr-2" />
-                                Nouveau Terme
+                                New Term
                             </Link>
                             {user.role === 'admin' && (
-                                <Link to="/dashboard" className="text-gray-700 mr-4 flex items-center">
+                                <Link to="/dashboard" className="text-gray-700 flex items-center mt-4 md:mt-0">
                                     <FaTachometerAlt className="mr-2" />
                                     Dashboard
                                 </Link>
                             )}
                             {(user.role === 'admin' || user.role === 'moderator') && (
-                                <Link to="/terms" className="text-gray-700 mr-4 flex items-center">
+                                <Link to="/terms" className="text-gray-700 flex items-center mt-4 md:mt-0">
                                     <FaListAlt className="mr-2" />
-                                    Gérer les Termes
+                                     Term Management
                                 </Link>
                             )}
-                            <div className="relative" ref={dropdownRef}>
+                            <div className="relative mt-4 md:mt-0" ref={dropdownRef}>
                                 <button
                                     onClick={toggleDropdown}
                                     className="text-gray-700 flex items-center focus:outline-none"
@@ -80,14 +93,14 @@ const Navbar: React.FC = () => {
                                             className="block px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center"
                                         >
                                             <FaUser className="mr-2" />
-                                            Profil
+                                            Profile
                                         </Link>
                                         <button
                                             onClick={handleLogout}
                                             className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center"
                                         >
                                             <FaSignOutAlt className="mr-2" />
-                                            Déconnexion
+                                            Logout
                                         </button>
                                     </div>
                                 )}
@@ -95,13 +108,13 @@ const Navbar: React.FC = () => {
                         </>
                     ) : (
                         <>
-                            <Link to="/login" className="text-gray-700 mr-4 flex items-center">
+                            <Link to="/login" className="text-gray-700 flex items-center mt-4 md:mt-0">
                                 <FaSignInAlt className="mr-2" />
-                                Connexion
+                                Login
                             </Link>
-                            <Link to="/register" className="text-gray-700 flex items-center">
+                            <Link to="/register" className="text-gray-700 flex items-center mt-4 md:mt-0">
                                 <FaUserPlus className="mr-2" />
-                                Inscription
+                                Signin
                             </Link>
                         </>
                     )}

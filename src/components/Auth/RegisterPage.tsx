@@ -20,9 +20,9 @@ const RegisterPage: React.FC = () => {
 
     return (
         <form onSubmit={handleRegister} className="max-w-md mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">Inscription</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">Signin</h2>
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800">Nom d'utilisateur</label>
+                <label className="block mb-2 text-gray-800">Username</label>
                 <input
                     type="text"
                     value={username}
@@ -32,7 +32,7 @@ const RegisterPage: React.FC = () => {
                 />
             </div>
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800">Mot de passe</label>
+                <label className="block mb-2 text-gray-800">Password</label>
                 <input
                     type="password"
                     value={password}
@@ -42,7 +42,7 @@ const RegisterPage: React.FC = () => {
                 />
             </div>
             <button type="submit" className="w-full p-3 text-white rounded-lg bg-gray-400 shadow-[3px_3px_6px_#b3b3b3,-3px_-3px_6px_#ffffff] hover:bg-gray-500 focus:outline-none">
-                Inscription
+                Signin
             </button>
         </form>
     );

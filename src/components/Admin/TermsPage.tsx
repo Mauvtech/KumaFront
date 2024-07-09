@@ -63,11 +63,11 @@ const TermsPage: React.FC = () => {
                     <table className="min-w-full bg-gray-200 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
                         <thead>
                             <tr>
-                                <th className="py-2 px-4 border-b text-left">Terme</th>
-                                <th className="py-2 px-4 border-b text-left">Définition</th>
-                                <th className="py-2 px-4 border-b text-left">Catégorie Grammaticale</th>
-                                <th className="py-2 px-4 border-b text-left">Thème</th>
-                                <th className="py-2 px-4 border-b text-left">Langue</th>
+                                <th className="py-2 px-4 border-b text-left">Term</th>
+                                <th className="py-2 px-4 border-b text-left">Definition</th>
+                                <th className="py-2 px-4 border-b text-left">Grammatical category</th>
+                                <th className="py-2 px-4 border-b text-left">Theme</th>
+                                <th className="py-2 px-4 border-b text-left">Language</th>
                                 <th className="py-2 px-4 border-b text-left">Actions</th>
                             </tr>
                         </thead>
@@ -86,13 +86,13 @@ const TermsPage: React.FC = () => {
                                                     onClick={() => setSelectedTerm(term)}
                                                     className="bg-blue-500 text-white px-2 py-1 rounded-md shadow-[2px_2px_5px_#d1d9e6,-2px_-2px_5px_#ffffff]"
                                                 >
-                                                    Modifier
+                                                    Modify
                                                 </button>
                                                 <button
                                                     onClick={() => handleReject(term._id)}
                                                     className="bg-red-500 text-white px-2 py-1 rounded-md shadow-[2px_2px_5px_#d1d9e6,-2px_-2px_5px_#ffffff]"
                                                 >
-                                                    Rejeter
+                                                    Reject
                                                 </button>
                                             </div>
                                         )}

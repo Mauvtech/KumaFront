@@ -50,9 +50,9 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                 const categoriesData = await getCategories(navigate);
                 const themesData = await getThemes(navigate);
                 const languagesData = await getLanguages(navigate);
-                setCategories([...categoriesData, { _id: 'other', name: 'Autre' }]);
-                setThemeOptions([...themesData, { _id: 'other', name: 'Autre' }]);
-                setLanguageOptions(Array.isArray(languagesData) ? [...languagesData, { _id: 'other', name: 'Autre', code: '' }] : []);
+                setCategories([...categoriesData, { _id: 'other', name: 'Other' }]);
+                setThemeOptions([...themesData, { _id: 'other', name: 'Other' }]);
+                setLanguageOptions(Array.isArray(languagesData) ? [...languagesData, { _id: 'other', name: 'Other', code: '' }] : []);
 
                 if (categoriesData.length > 0 && !initialData?.grammaticalCategory) {
                     setGrammaticalCategory(categoriesData[0].name);
@@ -65,8 +65,8 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                     setLanguageCode(languagesData[0].code);
                 }
             } catch (error) {
-                console.error('Erreur de chargement des données', error);
-                setError('Erreur de chargement des données');
+                console.error('Error loading data', error);
+                setError('Error loading data');
             }
         };
 
@@ -95,10 +95,10 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
             term,
             translation,
             definition,
-            grammaticalCategory: grammaticalCategory === 'Autre' ? newCategory : grammaticalCategory,
-            theme: theme === 'Autre' ? newTheme : theme,
-            language: language === 'Autre' ? newLanguage : language,
-            languageCode: language === 'Autre' ? languageCode : "",
+            grammaticalCategory: grammaticalCategory === 'Other' ? newCategory : grammaticalCategory,
+            theme: theme === 'Other' ? newTheme : theme,
+            language: language === 'Other' ? newLanguage : language,
+            languageCode: language === 'Other' ? languageCode : "",
         };
 
         console.log("Term Data: ", termData); // Log the term data
@@ -111,8 +111,8 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
             }
             navigate('/');
         } catch (error) {
-            console.error('Erreur de soumission du terme', error);
-            setError('Une erreur est survenue lors de la soumission du terme.');
+            console.error('Error submitting term', error);
+            setError('An error occurred while submitting the term.');
         } finally {
             setLoading(false);
         }
@@ -121,7 +121,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
     const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
         setGrammaticalCategory(value);
-        if (value !== 'Autre') {
+        if (value !== 'Other') {
             setNewCategory('');
         }
         updateRawValues({ grammaticalCategory: value });
@@ -130,7 +130,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
     const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
         setTheme(value);
-        if (value !== 'Autre') {
+        if (value !== 'Other') {
             setNewTheme('');
         }
         updateRawValues({ theme: value });
@@ -139,7 +139,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
     const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
         setLanguage(value);
-        if (value !== 'Autre') {
+        if (value !== 'Other') {
             setNewLanguage('');
             const selectedLanguage = languageOptions.find(lang => lang.name === value);
             setLanguageCode(selectedLanguage ? selectedLanguage.code : '');
@@ -152,10 +152,10 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
 
     return (
         <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
-            <h2 className="text-2xl font-bold mb-4">{termId ? 'Modifier Terme' : 'Ajouter Terme'}</h2>
+            <h2 className="text-2xl font-bold mb-4">{termId ? 'Edit Term' : 'Add Term'}</h2>
             {error && <div className="mb-4 text-red-500">{error}</div>}
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800" htmlFor="term">Terme</label>
+                <label className="block mb-2 text-gray-800" htmlFor="term">Term</label>
                 <input
                     type="text"
                     id="term"
@@ -169,7 +169,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                 />
             </div>
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800" htmlFor="translation">Traduction</label>
+                <label className="block mb-2 text-gray-800" htmlFor="translation">Translation</label>
                 <input
                     type="text"
                     id="translation"
@@ -183,7 +183,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                 />
             </div>
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800" htmlFor="definition">Définition</label>
+                <label className="block mb-2 text-gray-800" htmlFor="definition">Definition</label>
                 <textarea
                     id="definition"
                     value={definition}
@@ -196,7 +196,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                 />
             </div>
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800" htmlFor="grammaticalCategory">Catégorie grammaticale</label>
+                <label className="block mb-2 text-gray-800" htmlFor="grammaticalCategory">Grammatical Category</label>
                 <select
                     id="grammaticalCategory"
                     value={grammaticalCategory}
@@ -208,10 +208,10 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                         <option key={category._id} value={category.name}>{category.name}</option>
                     ))}
                 </select>
-                {grammaticalCategory === 'Autre' && (
+                {grammaticalCategory === 'Other' && (
                     <input
                         type="text"
-                        placeholder="Nouvelle catégorie grammaticale"
+                        placeholder="New Grammatical Category"
                         value={newCategory}
                         onChange={(e) => {
                             setNewCategory(e.target.value);
@@ -222,7 +222,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                 )}
             </div>
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800" htmlFor="theme">Thème</label>
+                <label className="block mb-2 text-gray-800" htmlFor="theme">Theme</label>
                 <select
                     id="theme"
                     value={theme}
@@ -234,10 +234,10 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                         <option key={theme._id} value={theme.name}>{theme.name}</option>
                     ))}
                 </select>
-                {theme === 'Autre' && (
+                {theme === 'Other' && (
                     <input
                         type="text"
-                        placeholder="Nouveau thème"
+                        placeholder="New Theme"
                         value={newTheme}
                         onChange={(e) => {
                             setNewTheme(e.target.value);
@@ -248,7 +248,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                 )}
             </div>
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800" htmlFor="language">Langue</label>
+                <label className="block mb-2 text-gray-800" htmlFor="language">Language</label>
                 <select
                     id="language"
                     value={language}
@@ -260,11 +260,11 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                         <option key={language._id} value={language.name}>{language.name}</option>
                     ))}
                 </select>
-                {language === 'Autre' && (
+                {language === 'Other' && (
                     <>
                         <input
                             type="text"
-                            placeholder="Nouvelle langue"
+                            placeholder="New Language"
                             value={newLanguage}
                             onChange={(e) => {
                                 setNewLanguage(e.target.value);
@@ -274,7 +274,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                         />
                         <input
                             type="text"
-                            placeholder="Code de la nouvelle langue"
+                            placeholder="New Language Code"
                             value={languageCode}
                             onChange={(e) => {
                                 setLanguageCode(e.target.value);
@@ -290,9 +290,8 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                 className="w-full p-3 text-white rounded-lg bg-gray-400 shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-gray-500 focus:outline-none"
                 disabled={loading}
             >
-                {loading ? 'Chargement...' : termId ? 'Modifier' : 'Ajouter'}
+                {loading ? 'Loading...' : termId ? 'Edit' : 'Add'}
             </button>
-
         </form>
     );
 };

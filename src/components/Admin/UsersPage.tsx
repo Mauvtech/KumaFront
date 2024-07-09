@@ -48,13 +48,13 @@ const UsersPage: React.FC = () => {
 
     return (
         <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
-            <h2 className="text-3xl font-bold mb-6 text-gray-800">Gestion des Utilisateurs</h2>
+            <h2 className="text-3xl font-bold mb-6 text-gray-800">Users</h2>
             <table className="min-w-full bg-gray-100 rounded-lg shadow-[3px_3px_6px_#b8b8b8,-3px_-3px_6px_#ffffff]">
                 <thead>
                     <tr className="text-left">
-                        <th className="py-2 px-4 border-b">Nom d'utilisateur</th>
+                        <th className="py-2 px-4 border-b">Username</th>
                         <th className="py-2 px-4 border-b">Email</th>
-                        <th className="py-2 px-4 border-b">Rôle</th>
+                        <th className="py-2 px-4 border-b">Role</th>
                         <th className="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
@@ -69,13 +69,13 @@ const UsersPage: React.FC = () => {
                                     onClick={() => handlePromote(user._id)}
                                     className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-[5px_5px_10px_#a0a0a0,-5px_-5px_10px_#ffffff] transition-transform transform hover:scale-105 focus:outline-none"
                                 >
-                                    Promouvoir
+                                    Promote
                                 </button>
                                 <button
                                     onClick={() => handleBan(user._id)}
                                     className="px-4 py-2 bg-red-500 text-white rounded-lg shadow-[5px_5px_10px_#a0a0a0,-5px_-5px_10px_#ffffff] transition-transform transform hover:scale-105 focus:outline-none"
                                 >
-                                    Bannir
+                                    Ban
                                 </button>
                             </td>
                         </tr>

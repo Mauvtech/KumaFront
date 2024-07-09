@@ -28,7 +28,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ categories, themes, languages, on
                     onChange={(e) => { setSelectedCategory(e.target.value); handleFilterChange(); }}
                     className="p-2 border border-gray-300 rounded-md"
                 >
-                    <option value="">Toutes les catégories</option>
+                    <option value="">All categories</option>
                     {categories.map((category) => (
                         <option key={category} value={category}>{category}</option>
                     ))}
@@ -38,7 +38,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ categories, themes, languages, on
                     onChange={(e) => { setSelectedTheme(e.target.value); handleFilterChange(); }}
                     className="p-2 border border-gray-300 rounded-md"
                 >
-                    <option value="">Tous les thèmes</option>
+                    <option value="">All themes</option>
                     {themes.map((theme) => (
                         <option key={theme} value={theme}>{theme}</option>
                     ))}
@@ -48,7 +48,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ categories, themes, languages, on
                     onChange={(e) => { setSelectedLanguage(e.target.value); handleFilterChange(); }}
                     className="p-2 border border-gray-300 rounded-md"
                 >
-                    <option value="">Toutes les langues</option>
+                    <option value="">All languages</option>
                     {languages.map((language) => (
                         <option key={language} value={language}>{language}</option>
                     ))}

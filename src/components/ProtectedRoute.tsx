@@ -11,7 +11,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, roles }) => {
     const { user, loading } = useAuth();
 
     if (loading) {
-        return <div>Chargement...</div>; 
+        return <div>Loading...</div>;
     }
 
     if (!user) {
