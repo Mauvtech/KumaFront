@@ -75,7 +75,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
     useEffect(() => {
         const updatedApproveData = {
             term: updatedTerm.term,
-            translation: updatedTerm.translation,
+            translation: updatedTerm.translation.trim(), // Trim to remove extra spaces
             definition: updatedTerm.definition,
             grammaticalCategory: typeof updatedTerm.grammaticalCategory === 'string' ? updatedTerm.grammaticalCategory : (updatedTerm.grammaticalCategory as Category).name,
             theme: typeof updatedTerm.theme === 'string' ? updatedTerm.theme : (updatedTerm.theme as Theme).name,
@@ -91,22 +91,21 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
 
     const validateField = (fieldName: string, value: string): string | null => {
         if (!value && fieldName !== 'Language Code') return `${fieldName} ne doit pas être vide.`;
-        if (fieldName !== 'Definition' && !/^[A-Z][a-z]*$/.test(value) && fieldName !== 'Language Code') return `${fieldName} doit commencer par une majuscule suivie de lettres minuscules.`;
+        if (fieldName !== 'Definition' && !/^[A-Z][a-z]*(\s[A-Z][a-z]*)*$/.test(value) && fieldName !== 'Language Code') return `${fieldName} doit commencer par une majuscule suivie de lettres minuscules.`;
         if (fieldName === 'Language Code' && value && !/^[A-Z]+$/.test(value)) return `${fieldName} doit être en majuscules.`;
-        if (fieldName !== 'Definition' && /[^a-zA-Z]/.test(value) && fieldName !== 'Language Code') return `${fieldName} ne doit pas contenir de caractères spéciaux.`;
+        if (fieldName !== 'Definition' && /[^a-zA-Z\s]/.test(value) && fieldName !== 'Language Code') return `${fieldName} ne doit pas contenir de caractères spéciaux.`;
         return null;
     };
 
-    const validateForm = (): boolean => {
+    const validateApproveData = (data: any): boolean => {
         const errors: string[] = [];
         const fieldsToValidate = [
-            { name: 'Term', value: updatedTerm.term },
-            { name: 'Translation', value: updatedTerm.translation },
-            { name: 'Definition', value: updatedTerm.definition },
-            { name: 'Grammatical Category', value: typeof updatedTerm.grammaticalCategory === 'string' ? updatedTerm.grammaticalCategory : (updatedTerm.grammaticalCategory as Category).name },
-            { name: 'Theme', value: typeof updatedTerm.theme === 'string' ? updatedTerm.theme : (updatedTerm.theme as Theme).name },
-            { name: 'Language', value: typeof updatedTerm.language === 'string' ? updatedTerm.language : (updatedTerm.language as Language).name },
-            { name: 'Language Code', value: updatedTerm.languageCode },
+            { name: 'Term', value: data.term },
+            { name: 'Translation', value: data.translation },
+            { name: 'Grammatical Category', value: data.grammaticalCategory },
+            { name: 'Theme', value: data.theme },
+            { name: 'Language', value: data.language },
+            { name: 'Language Code', value: data.languageCode },
         ];
 
         fieldsToValidate.forEach(field => {
@@ -123,17 +122,18 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
         setLoading(true);
         setError(null);
 
-        if (!validateForm()) {
+        const finalApproveData = {
+            ...approveData,
+            language: updatedTerm.language === 'Other' ? newLanguage.name : approveData.language,
+            languageCode: updatedTerm.language === 'Other' ? newLanguage.code : approveData.languageCode,
+        };
+
+        console.log('Final approve data:', finalApproveData)
+
+        if (!validateApproveData(finalApproveData)) {
             setLoading(false);
             return;
         }
-
-        const approveData = {
-            grammaticalCategory: typeof updatedTerm.grammaticalCategory === 'string' ? updatedTerm.grammaticalCategory : (updatedTerm.grammaticalCategory as Category).name,
-            theme: typeof updatedTerm.theme === 'string' ? updatedTerm.theme : (updatedTerm.theme as Theme).name,
-            language: typeof updatedTerm.language === 'string' ? updatedTerm.language : (updatedTerm.language as Language).name,
-            languageCode: typeof updatedTerm.language === 'string' ? updatedTerm.languageCode : (updatedTerm.language as Language).code,
-        };
 
         try {
             // Approve new category if necessary
@@ -163,12 +163,6 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                     await approveLanguage(languageId);
                 }
             }
-
-            const finalApproveData = {
-                ...approveData,
-                language: updatedTerm.language === 'Other' ? newLanguage.name : approveData.language,
-                languageCode: updatedTerm.language === 'Other' ? newLanguage.code : approveData.languageCode,
-            };
 
             console.log('Approve data:', finalApproveData);
 
