@@ -194,8 +194,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                     id="definition"
                     value={definition}
                     onChange={(e) => {
-                      const value =  capitalizeWord(e.target.value)
-                        setDefinition(value);
+                        setDefinition(e.target.value);
                         updateRawValues({ definition: e.target.value });
                     }}
                     className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
@@ -288,7 +287,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                             value={languageCode}
                             onChange={(e) => {
                                 const value = capitalizeWord(e.target.value);
-                                setLanguageCode(value);
+                                setLanguageCode(value.toUpperCase());
                                 updateRawValues({ languageCode: e.target.value });
                             }}
                             className="w-full p-3 mt-2 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
