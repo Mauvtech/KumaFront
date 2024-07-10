@@ -10,7 +10,7 @@ interface FilterButtonsProps {
 const FilterButtons: React.FC<FilterButtonsProps> = ({ title, options, selectedOption, onSelectOption }) => {
     return (
         <div className="mb-6">
-            <h3 className="text-xl font-bold mb-2 text-gray-800">{title}</h3>
+            <h3 className="text-xl font-bold mb-2 text-gray-700">{title}</h3>
             <div className="flex flex-wrap gap-2">
                 {options.map(option => (
                     <button

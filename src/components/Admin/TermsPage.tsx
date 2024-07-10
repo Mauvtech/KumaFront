@@ -55,7 +55,7 @@ const TermsPage: React.FC = () => {
 
     return (
         <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-200 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
-            <h2 className="text-2xl font-bold mb-4">Gestion des Termes</h2>
+            <h2 className="text-2xl font-bold mb-4">Term management</h2>
             {selectedTerm ? (
                 <ApproveTermForm term={selectedTerm} onCancel={() => setSelectedTerm(null)} />
             ) : (

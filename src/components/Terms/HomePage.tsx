@@ -138,7 +138,7 @@ const HomePage: React.FC = () => {
 
     return (
         <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
-            <h2 className="text-3xl font-bold mb-6 text-gray-800">The Words World</h2>
+            <h2 className="text-3xl font-bold mb-6 text-gray-700">The Words World</h2>
             <input
                 type="text"
                 placeholder="Rechercher un terme ou une définition..."

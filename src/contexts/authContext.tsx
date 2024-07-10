@@ -8,7 +8,7 @@ interface User {
   _id: string;
 }
 
-interface AuthContextType {
+export interface AuthContextType {
   setUser: (user: User | null) => void;
   user: User | null;
   loading: boolean;
@@ -16,7 +16,7 @@ interface AuthContextType {
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);

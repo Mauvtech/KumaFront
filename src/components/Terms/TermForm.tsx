@@ -86,6 +86,10 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
         }
     }, [categories, themeOptions, languageOptions, initialData]);
 
+    const capitalizeWord = (word: string): string => {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -101,7 +105,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
             languageCode: language === 'Other' ? languageCode : '',
         };
 
-        console.log("Term Data: ", termData); // Log the term data
+
 
         try {
             if (termId) {
@@ -161,8 +165,9 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                     id="term"
                     value={term}
                     onChange={(e) => {
-                        setTerm(e.target.value);
-                        updateRawValues({ term: e.target.value });
+                        const value = capitalizeWord(e.target.value);
+                        setTerm(value);
+                        updateRawValues({ term: value });
                     }}
                     className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
@@ -175,8 +180,9 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                     id="translation"
                     value={translation}
                     onChange={(e) => {
-                        setTranslation(e.target.value);
-                        updateRawValues({ translation: e.target.value });
+                        const value = capitalizeWord(e.target.value);
+                        setTranslation(value);
+                        updateRawValues({ translation: value });
                     }}
                     className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
@@ -188,7 +194,8 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                     id="definition"
                     value={definition}
                     onChange={(e) => {
-                        setDefinition(e.target.value);
+                      const value =  capitalizeWord(e.target.value)
+                        setDefinition(value);
                         updateRawValues({ definition: e.target.value });
                     }}
                     className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
@@ -214,8 +221,9 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                         placeholder="New Grammatical Category"
                         value={newCategory}
                         onChange={(e) => {
-                            setNewCategory(e.target.value);
-                            updateRawValues({ newCategory: e.target.value });
+                            const value = capitalizeWord(e.target.value);
+                            setNewCategory(value);
+                            updateRawValues({ newCategory: value });
                         }}
                         className="w-full p-3 mt-2 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                     />
@@ -240,8 +248,9 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                         placeholder="New Theme"
                         value={newTheme}
                         onChange={(e) => {
-                            setNewTheme(e.target.value);
-                            updateRawValues({ newTheme: e.target.value });
+                            const value = capitalizeWord(e.target.value);
+                            setNewTheme(value);
+                            updateRawValues({ newTheme: value });
                         }}
                         className="w-full p-3 mt-2 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                     />
@@ -267,8 +276,9 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                             placeholder="New Language"
                             value={newLanguage}
                             onChange={(e) => {
-                                setNewLanguage(e.target.value);
-                                updateRawValues({ newLanguage: e.target.value });
+                                const value = capitalizeWord(e.target.value);
+                                setNewLanguage(value);
+                                updateRawValues({ newLanguage: value });
                             }}
                             className="w-full p-3 mt-2 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                         />
@@ -277,7 +287,8 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                             placeholder="New Language Code"
                             value={languageCode}
                             onChange={(e) => {
-                                setLanguageCode(e.target.value);
+                                const value = capitalizeWord(e.target.value);
+                                setLanguageCode(value);
                                 updateRawValues({ languageCode: e.target.value });
                             }}
                             className="w-full p-3 mt-2 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
