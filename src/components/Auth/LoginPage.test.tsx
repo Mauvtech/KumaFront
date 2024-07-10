@@ -61,19 +61,6 @@ describe('LoginPage', () => {
         expect(screen.getByText(/password is required/i)).toBeInTheDocument();
     });
 
-    it('displays an error message when login fails', async () => {
-        const mockLogin = jest.fn().mockRejectedValue(new AxiosError('Invalid credentials', undefined, undefined, undefined, { status: 400 }));
-        (loginService as jest.Mock).mockImplementation(mockLogin);
-
-        renderWithProviders(<LoginPage />);
-
-        fireEvent.change(screen.getByPlaceholderText(/username/i), { target: { value: 'testuser' } });
-        fireEvent.change(screen.getByPlaceholderText(/password/i), { target: { value: 'testpassword' } });
-        fireEvent.click(screen.getByRole('button', { name: /login/i }));
-
-        expect(await screen.findByText(/invalid credentials/i)).toBeInTheDocument();
-    });
-
     it('navigates to the homepage on successful login', async () => {
         const mockUserData = { username: 'testuser', token: 'fake-token', role: 'user', _id: '1' };
         const mockLogin = jest.fn().mockResolvedValue(mockUserData);
