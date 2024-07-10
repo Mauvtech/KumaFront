@@ -1,61 +1,97 @@
 import React, { useState } from 'react';
 import { register } from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
 
 const RegisterPage: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('user'); // Par défaut, le rôle est 'user'
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [role, setRole] = useState('user'); // Default role is 'user'
+    const [errors, setErrors] = useState<{ username?: string, password?: string, confirmPassword?: string, general?: string }>({});
     const navigate = useNavigate();
+
+    const validateForm = () => {
+        let formErrors: { username?: string, password?: string, confirmPassword?: string } = {};
+
+        if (!username) {
+            formErrors.username = 'Username is required';
+        }
+
+        if (!password) {
+            formErrors.password = 'Password is required';
+        }
+
+        if (!confirmPassword) {
+            formErrors.confirmPassword = 'Password confirmation is required';
+        } else if (password !== confirmPassword) {
+            formErrors.confirmPassword = 'Passwords do not match';
+        }
+
+        setErrors(formErrors);
+
+        return Object.keys(formErrors).length === 0;
+    };
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!validateForm()) {
+            return;
+        }
+
         try {
             await register({ username, password, role });
-            navigate('/login'); // Redirection vers la page de connexion après inscription réussie
+            navigate('/login'); // Redirect to login page after successful registration
         } catch (error) {
-            console.error('Erreur d\'inscription', error);
+            if (error instanceof AxiosError) {
+                if (error.response?.status === 400) {
+                    setErrors({ general: "Invalid credentials" }   );
+                } else { setErrors({ general: 'Registration failed' }); }
+            } else { console.error('Registration error', error); }
+
         }
     };
 
     return (
-        <form onSubmit={handleRegister} className="max-w-md mx-auto mt-10 p-4 bg-white shadow-md rounded-md">
-            <h2 className="text-2xl font-bold mb-4">Inscription</h2>
+        <form onSubmit={handleRegister} className="max-w-md mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">Sign Up</h2>
+            {errors.general && <div className="mb-4 text-red-500">{errors.general}</div>}
             <div className="mb-4">
-                <label className="block mb-2">Nom d'utilisateur</label>
+                <label className="block mb-2 text-gray-800">Username</label>
                 <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className={`w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 ${errors.username ? 'border-red-500' : ''}`}
                     required
                 />
+                {errors.username && <div className="text-red-500">{errors.username}</div>}
             </div>
             <div className="mb-4">
-                <label className="block mb-2">Mot de passe</label>
+                <label className="block mb-2 text-gray-800">Password</label>
                 <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className={`w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 ${errors.password ? 'border-red-500' : ''}`}
                     required
                 />
+                {errors.password && <div className="text-red-500">{errors.password}</div>}
             </div>
             <div className="mb-4">
-                <label className="block mb-2">Rôle</label>
-                <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                <label className="block mb-2 text-gray-800">Confirm Password</label>
+                <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className={`w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 ${errors.confirmPassword ? 'border-red-500' : ''}`}
                     required
-                >
-                    <option value="user">Utilisateur</option>
-                    <option value="moderator">Modérateur</option>
-                    <option value="admin">Administrateur</option>
-                </select>
+                />
+                {errors.confirmPassword && <div className="text-red-500">{errors.confirmPassword}</div>}
             </div>
-            <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded-md">
-                Inscription
+            <button type="submit" className="w-full p-3 text-white rounded-lg bg-gray-400 shadow-[3px_3px_6px_#b3b3b3,-3px_-3px_6px_#ffffff] hover:bg-gray-500 focus:outline-none">
+                Sign Up
             </button>
         </form>
     );

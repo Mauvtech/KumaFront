@@ -102,6 +102,7 @@ describe('TermForm', () => {
             grammaticalCategory: 'Noun',
             theme: 'Nature',
             language: 'English',
+            languageCode: 'en'
         }} />);
 
         fireEvent.change(screen.getByLabelText(/term/i), { target: { value: 'Updated Term' } });
