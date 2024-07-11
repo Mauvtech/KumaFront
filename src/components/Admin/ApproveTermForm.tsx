@@ -79,8 +79,8 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
             definition: updatedTerm.definition,
             grammaticalCategory: typeof updatedTerm.grammaticalCategory === 'string' ? updatedTerm.grammaticalCategory : (updatedTerm.grammaticalCategory as Category).name,
             theme: typeof updatedTerm.theme === 'string' ? updatedTerm.theme : (updatedTerm.theme as Theme).name,
-            language: typeof updatedTerm.language === 'string' && updatedTerm.language === 'Other' ? newLanguage.name : (updatedTerm.language as Language).name,
-            languageCode: typeof updatedTerm.language === 'string' && updatedTerm.language === 'Other' ? newLanguage.code : (updatedTerm.language as Language).code,
+            language: updatedTerm.language === 'Other' ? newLanguage.name : (updatedTerm.language as Language).name,
+            languageCode: updatedTerm.language === 'Other' ? newLanguage.code : updatedTerm.languageCode,
         };
         setApproveData(updatedApproveData);
     }, [updatedTerm, newLanguage]);
@@ -335,13 +335,27 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                     </>
                 )}
             </div>
+            <div className="mb-4">
+                <label className="block mb-2" htmlFor="languageCode">Language Code</label>
+                <input
+                    type="text"
+                    id="languageCode"
+                    name="languageCode"
+                    value={updatedTerm.languageCode}
+                    onChange={(e) => {
+                        const value = e.target.value.toUpperCase(); // language code should be uppercase
+                        setUpdatedTerm((prev: Term) => ({ ...prev, languageCode: value }));
+                    }}
+                    className="w-full p-3 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    required
+                />
+            </div>
             <button type="submit" className="w-full p-3 text-white rounded-lg bg-gray-400 shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-gray-500 focus:outline-none" disabled={loading}>
                 {loading ? 'Loading...' : 'Approve'}
             </button>
             <button type="button" className="w-full p-3 mt-2 text-white rounded-lg bg-gray-400 shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-gray-500 focus:outline-none" onClick={onCancel}>
                 Cancel
             </button>
-
         </form>
     );
 };

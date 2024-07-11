@@ -14,7 +14,6 @@ interface TermFormProps {
         grammaticalCategory: string;
         theme: string;
         language: string;
-        languageCode: string;
     };
 }
 
@@ -25,7 +24,6 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
     const [grammaticalCategory, setGrammaticalCategory] = useState(initialData?.grammaticalCategory || '');
     const [theme, setTheme] = useState(initialData?.theme || '');
     const [language, setLanguage] = useState(initialData?.language || '');
-    const [languageCode, setLanguageCode] = useState(initialData?.languageCode || '');
     const [newCategory, setNewCategory] = useState('');
     const [newTheme, setNewTheme] = useState('');
     const [newLanguage, setNewLanguage] = useState('');
@@ -62,7 +60,6 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                 }
                 if (languagesData.length > 0 && !initialData?.language) {
                     setLanguage(languagesData[0].name);
-                    setLanguageCode(languagesData[0].code);
                 }
             } catch (error) {
                 console.error('Error loading data', error);
@@ -82,7 +79,6 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
         }
         if (languageOptions.length > 0 && !initialData?.language) {
             setLanguage(languageOptions[0].name);
-            setLanguageCode(languageOptions[0].code);
         }
     }, [categories, themeOptions, languageOptions, initialData]);
 
@@ -102,7 +98,6 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
             grammaticalCategory: grammaticalCategory === 'Other' ? newCategory : grammaticalCategory,
             theme: theme === 'Other' ? newTheme : theme,
             language: language === 'Other' ? newLanguage : language,
-            languageCode: language === 'Other' ? languageCode : '',
         };
 
 
@@ -146,10 +141,8 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
         if (value !== 'Other') {
             setNewLanguage('');
             const selectedLanguage = languageOptions.find(lang => lang.name === value);
-            setLanguageCode(selectedLanguage ? selectedLanguage.code : '');
             updateRawValues({ language: value, languageCode: selectedLanguage ? selectedLanguage.code : '' });
         } else {
-            setLanguageCode('');
             updateRawValues({ language: value, languageCode: '' });
         }
     };
@@ -278,17 +271,6 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                                 const value = capitalizeWord(e.target.value);
                                 setNewLanguage(value);
                                 updateRawValues({ newLanguage: value });
-                            }}
-                            className="w-full p-3 mt-2 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        />
-                        <input
-                            type="text"
-                            placeholder="New Language Code"
-                            value={languageCode}
-                            onChange={(e) => {
-                                const value = capitalizeWord(e.target.value);
-                                setLanguageCode(value.toUpperCase());
-                                updateRawValues({ languageCode: e.target.value });
                             }}
                             className="w-full p-3 mt-2 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                         />
