@@ -14,7 +14,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import TermDetails from './components/Terms/TermDetails';
 import UpdateProfile from './components/User/UpdateProfile';
 
-const App: React.FC = () => {
+function App() {
   return (
     <AuthProvider>
       <Router>
@@ -32,15 +32,15 @@ const App: React.FC = () => {
           />
           <Route
             path="/dashboard"
-            element={<ProtectedRoute element={<DashboardPage />} roles={['admin']} />}
+            element={<ProtectedRoute element={<DashboardPage />} allowedRoles={['admin']} />}
           />
           <Route
             path="/users"
-            element={<ProtectedRoute element={<UsersPage />} roles={['admin']} />}
+            element={<ProtectedRoute element={<UsersPage />} allowedRoles={['admin']} />}
           />
           <Route
             path="/terms"
-            element={<ProtectedRoute element={<TermsPage />} roles={['admin','moderator']} />}
+            element={<ProtectedRoute element={<TermsPage />} allowedRoles={['admin','moderator']} />}
           />
           <Route
             path="/new-term"
