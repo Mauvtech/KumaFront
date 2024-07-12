@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { approveTerm } from '../../services/termService';
 import { getAllCategories, approveCategory } from '../../services/categoryService';
 import { getAllThemes, approveTheme } from '../../services/themeService';
-import { getAllLanguages, approveLanguage } from '../../services/languageService';
+import { getAllLanguages, approveLanguage, addLanguage } from '../../services/languageService';
 import { useNavigate } from 'react-router-dom';
 
 interface Category {
@@ -75,7 +75,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
     useEffect(() => {
         const updatedApproveData = {
             term: updatedTerm.term,
-            translation: updatedTerm.translation.trim(), // Trim to remove extra spaces
+            translation: updatedTerm.translation,
             definition: updatedTerm.definition,
             grammaticalCategory: typeof updatedTerm.grammaticalCategory === 'string' ? updatedTerm.grammaticalCategory : (updatedTerm.grammaticalCategory as Category).name,
             theme: typeof updatedTerm.theme === 'string' ? updatedTerm.theme : (updatedTerm.theme as Theme).name,
@@ -101,7 +101,6 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
         const errors: string[] = [];
         const fieldsToValidate = [
             { name: 'Term', value: data.term },
-            { name: 'Translation', value: data.translation },
             { name: 'Grammatical Category', value: data.grammaticalCategory },
             { name: 'Theme', value: data.theme },
             { name: 'Language', value: data.language },
@@ -124,7 +123,9 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
 
         const finalApproveData = {
             ...approveData,
-            language: updatedTerm.language === 'Other' ? newLanguage.name : approveData.language,
+            theme: updatedTerm.theme === 'Other' ? newTheme : approveData.theme,
+            grammaticalCategory: updatedTerm.grammaticalCategory === 'Other' ? newCategory : approveData.grammaticalCategory,
+            language: updatedTerm.language === 'Other' ? newLanguage.name : (updatedTerm.language as Language).name,
             languageCode: updatedTerm.language === 'Other' ? newLanguage.code : approveData.languageCode,
         };
 
@@ -154,16 +155,24 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                 }
             }
 
+
+
             // Approve new language if necessary
-            if ((typeof updatedTerm.language === 'string' && updatedTerm.language === 'Other' && newLanguage.name && newLanguage.code) ||
-                (typeof updatedTerm.language !== 'string' && !(updatedTerm.language as Language).isApproved)) {
-                const languageId = languageOptions.find(lang => lang.name === newLanguage.name && lang.code === newLanguage.code ||
-                    (typeof updatedTerm.language !== 'string' && updatedTerm.language.name === lang.name && updatedTerm.language.code === lang.code))?._id;
-                if (languageId) {
-                    await approveLanguage(languageId);
-                }
+            if ((typeof updatedTerm.language === 'string' && updatedTerm.language === 'Other' && newLanguage.name)) {
+                const data = await addLanguage(newLanguage.name, newLanguage.code, navigate);
+                console.log('New language data:', data)
+                await approveLanguage(data._id, newLanguage.code);
             }
 
+            if (typeof updatedTerm.language !== 'string') {
+                const languageId = (updatedTerm.language as Language)._id;
+                console.log('languageId', languageId)
+                await approveLanguage(languageId, finalApproveData.languageCode);
+            }
+
+
+
+            console.log('Updated term language:', updatedTerm.languageCode)
             console.log('Approve data:', finalApproveData);
 
             await approveTerm(term._id, finalApproveData, navigate);
