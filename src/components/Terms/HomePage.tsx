@@ -71,9 +71,12 @@ const HomePage: React.FC = () => {
                 page: currentPage,
                 limit: termsPerPage,
             });
-            if (data) {
-                setTerms(data);
-                setFilteredTerms(data);
+            if (data && data.terms) {
+                setTerms(data.terms);
+                setFilteredTerms(data.terms);
+            }
+            if(data){
+                console.log("data",data)
             }
         } catch (error) {
             handleAuthError(error as AxiosError<ErrorResponse>, navigate);
@@ -115,13 +118,15 @@ const HomePage: React.FC = () => {
     }, [fetchApprovedTerms, fetchCategories, fetchThemes, fetchLanguages]);
 
     useEffect(() => {
-        const filtered = terms.filter((term: Term) =>
-            (selectedCategory ? term.grammaticalCategory.name === selectedCategory : true) &&
-            (selectedTheme ? term.theme.name === selectedTheme : true) &&
-            (selectedLanguage ? term.language.name === selectedLanguage : true) &&
-            (term.term.toLowerCase().includes(searchTerm.toLowerCase()) || term.definition.toLowerCase().includes(searchTerm.toLowerCase()))
-        );
-        setFilteredTerms(filtered);
+        if (terms && terms.length > 0) {
+            const filtered = terms.filter((term: Term) =>
+                (selectedCategory ? term.grammaticalCategory.name === selectedCategory : true) &&
+                (selectedTheme ? term.theme.name === selectedTheme : true) &&
+                (selectedLanguage ? term.language.name === selectedLanguage : true) &&
+                (term.term.toLowerCase().includes(searchTerm.toLowerCase()) || term.definition.toLowerCase().includes(searchTerm.toLowerCase()))
+            );
+            setFilteredTerms(filtered);
+        }
     }, [selectedCategory, selectedTheme, selectedLanguage, searchTerm, terms]);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,7 +135,7 @@ const HomePage: React.FC = () => {
 
     const indexOfLastTerm = currentPage * termsPerPage;
     const indexOfFirstTerm = indexOfLastTerm - termsPerPage;
-    const currentTerms = filteredTerms.slice(indexOfFirstTerm, indexOfLastTerm);
+    const currentTerms = filteredTerms.length > 0 ? filteredTerms.slice(indexOfFirstTerm, indexOfLastTerm) : [];
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -171,7 +176,7 @@ const HomePage: React.FC = () => {
                 selectedOption={selectedLanguage}
                 onSelectOption={(option) => setSelectedLanguage(option === selectedLanguage ? '' : option)}
             />
-            {filteredTerms.length === 0 ? (
+            {filteredTerms && filteredTerms.length === 0 ? (
                 <p className="text-center text-gray-500">No terms found.</p>
             ) : (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -211,7 +216,7 @@ const HomePage: React.FC = () => {
                     })}
                 </ul>
             )}
-            <Pagination termsPerPage={termsPerPage} totalTerms={filteredTerms.length} paginate={paginate} />
+            <Pagination termsPerPage={termsPerPage} totalTerms={terms.length} paginate={paginate} />
         </div>
     );
 };
