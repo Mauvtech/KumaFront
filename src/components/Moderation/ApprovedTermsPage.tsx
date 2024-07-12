@@ -18,8 +18,8 @@ const ApprovedTermsPage: React.FC = () => {
             }
 
             try {
-                const response = await getApprovedTerms(navigate);
-                setTerms(response);
+                const response = await getApprovedTerms(navigate,{});
+                setTerms(response || []);
             } catch (error) {
                 console.error('Erreur de chargement des termes approuvés', error);
                 if (error instanceof AxiosError) {
