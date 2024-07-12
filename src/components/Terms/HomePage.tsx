@@ -9,8 +9,6 @@ import { handleAuthError } from '../../utils/handleAuthError';
 import FilterButtons from '../FilterButtons';
 import { ErrorResponse } from '../../utils/types';
 import { useAuth } from '../../contexts/authContext';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 interface Category {
     _id: string;
@@ -46,6 +44,34 @@ export interface Term {
     userVote?: 'upvote' | 'downvote' | null;
 }
 
+const BookmarkIcon: React.FC<{ isUpvoted: boolean }> = ({ isUpvoted }) => (
+    isUpvoted ? (
+        <svg
+            className="w-7 h-7 pointer-events-none text-green-600"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+        >
+            <path
+                d="M13.234 3.395c.191.136.358.303.494.493l7.077 9.285a1.06 1.06 0 01-1.167 1.633l-4.277-1.284a1.06 1.06 0 00-1.355.866l-.814 5.701a1.06 1.06 0 01-1.05.911h-.281a1.06 1.06 0 01-1.05-.91l-.815-5.702a1.06 1.06 0 00-1.355-.866l-4.276 1.284a1.06 1.06 0 01-1.167-1.633l7.077-9.285a2.121 2.121 0 012.96-.493z"
+                fill="currentColor"
+                fillRule="evenodd"
+            />
+        </svg>
+    ) : (
+        <svg
+            className="w-7 h-7 pointer-events-none text-gray-400"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+        >
+            <path
+                d="M9.456 4.216l-5.985 7.851c-.456.637-.583 1.402-.371 2.108l.052.155a2.384 2.384 0 002.916 1.443l2.876-.864.578 4.042a2.384 2.384 0 002.36 2.047h.234l.161-.006a2.384 2.384 0 002.2-2.041l.576-4.042 2.877.864a2.384 2.384 0 002.625-3.668L14.63 4.33a3.268 3.268 0 00-5.174-.115zm3.57.613c.16.114.298.253.411.411l5.897 7.736a.884.884 0 01-.973 1.36l-3.563-1.069a.884.884 0 00-1.129.722l-.678 4.75a.884.884 0 01-.875.759h-.234a.884.884 0 01-.875-.76l-.679-4.75a.884.884 0 00-1.128-.72l-3.563 1.068a.884.884 0 01-.973-1.36L10.56 5.24a1.767 1.767 0 012.465-.41z"
+                fill="currentColor"
+                fillRule="evenodd"
+            />
+        </svg>
+    )
+);
+
 const HomePage: React.FC = () => {
     const { user } = useAuth();
     const [terms, setTerms] = useState<Term[]>([]);
@@ -71,12 +97,10 @@ const HomePage: React.FC = () => {
                 page: currentPage,
                 limit: termsPerPage,
             });
+            console.log('Response data:', data); // Ajoutez cette ligne pour vérifier la réponse
             if (data && data.terms) {
                 setTerms(data.terms);
                 setFilteredTerms(data.terms);
-            }
-            if(data){
-                console.log("data",data)
             }
         } catch (error) {
             handleAuthError(error as AxiosError<ErrorResponse>, navigate);
@@ -104,6 +128,7 @@ const HomePage: React.FC = () => {
     const fetchLanguages = useCallback(async () => {
         try {
             const languagesData = await getLanguages(navigate);
+            console.log('Fetched languages:', languagesData); // Ajoutez cette ligne pour vérifier les langues
             setLanguages(languagesData.filter((language: Language) => language.isApproved));
         } catch (error) {
             console.error('Erreur de chargement des langues', error);
@@ -176,21 +201,32 @@ const HomePage: React.FC = () => {
                 selectedOption={selectedLanguage}
                 onSelectOption={(option) => setSelectedLanguage(option === selectedLanguage ? '' : option)}
             />
-            {filteredTerms && filteredTerms.length === 0 ? (
+            {filteredTerms.length === 0 ? (
                 <p className="text-center text-gray-500">No terms found.</p>
             ) : (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {currentTerms.map((term) => {
                         const userVote = user ? (term.upvotedBy.includes(user._id) ? 'upvote' : term.downvotedBy.includes(user._id) ? 'downvote' : null) : null;
                         return (
-                            <li key={term._id} className="mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff] transition-transform transform hover:scale-105">
-                                <Link to={`/terms/${term._id}`}>
-                                    <h3 className="text-xl font-bold text-gray-800">{term.term}</h3>
-                                    <p className="text-gray-600">{term.translation}</p>
-                                    <p className="text-gray-800">{term.definition}</p>
-                                    {term.language && (
-                                        <p className="text-gray-800">Language {term.language.name} (Code {term.language.code})</p>
-                                    )}
+                            <li key={term._id} className="flex flex-col justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff] transition-transform transform hover:scale-105">
+                                <div>
+                                    <Link to={`/terms/${term._id}`}>
+                                        <h3 className="text-xl font-bold text-gray-800">{term.term}</h3>
+                                        <p className="text-gray-600">{term.translation}</p>
+                                        <p className="text-gray-800">{term.definition}</p>
+                                        {term.language && (
+                                            <>
+                                                {(() => {
+                                                    // Utilisez console.log ici pour déboguer
+                                                    console.log('Objet term.language:', term.language);
+                                                    return null; // Retourne null ou un élément JSX si nécessaire
+                                                })()}
+                                                <p className="text-gray-800">Language {term.language.name} (Code {term.language.code})</p>
+                                            </>
+                                        )}
+                                    </Link>
+                                </div>
+                                <div>
                                     <div className="mt-2">
                                         <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full mr-2">
                                             {term.grammaticalCategory.name}
@@ -199,18 +235,18 @@ const HomePage: React.FC = () => {
                                             {term.theme.name}
                                         </span>
                                     </div>
-                                </Link>
-                                {user && (
-                                    <div className="mt-4 flex justify-between items-center">
-                                        <button
-                                            onClick={() => handleUpvote(term._id)}
-                                            className="text-3xl"
-                                            style={{ color: userVote === 'upvote' ? 'green' : 'black' }}
-                                        >
-                                            {userVote === 'upvote' ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-                                        </button>
-                                    </div>
-                                )}
+                                    {user && (
+                                        <div className="mt-4 flex justify-between items-center">
+                                            <button
+                                                onClick={() => handleUpvote(term._id)}
+                                                className={`text-3xl rounded-md hover:bg-green-200 focus:outline-none transition duration-200 ${userVote === 'upvote' ? ' text-green-600' : ''
+                                                    }`}
+                                            >
+                                                <BookmarkIcon isUpvoted={userVote === 'upvote'} />
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </li>
                         );
                     })}

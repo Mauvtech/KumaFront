@@ -35,6 +35,9 @@ export const addLanguage = async (
   }
 };
 
-export const approveLanguage = async (languageId: string) => {
-  return await api.post(`/languages/${languageId}/approve`);
+export const approveLanguage = async (languageId: string,code: string) => {
+ const response = await api.post(`/languages/${languageId}/approve`, {code});
+ console.log("je suis passé par approvelangue")
+ console.log("response.data",response.data)
+ return response.data;
 };
