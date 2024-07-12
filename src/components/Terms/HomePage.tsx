@@ -63,7 +63,14 @@ const HomePage: React.FC = () => {
 
     const fetchApprovedTerms = useCallback(async () => {
         try {
-            const data = await getApprovedTerms(navigate);
+            const data = await getApprovedTerms(navigate, {
+                category: selectedCategory,
+                theme: selectedTheme,
+                language: selectedLanguage,
+                searchTerm,
+                page: currentPage,
+                limit: termsPerPage,
+            });
             if (data) {
                 setTerms(data);
                 setFilteredTerms(data);
@@ -71,7 +78,7 @@ const HomePage: React.FC = () => {
         } catch (error) {
             handleAuthError(error as AxiosError<ErrorResponse>, navigate);
         }
-    }, [navigate]);
+    }, [navigate, selectedCategory, selectedTheme, selectedLanguage, searchTerm, currentPage]);
 
     const fetchCategories = useCallback(async () => {
         try {
@@ -164,7 +171,7 @@ const HomePage: React.FC = () => {
                 selectedOption={selectedLanguage}
                 onSelectOption={(option) => setSelectedLanguage(option === selectedLanguage ? '' : option)}
             />
-            {terms.length === 0 ? (
+            {filteredTerms.length === 0 ? (
                 <p className="text-center text-gray-500">No terms found.</p>
             ) : (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

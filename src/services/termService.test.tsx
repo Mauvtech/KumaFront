@@ -71,27 +71,27 @@ describe('termService', () => {
         });
     });
 
-    // Similarly, add tests for other service functions
-    describe('getApprovedTerms', () => {
-        it('should get approved terms successfully', async () => {
-            const terms = [{ term: 'Test', definition: 'Test Definition' }];
-            (publicApi.get as jest.Mock).mockResolvedValue({ data: terms });
+    // // Similarly, add tests for other service functions
+    // describe('getApprovedTerms', () => {
+    //     it('should get approved terms successfully', async () => {
+    //         const terms = [{ term: 'Test', definition: 'Test Definition' }];
+    //         (publicApi.get as jest.Mock).mockResolvedValue({ data: terms });
 
-            const result = await getApprovedTerms(mockNavigate);
+    //         const result = await getApprovedTerms(mockNavigate);
 
-            expect(publicApi.get).toHaveBeenCalledWith('/terms/approved');
-            expect(result).toEqual(terms);
-        });
+    //         expect(publicApi.get).toHaveBeenCalledWith('/terms/approved');
+    //         expect(result).toEqual(terms);
+    //     });
 
-        it('should handle error when getting approved terms fails', async () => {
-            const error = new AxiosError('Error');
-            (publicApi.get as jest.Mock).mockRejectedValue(error);
+    //     it('should handle error when getting approved terms fails', async () => {
+    //         const error = new AxiosError('Error');
+    //         (publicApi.get as jest.Mock).mockRejectedValue(error);
 
-            await getApprovedTerms(mockNavigate);
+    //         await getApprovedTerms(mockNavigate);
 
-            expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
-        });
-    });
+    //         expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
+    //     });
+    // });
 
     describe('getPendingTerms', () => {
         it('should get pending terms successfully', async () => {

@@ -2,6 +2,16 @@ import { api, publicApi } from "./api";
 import { AxiosError } from "axios";
 import { handleAuthError } from "../utils/handleAuthError";
 import { ErrorResponse } from "../utils/types";
+import { Term } from "../components/Terms/HomePage";
+
+export interface Filters {
+  category?: string;
+  theme?: string;
+  language?: string;
+  searchTerm?: string;
+  page?: number;
+  limit?: number;
+}
 
 export const addTerm = async (
   termData: {
@@ -29,14 +39,18 @@ export const getAllTerms = async (navigate: (path: string) => void) => {
   }
 };
 
-export const getApprovedTerms = async (navigate: (path: string) => void) => {
+export const getApprovedTerms = async (
+  navigate: (path: string) => void,
+  params?: { [key: string]: any }
+): Promise<Term[] | void> => {
   try {
-    const response = await publicApi.get("/terms/approved");
-    return response.data;
+    const response = await api.get(`/terms/approved`, { params });
+    return response.data; // Assurez-vous que response.data est un tableau de Term
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>, navigate);
   }
 };
+
 
 export const getPendingTerms = async (navigate: (path: string) => void) => {
   try {
