@@ -42,15 +42,14 @@ export const getAllTerms = async (navigate: (path: string) => void) => {
 export const getApprovedTerms = async (
   navigate: (path: string) => void,
   params?: { [key: string]: any }
-): Promise<Term[] | void> => {
+): Promise<{ terms: Term[]; totalTerms: number } | void> => {
   try {
     const response = await api.get(`/terms/approved`, { params });
-    return response.data; // Assurez-vous que response.data est un tableau de Term
+    return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>, navigate);
   }
 };
-
 
 export const getPendingTerms = async (navigate: (path: string) => void) => {
   try {
