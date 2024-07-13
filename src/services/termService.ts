@@ -2,16 +2,9 @@ import { api, publicApi } from "./api";
 import { AxiosError } from "axios";
 import { handleAuthError } from "../utils/handleAuthError";
 import { ErrorResponse } from "../utils/types";
-import { Term } from "../components/Terms/HomePage";
+import { Term } from "../models/termModel";
 
-export interface Filters {
-  category?: string;
-  theme?: string;
-  language?: string;
-  searchTerm?: string;
-  page?: number;
-  limit?: number;
-}
+
 
 export const addTerm = async (
   termData: {

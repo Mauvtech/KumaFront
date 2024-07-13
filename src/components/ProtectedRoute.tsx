@@ -4,10 +4,10 @@ import { useAuth } from '../contexts/authContext';
 
 interface ProtectedRouteProps {
     element: ReactNode;
-    allowedRoles?: string[];
+    allowedRoles?: string[]; //todo suppr nullabilité
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, allowedRoles }) => {
+function ProtectedRoute({ element, allowedRoles }: ProtectedRouteProps){
     const { user, loading } = useAuth();
 
     if (loading) {

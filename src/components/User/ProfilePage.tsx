@@ -10,7 +10,7 @@ const ProfilePage: React.FC = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
 
-    useEffect(() => {
+    useEffect(() => { //todo utiliser useQuery
         const fetchUserProfile = async () => {
             if (!user || !user.token) {
                 navigate('/login'); // Rediriger vers la page de connexion si l'utilisateur n'est pas authentifié

@@ -9,42 +9,14 @@ import { handleAuthError } from '../../utils/handleAuthError';
 import FilterButtons from '../FilterButtons';
 import { ErrorResponse } from '../../utils/types';
 import { useAuth } from '../../contexts/authContext';
+import { Theme } from '../../models/themeModel';
+import { Category } from '../../models/categoryModel';
+import { Language } from '../../models/languageModel';
+import { Term } from '../../models/termModel';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
-interface Category {
-    _id: string;
-    name: string;
-    isApproved: boolean;
-}
-
-interface Theme {
-    _id: string;
-    name: string;
-    isApproved: boolean;
-}
-
-interface Language {
-    _id: string;
-    name: string;
-    code: string;
-    isApproved: boolean;
-}
-
-export interface Term {
-    _id: string;
-    term: string;
-    translation: string;
-    definition: string;
-    grammaticalCategory: Category;
-    theme: Theme;
-    language: Language;
-    status: string;
-    comments?: Array<{ author: string; text: string; createdAt: Date }>;
-    upvotedBy: string[];
-    downvotedBy: string[];
-    userVote?: 'upvote' | 'downvote' | null;
-}
-
-const BookmarkIcon: React.FC<{ isUpvoted: boolean }> = ({ isUpvoted }) => (
+const UpvoteIcon: React.FC<{ isUpvoted: boolean }> = ({ isUpvoted }) => (
     isUpvoted ? (
         <svg
             className="w-7 h-7 pointer-events-none text-green-600"
@@ -72,7 +44,7 @@ const BookmarkIcon: React.FC<{ isUpvoted: boolean }> = ({ isUpvoted }) => (
     )
 );
 
-const HomePage: React.FC = () => {
+function HomePage() {
     const { user } = useAuth();
     const [terms, setTerms] = useState<Term[]>([]);
     const [filteredTerms, setFilteredTerms] = useState<Term[]>([]);
@@ -84,10 +56,12 @@ const HomePage: React.FC = () => {
     const [selectedLanguage, setSelectedLanguage] = useState<string>('');
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const [loading, setLoading] = useState<boolean>(true);
     const termsPerPage: number = 10;
     const navigate = useNavigate();
 
     const fetchApprovedTerms = useCallback(async () => {
+        setLoading(true);
         try {
             const data = await getApprovedTerms(navigate, {
                 category: selectedCategory,
@@ -104,34 +78,45 @@ const HomePage: React.FC = () => {
             }
         } catch (error) {
             handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+        } finally {
+            setLoading(false);
         }
     }, [navigate, selectedCategory, selectedTheme, selectedLanguage, searchTerm, currentPage]);
 
     const fetchCategories = useCallback(async () => {
+        setLoading(true);
         try {
             const categoriesData = await getCategories(navigate);
             setCategories(categoriesData.filter((category: Category) => category.isApproved));
         } catch (error) {
             console.error('Erreur de chargement des catégories', error);
+        } finally {
+            setLoading(false);
         }
     }, [navigate]);
 
     const fetchThemes = useCallback(async () => {
+        setLoading(true);
         try {
             const themesData = await getThemes(navigate);
             setThemes(themesData.filter((theme: Theme) => theme.isApproved));
         } catch (error) {
             console.error('Erreur de chargement des thèmes', error);
+        } finally {
+            setLoading(false);
         }
     }, [navigate]);
 
     const fetchLanguages = useCallback(async () => {
+        setLoading(true);
         try {
             const languagesData = await getLanguages(navigate);
             console.log('Fetched languages:', languagesData); // Ajoutez cette ligne pour vérifier les langues
             setLanguages(languagesData.filter((language: Language) => language.isApproved));
         } catch (error) {
             console.error('Erreur de chargement des langues', error);
+        } finally {
+            setLoading(false);
         }
     }, [navigate]);
 
@@ -188,20 +173,38 @@ const HomePage: React.FC = () => {
                 options={categories.map(cat => cat.name)}
                 selectedOption={selectedCategory}
                 onSelectOption={(option) => setSelectedCategory(option === selectedCategory ? '' : option)}
+                loading={loading}
             />
             <FilterButtons
                 title="Themes"
                 options={themes.map(theme => theme.name)}
                 selectedOption={selectedTheme}
                 onSelectOption={(option) => setSelectedTheme(option === selectedTheme ? '' : option)}
+                loading={loading}
             />
             <FilterButtons
                 title="Languages"
                 options={languages.map(lang => lang.name)}
                 selectedOption={selectedLanguage}
                 onSelectOption={(option) => setSelectedLanguage(option === selectedLanguage ? '' : option)}
+                loading={loading}
             />
-            {filteredTerms.length === 0 ? (
+            {loading ? (
+                <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Array.from({ length: termsPerPage }).map((_, index) => (
+                        <li key={index} className="flex flex-col justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
+                            <Skeleton height={30} width="80%" />
+                            <Skeleton height={20} width="60%" />
+                            <Skeleton height={20} width="100%" />
+                            <Skeleton height={20} width="90%" />
+                            <div className="mt-2">
+                                <Skeleton height={20} width="30%" />
+                                <Skeleton height={20} width="40%" />
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            ) : filteredTerms.length === 0 ? (
                 <p className="text-center text-gray-500">No terms found.</p>
             ) : (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -215,14 +218,7 @@ const HomePage: React.FC = () => {
                                         <p className="text-gray-600">{term.translation}</p>
                                         <p className="text-gray-800">{term.definition}</p>
                                         {term.language && (
-                                            <>
-                                                {(() => {
-                                                    // Utilisez console.log ici pour déboguer
-                                                    console.log('Objet term.language:', term.language);
-                                                    return null; // Retourne null ou un élément JSX si nécessaire
-                                                })()}
-                                                <p className="text-gray-800">Language {term.language.name} (Code {term.language.code})</p>
-                                            </>
+                                            <p className="text-gray-800">Language {term.language.name} ({term.language.code})</p>
                                         )}
                                     </Link>
                                 </div>
@@ -242,7 +238,7 @@ const HomePage: React.FC = () => {
                                                 className={`text-3xl rounded-md hover:bg-green-200 focus:outline-none transition duration-200 ${userVote === 'upvote' ? ' text-green-600' : ''
                                                     }`}
                                             >
-                                                <BookmarkIcon isUpvoted={userVote === 'upvote'} />
+                                                <UpvoteIcon isUpvoted={userVote === 'upvote'} />
                                             </button>
                                         </div>
                                     )}
@@ -255,7 +251,7 @@ const HomePage: React.FC = () => {
             <Pagination termsPerPage={termsPerPage} totalTerms={terms.length} paginate={paginate} />
         </div>
     );
-};
+}
 
 interface PaginationProps {
     termsPerPage: number;

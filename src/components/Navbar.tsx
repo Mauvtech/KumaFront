@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/authContext';
 import { FaUser, FaSpinner, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaPlus, FaTachometerAlt, FaListAlt, FaCommentDots, FaChevronDown, FaBars, FaTimes } from 'react-icons/fa';
 
-const Navbar: React.FC = () => {
+function Navbar() {
     const { user, loading, logout } = useAuth();
     const navigate = useNavigate();
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -18,15 +18,15 @@ const Navbar: React.FC = () => {
         navigate('/login');
     };
 
-    const toggleDropdown = () => {
+    function toggleDropdown() {
         setDropdownOpen(!dropdownOpen);
     };
 
-    const toggleMenu = () => {
+    function toggleMenu() {
         setMenuOpen(!menuOpen);
     };
 
-    const handleClickOutside = (event: MouseEvent) => {
+    function handleClickOutside(event: MouseEvent) {
         if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
             setMenuOpen(false);
         }
@@ -73,7 +73,7 @@ const Navbar: React.FC = () => {
                             {(user.role === 'admin' || user.role === 'moderator') && (
                                 <Link to="/terms" className="text-gray-700 flex items-center mt-4 md:mt-0">
                                     <FaListAlt className="mr-2" />
-                                     Term Management
+                                    Term Management
                                 </Link>
                             )}
                             <div className="relative mt-4 md:mt-0" ref={dropdownRef}>

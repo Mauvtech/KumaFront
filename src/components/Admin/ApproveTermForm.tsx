@@ -204,7 +204,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
     };
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-4 bg-white rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
+        <form onSubmit={handleSubmit} className="bg-gray-200 max-w-md mx-auto mt-10 p-4 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
             <h2 className="text-2xl font-bold mb-4">Approve and Modify Term</h2>
             {error && <div className="mb-4 text-red-500">{error}</div>}
             {validationErrors.length > 0 && (
@@ -224,7 +224,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                     name="term"
                     value={updatedTerm.term}
                     onChange={handleChange}
-                    className="w-full p-3 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 />
             </div>
@@ -236,7 +236,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                     name="translation"
                     value={updatedTerm.translation}
                     onChange={handleChange}
-                    className="w-full p-3 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 />
             </div>
@@ -247,7 +247,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                     name="definition"
                     value={updatedTerm.definition}
                     onChange={handleChange}
-                    className="w-full p-3 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 />
             </div>
@@ -258,7 +258,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                     name="grammaticalCategory"
                     value={typeof updatedTerm.grammaticalCategory === 'string' ? updatedTerm.grammaticalCategory : (updatedTerm.grammaticalCategory as Category).name}
                     onChange={handleChange}
-                    className="w-full p-3 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 >
                     {categories.map(category => (
@@ -274,7 +274,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                             const value = capitalizeWord(e.target.value);
                             setNewCategory(value);
                         }}
-                        className="w-full p-3 mt-2 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        className="w-full p-3 mt-2 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     />
                 )}
             </div>
@@ -285,7 +285,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                     name="theme"
                     value={typeof updatedTerm.theme === 'string' ? updatedTerm.theme : (updatedTerm.theme as Theme).name}
                     onChange={handleChange}
-                    className="w-full p-3 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 >
                     {themeOptions.map(theme => (
@@ -301,7 +301,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                             const value = capitalizeWord(e.target.value);
                             setNewTheme(value);
                         }}
-                        className="w-full p-3 mt-2 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        className="w-full p-3 mt-2 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     />
                 )}
             </div>
@@ -312,7 +312,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                     name="language"
                     value={typeof updatedTerm.language === 'string' ? updatedTerm.language : (updatedTerm.language as Language).name}
                     onChange={handleLanguageChange}
-                    className="w-full p-3 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 >
                     {languageOptions.map(language => (
@@ -329,7 +329,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                                 const value = capitalizeWord(e.target.value);
                                 setNewLanguage(prev => ({ ...prev, name: value }));
                             }}
-                            className="w-full p-3 mt-2 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                            className="w-full p-3 mt-2 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                         />
                         <input
                             type="text"
@@ -339,7 +339,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                                 const value = e.target.value.toUpperCase(); // language code should be uppercase
                                 setNewLanguage(prev => ({ ...prev, code: value }));
                             }}
-                            className="w-full p-3 mt-2 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                            className="w-full p-3 mt-2 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                         />
                     </>
                 )}
@@ -355,7 +355,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                         const value = e.target.value.toUpperCase(); // language code should be uppercase
                         setUpdatedTerm((prev: Term) => ({ ...prev, languageCode: value }));
                     }}
-                    className="w-full p-3 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 />
             </div>

@@ -3,9 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getTermById, addComment } from '../../services/termService';
 import { AxiosError } from 'axios';
 import { handleAuthError } from '../../utils/handleAuthError';
-import { Term } from './HomePage';
 import { ErrorResponse } from '../../utils/types';
 import { useAuth } from '../../contexts/authContext';
+import { Term } from '../../models/termModel';
 
 const TermDetails: React.FC = () => {
     const { id } = useParams<{ id: string }>();
