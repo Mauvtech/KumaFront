@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/authContext';
-import { FaUser, FaSpinner, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaPlus, FaTachometerAlt, FaListAlt, FaCommentDots, FaChevronDown, FaBars, FaTimes } from 'react-icons/fa';
+import { FaUser, FaSpinner, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaPlus, FaTachometerAlt, FaListAlt, FaCommentDots, FaChevronDown, FaBars, FaTimes, FaQuestion } from 'react-icons/fa';
 
 function Navbar() {
     const { user, loading, logout } = useAuth();
@@ -65,7 +65,7 @@ function Navbar() {
                                 New Term
                             </Link>
                             <Link to="/terms/flashcard-serie" className="text-gray-700 flex items-center mt-4 md:mt-0">
-                                <FaListAlt className="mr-2" />
+                                <FaQuestion className="mr-2" />
                                 Quiz
                             </Link>
                             {user.role === 'admin' && (
