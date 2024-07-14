@@ -6,7 +6,7 @@ const FlashcardSerieParams: React.FC = () => {
     const navigate = useNavigate();
 
     const handleStartQuiz = () => {
-        navigate(`/quiz?questions=${numberOfQuestions}`);
+        navigate(`/terms/quiz?questions=${numberOfQuestions}`);
     };
 
     return (
