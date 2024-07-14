@@ -1,0 +1,5 @@
+# Ce fichier CODEOWNERS désigne les propriétaires de différents fichiers et répertoires.
+
+# Propriétaire par défaut pour tout le dépôt
+*       @mauvtech
+
