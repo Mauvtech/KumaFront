@@ -64,7 +64,7 @@ function Navbar() {
                                 <FaPlus className="mr-2" />
                                 New Term
                             </Link>
-                            <Link to="/terms/quiz" className="text-gray-700 flex items-center mt-4 md:mt-0">
+                            <Link to="/terms/flashcard-serie" className="text-gray-700 flex items-center mt-4 md:mt-0">
                                 <FaListAlt className="mr-2" />
                                 Quiz
                             </Link>

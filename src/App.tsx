@@ -14,6 +14,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import TermDetails from './components/Terms/TermDetails';
 import UpdateProfile from './components/User/UpdateProfile';
 import QuizPage from './components/Quiz/QuizPage';
+import FlashcardSerieParams from './components/Quiz/FlashcardSerieParams';
 
 function App() {
   return (
@@ -39,6 +40,9 @@ function App() {
             path="/users"
             element={<ProtectedRoute element={<UsersPage />} allowedRoles={['admin']} />}
           />
+          <Route
+            path="/terms/flashcard-serie"
+            element={<ProtectedRoute element={<FlashcardSerieParams/>} allowedRoles={['admin', 'moderator', 'user']} />} />
           <Route
             path="/terms/quiz"
             element={<ProtectedRoute element={<QuizPage />}allowedRoles={['admin','moderator','user']} />} />

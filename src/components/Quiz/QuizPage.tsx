@@ -3,6 +3,7 @@ import { getQuiz, getFlashcardById } from '../../services/termService';
 import { handleAuthError } from '../../utils/handleAuthError';
 import { AxiosError } from 'axios';
 import { Term } from '../../models/termModel';
+import { useLocation } from 'react-router-dom';
 
 const QuizPage: React.FC = () => {
     const [flashcardIds, setFlashcardIds] = useState<string[]>([]);
@@ -10,10 +11,13 @@ const QuizPage: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const numberOfQuestions = Number(queryParams.get('questions')) || 10;
 
     const fetchQuiz = useCallback(async () => {
         try {
-            const ids = await getQuiz(10);
+            const ids = await getQuiz(numberOfQuestions.toString());
             if (ids) {
                 setFlashcardIds(ids);
                 fetchFlashcard(ids[0]);

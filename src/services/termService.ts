@@ -52,9 +52,9 @@ export const getPendingTerms = async () => {
   }
 };
 
-export const getQuiz = async (numberOfQuesions:number) => {
+export const getQuiz = async (numberOfQuesions:string) => {
   try {
-    const response = await api.get("/terms/quiz");
+    const response = await api.get("/terms/quiz", { params: { number:numberOfQuesions } });
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>);
