@@ -13,6 +13,7 @@ import TermsPage from './components/Admin/TermsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import TermDetails from './components/Terms/TermDetails';
 import UpdateProfile from './components/User/UpdateProfile';
+import QuizPage from './components/Quiz/QuizPage';
 
 function App() {
   return (
@@ -39,7 +40,10 @@ function App() {
             element={<ProtectedRoute element={<UsersPage />} allowedRoles={['admin']} />}
           />
           <Route
-            path="/terms"
+            path="/terms/quiz"
+            element={<ProtectedRoute element={<QuizPage />}allowedRoles={['admin','moderator','user']} />} />
+
+          <Route  path="/terms"
             element={<ProtectedRoute element={<TermsPage />} allowedRoles={['admin','moderator']} />}
           />
           <Route

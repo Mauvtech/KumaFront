@@ -21,9 +21,11 @@ export const addTerm = async (
   }
 };
 
-export const getAllTerms = async () => {
+export const getAllTerms = async (page: number = 1, limit: number = 10) => {
   try {
-    const response = await api.get("/terms");
+    const response = await api.get(`/terms`, {
+      params: { page, limit },
+    });
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>);
@@ -49,6 +51,25 @@ export const getPendingTerms = async () => {
     handleAuthError(error as AxiosError<ErrorResponse>);
   }
 };
+
+export const getQuiz = async (numberOfQuesions:number) => {
+  try {
+    const response = await publicApi.get("/terms/quiz");
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>);
+  }
+}
+
+export const getFlashcardById = async (id: string) => {
+  try {
+    const response = await publicApi.get(`/terms/${id}/flashcard`);
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>);
+  }
+
+}
 
 export const getTermById = async (
   id: string,) => {

@@ -10,33 +10,35 @@ interface TermsPageProps {
     setSelectedTerm: (term: any) => void;
 }
 
-const TermsPage: React.FC<TermsPageProps> = ({setSelectedTerm}) => {
+const TermsPage: React.FC<TermsPageProps> = ({ setSelectedTerm }) => {
     const [terms, setTerms] = useState<any[]>([]);
     const { user, loading } = useAuth();
     const navigate = useNavigate();
     const [termsLoading, setTermsLoading] = useState<boolean>(true);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [totalPages, setTotalPages] = useState<number>(1);
+
+    const fetchTerms = async (page: number) => {
+        setTermsLoading(true);
+        try {
+            const data = await getAllTerms(page);
+            if (data) {
+                setTerms(data.terms);
+                setCurrentPage(data.currentPage);
+                setTotalPages(data.totalPages);
+            }
+        } catch (error) {
+            console.error('Erreur de chargement des termes', error);
+        } finally {
+            setTermsLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchTerms = async () => {
-            if (!user || !user.token) {
-                navigate('/login');
-                return;
-            }
-
-            try {
-                const data = await getAllTerms();
-                setTerms(data);
-            } catch (error) {
-                console.error('Erreur de chargement des termes', error);
-            } finally {
-                setTermsLoading(false);
-            }
-        };
-
-        if (!loading && user) {
-            fetchTerms();
+        if (user && !loading) {
+            fetchTerms(currentPage);
         }
-    }, [user, loading]);
+    }, [user, loading, currentPage]);
 
     const handleApprove = async (termId: string, approveData: any) => {
         try {
@@ -56,6 +58,8 @@ const TermsPage: React.FC<TermsPageProps> = ({setSelectedTerm}) => {
             console.error('Erreur de rejet du terme', error);
         }
     };
+
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
     return (
         <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-200 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
@@ -115,8 +119,30 @@ const TermsPage: React.FC<TermsPageProps> = ({setSelectedTerm}) => {
                         )}
                     </tbody>
                 </table>
+                <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
             </div>
         </div>
+    );
+};
+
+const Pagination: React.FC<{ currentPage: number; totalPages: number; paginate: (pageNumber: number) => void }> = ({ currentPage, totalPages, paginate }) => {
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    return (
+        <nav className="mt-4">
+            <ul className="inline-flex -space-x-px">
+                {pageNumbers.map(number => (
+                    <li key={number}>
+                        <button
+                            onClick={() => paginate(number)}
+                            className={`px-3 py-2 leading-tight text-gray-500 bg-gray-100 border border-gray-300 hover:bg-gray-200 hover:text-gray-700 rounded-lg shadow-lg ${currentPage === number ? 'bg-blue-500 text-white' : ''}`}
+                        >
+                            {number}
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </nav>
     );
 };
 
