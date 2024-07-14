@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { getApprovedTerms, upvoteTerm } from '../../services/termService';
+import { downvoteTerm, getApprovedTerms, upvoteTerm } from '../../services/termService';
 import { getCategories } from '../../services/categoryService';
 import { getThemes } from '../../services/themeService';
 import { getLanguages } from '../../services/languageService';
@@ -15,73 +15,9 @@ import { Language } from '../../models/languageModel';
 import { Term } from '../../models/termModel';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import TermItem from './TermItem';
 
-const UpvoteIcon: React.FC<{ isUpvoted: boolean }> = ({ isUpvoted }) => (
-    isUpvoted ? (
-        <svg
-            className="w-7 h-7 pointer-events-none text-green-600"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-        >
-            <path
-                d="M13.234 3.395c.191.136.358.303.494.493l7.077 9.285a1.06 1.06 0 01-1.167 1.633l-4.277-1.284a1.06 1.06 0 00-1.355.866l-.814 5.701a1.06 1.06 0 01-1.05.911h-.281a1.06 1.06 0 01-1.05-.91l-.815-5.702a1.06 1.06 0 00-1.355-.866l-4.276 1.284a1.06 1.06 0 01-1.167-1.633l7.077-9.285a2.121 2.121 0 012.96-.493z"
-                fill="currentColor"
-                fillRule="evenodd"
-            />
-        </svg>
-    ) : (
-        <svg
-            className="w-7 h-7 pointer-events-none text-gray-400"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-        >
-            <path
-                d="M9.456 4.216l-5.985 7.851c-.456.637-.583 1.402-.371 2.108l.052.155a2.384 2.384 0 002.916 1.443l2.876-.864.578 4.042a2.384 2.384 0 002.36 2.047h.234l.161-.006a2.384 2.384 0 002.2-2.041l.576-4.042 2.877.864a2.384 2.384 0 002.625-3.668L14.63 4.33a3.268 3.268 0 00-5.174-.115zm3.57.613c.16.114.298.253.411.411l5.897 7.736a.884.884 0 01-.973 1.36l-3.563-1.069a.884.884 0 00-1.129.722l-.678 4.75a.884.884 0 01-.875.759h-.234a.884.884 0 01-.875-.76l-.679-4.75a.884.884 0 00-1.128-.72l-3.563 1.068a.884.884 0 01-.973-1.36L10.56 5.24a1.767 1.767 0 012.465-.41z"
-                fill="currentColor"
-                fillRule="evenodd"
-            />
-        </svg>
-    )
-);
 
-const TermItem: React.FC<{ term: Term; user: any; handleUpvote: (id: string) => void }> = ({ term, user, handleUpvote }) => {
-    const userVote = user ? (term.upvotedBy.includes(user._id) ? 'upvote' : term.downvotedBy.includes(user._id) ? 'downvote' : null) : null;
-
-    return (
-        <li className="flex flex-col justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff] transition-transform transform hover:scale-105">
-            <div>
-                <Link to={`/terms/${term._id}`}>
-                    <h3 className="text-xl font-bold text-gray-800">{term.term}</h3>
-                    <p className="text-gray-600">{term.translation}</p>
-                    <p className="text-gray-800">{term.definition}</p>
-                    {term.language && (
-                        <p className="text-gray-800">Language {term.language.name} ({term.language.code})</p>
-                    )}
-                </Link>
-            </div>
-            <div>
-                <div className="mt-2">
-                    <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full mr-2">
-                        {term.grammaticalCategory.name}
-                    </span>
-                    <span className="inline-block bg-green-200 text-green-800 text-xs px-2 rounded-full">
-                        {term.theme.name}
-                    </span>
-                </div>
-                {user && (
-                    <div className="mt-4 flex justify-between items-center">
-                        <button
-                            onClick={() => handleUpvote(term._id)}
-                            className={`text-3xl rounded-md hover:bg-green-200 focus:outline-none transition duration-200 ${userVote === 'upvote' ? 'text-green-600' : ''}`}
-                        >
-                            <UpvoteIcon isUpvoted={userVote === 'upvote'} />
-                        </button>
-                    </div>
-                )}
-            </div>
-        </li>
-    );
-};
 
 function HomePage() {
     const { user } = useAuth();
@@ -96,13 +32,14 @@ function HomePage() {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [loading, setLoading] = useState<boolean>(true);
+    const [votes, setVotes] = useState< { upvotes: number; downvotes: number } >();
     const termsPerPage: number = 10;
     const navigate = useNavigate();
 
     const fetchApprovedTerms = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await getApprovedTerms( {
+            const data = await getApprovedTerms({
                 category: selectedCategory,
                 theme: selectedTheme,
                 language: selectedLanguage,
@@ -207,6 +144,27 @@ function HomePage() {
         }
     };
 
+    const handleDownvote = async (id: string) => {
+        try {
+            await downvoteTerm(id);
+            setTerms(prevTerms =>
+                prevTerms.map(term => {
+                    if (term._id === id) {
+                        const isDownvoted = term.downvotedBy.includes(user!._id);
+                        const downvotedBy = isDownvoted
+                            ? term.downvotedBy.filter(userId => userId !== user!._id)
+                            : [...term.downvotedBy, user!._id];
+                        const upvotedBy = term.upvotedBy.filter(userId => userId !== user!._id);
+                        return { ...term, upvotedBy, downvotedBy };
+                    }
+                    return term;
+                })
+            );
+        } catch (error) {
+            console.error('Erreur lors de l\'downvote', error);
+        }
+    }
+
     return (
         <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
             <h2 className="text-3xl font-bold mb-6 text-gray-700">The Words World</h2>
@@ -258,7 +216,7 @@ function HomePage() {
             ) : (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {currentTerms.map((term) => (
-                        <TermItem key={term._id} term={term} user={user} handleUpvote={handleUpvote} />
+                        <TermItem key={term._id} term={term} user={user} handleUpvote={handleUpvote} handleDownvote={handleDownvote} />
                     ))}
                 </ul>
             )}

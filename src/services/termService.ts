@@ -145,6 +145,7 @@ export const upvoteTerm = async (
   }
 };
 
+
 export const downvoteTerm = async (
   id: string,) => {
   try {
@@ -165,6 +166,15 @@ export const addComment = async (
     handleAuthError(error as AxiosError<ErrorResponse>);
   }
 };
+
+export const getVotes = async (termId:string)=>{
+  try{
+    const response = await api.get(`/terms/${termId}/votes`);
+    return response.data;
+  }catch(error){
+    handleAuthError(error as AxiosError<ErrorResponse>);
+  }
+}
 
 export const addTag = async (
   id: string,
