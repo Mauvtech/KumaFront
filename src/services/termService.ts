@@ -54,7 +54,7 @@ export const getPendingTerms = async () => {
 
 export const getQuiz = async (numberOfQuesions:number) => {
   try {
-    const response = await publicApi.get("/terms/quiz");
+    const response = await api.get("/terms/quiz");
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>);
@@ -63,7 +63,7 @@ export const getQuiz = async (numberOfQuesions:number) => {
 
 export const getFlashcardById = async (id: string) => {
   try {
-    const response = await publicApi.get(`/terms/${id}/flashcard`);
+    const response = await api.get(`/terms/${id}/flashcard`);
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>);
