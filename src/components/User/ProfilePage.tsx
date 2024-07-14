@@ -18,7 +18,7 @@ const ProfilePage: React.FC = () => {
             }
             try {
                 console.log("Utilisateur dans ProfilePage:", user);
-                const data = await getUserProfile(navigate); // Utilisation du token
+                const data = await getUserProfile(); // Utilisation du token
                 setUserProfile(data);
                 setLoading(false);
             } catch (error) {

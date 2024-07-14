@@ -3,26 +3,25 @@ import { AxiosError } from "axios";
 import { handleAuthError } from "../utils/handleAuthError";
 import { ErrorResponse } from "../utils/types";
 
-export const getThemes = async (navigate :(path:string) => void) => {
+export const getThemes = async () => {
  try{const response = await publicApi.get("/themes/approved");
   return response.data;} catch(error){
-    handleAuthError(error as AxiosError<ErrorResponse>,navigate)
+    handleAuthError(error as AxiosError<ErrorResponse>)
   }
 };
 
-export const getAllThemes = async (navigate: (path: string) => void) => {
+export const getAllThemes = async () => {
   try {
     const response = await api.get("/themes");
     return response.data;
   } catch (error) {
-    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+    handleAuthError(error as AxiosError<ErrorResponse>);
   }
 };
 
 
 export const addTheme = async (
   theme: string,
-  navigate: (path: string) => void
 ) => {
   const response = await api.post("/themes", { theme });
   return response.data;

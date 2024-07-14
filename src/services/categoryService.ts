@@ -4,21 +4,21 @@ import { handleAuthError } from "../utils/handleAuthError";
 import {api, publicApi} from "./api";
 import { ErrorResponse } from "../utils/types";
 
-export const getAllCategories = async (navigate: (path: string) => void) => {
+export const getAllCategories = async () => {
   try {
     const response = await api.get("/categories");
     return response.data;
   } catch (error) {
-    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+    handleAuthError(error as AxiosError<ErrorResponse>);
   }
 };
 
-export const getCategories = async (navigate: (path: string) => void) => {
+export const getCategories = async () => {
   try {
     const response = await publicApi.get("/categories/approved");
     return response.data;
   } catch (error) {
-    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+    handleAuthError(error as AxiosError<ErrorResponse>);
   }
 };
 

@@ -58,9 +58,9 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
     useEffect(() => {
         const fetchCategoriesThemesLanguages = async () => {
             try {
-                const categoriesData = await getAllCategories(navigate);
-                const themesData = await getAllThemes(navigate);
-                const languagesData = await getAllLanguages(navigate);
+                const categoriesData = await getAllCategories();
+                const themesData = await getAllThemes();
+                const languagesData = await getAllLanguages();
                 setCategories([...categoriesData, { _id: 'other', name: 'Other', isApproved: true }]);
                 setThemeOptions([...themesData, { _id: 'other', name: 'Other', isApproved: true }]);
                 setLanguageOptions([...languagesData, { _id: 'other', name: 'Other', code: '', isApproved: true }]);
@@ -129,8 +129,6 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
             languageCode: updatedTerm.language === 'Other' ? newLanguage.code : approveData.languageCode,
         };
 
-        console.log('Final approve data:', finalApproveData)
-
         if (!validateApproveData(finalApproveData)) {
             setLoading(false);
             return;
@@ -159,23 +157,17 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
 
             // Approve new language if necessary
             if ((typeof updatedTerm.language === 'string' && updatedTerm.language === 'Other' && newLanguage.name)) {
-                const data = await addLanguage(newLanguage.name, newLanguage.code, navigate);
-                console.log('New language data:', data)
+                const data = await addLanguage(newLanguage.name, newLanguage.code);
                 await approveLanguage(data._id, newLanguage.code);
             }
 
             if (typeof updatedTerm.language !== 'string') {
                 const languageId = (updatedTerm.language as Language)._id;
-                console.log('languageId', languageId)
                 await approveLanguage(languageId, finalApproveData.languageCode);
             }
 
 
-
-            console.log('Updated term language:', updatedTerm.languageCode)
-            console.log('Approve data:', finalApproveData);
-
-            await approveTerm(term._id, finalApproveData, navigate);
+            await approveTerm(term._id, finalApproveData);
             navigate('/dashboard');
         } catch (error) {
             console.error('Error submitting term', error);

@@ -24,7 +24,7 @@ const TermsPage: React.FC<TermsPageProps> = ({setSelectedTerm}) => {
             }
 
             try {
-                const data = await getAllTerms(navigate);
+                const data = await getAllTerms();
                 setTerms(data);
             } catch (error) {
                 console.error('Erreur de chargement des termes', error);
@@ -36,11 +36,11 @@ const TermsPage: React.FC<TermsPageProps> = ({setSelectedTerm}) => {
         if (!loading && user) {
             fetchTerms();
         }
-    }, [user, loading, navigate]);
+    }, [user, loading]);
 
     const handleApprove = async (termId: string, approveData: any) => {
         try {
-            await approveTerm(termId, approveData, navigate);
+            await approveTerm(termId, approveData);
             setTerms(terms.map(term => term._id === termId ? { ...term, status: 'approved' } : term));
             setSelectedTerm(null);
         } catch (error) {
@@ -50,7 +50,7 @@ const TermsPage: React.FC<TermsPageProps> = ({setSelectedTerm}) => {
 
     const handleReject = async (termId: string) => {
         try {
-            await rejectTerm(termId, navigate);
+            await rejectTerm(termId);
             setTerms(terms.map(term => term._id === termId ? { ...term, status: 'rejected' } : term));
         } catch (error) {
             console.error('Erreur de rejet du terme', error);

@@ -20,16 +20,16 @@ const TermDetails: React.FC = () => {
         const fetchTerm = async () => {
             if (id) {
                 try {
-                    const data = await getTermById(id, navigate);
+                    const data = await getTermById(id);
                     setTerm(data);
                 } catch (error) {
-                    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+                    handleAuthError(error as AxiosError<ErrorResponse>);
                 }
             }
         };
 
         fetchTerm();
-    }, [id, navigate]);
+    }, [id]);
 
     const handleAddComment = async () => {
         if (!commentText.trim()) return;
@@ -38,10 +38,10 @@ const TermDetails: React.FC = () => {
         setError(null);
 
         try {
-            await addComment(id!, { text: commentText, createdAt: new Date() }, navigate);
+            await addComment(id!, { text: commentText, createdAt: new Date() });
             setCommentText('');
             // Re-fetch the term to update the comments
-            const updatedTerm = await getTermById(id!, navigate);
+            const updatedTerm = await getTermById(id!);
             setTerm(updatedTerm);
         } catch (error) {
             console.error('Erreur lors de l\'ajout du commentaire', error);

@@ -16,7 +16,7 @@ const UsersPage: React.FC = () => {
             }
 
             try {
-                const data = await getUsers(navigate);
+                const data = await getUsers();
                 setUsers(data);
             } catch (error) {
                 console.error('Erreur de chargement des utilisateurs', error);
@@ -28,7 +28,7 @@ const UsersPage: React.FC = () => {
 
     const handlePromote = async (userId: string) => {
         try {
-            await promoteUser(userId, navigate);
+            await promoteUser(userId);
             // Mettre à jour la liste des utilisateurs après promotion
             setUsers(users.map(u => u._id === userId ? { ...u, role: 'admin' } : u));
         } catch (error) {
@@ -38,7 +38,7 @@ const UsersPage: React.FC = () => {
 
     const handleBan = async (userId: string) => {
         try {
-            await banUser(userId, navigate);
+            await banUser(userId);
             // Mettre à jour la liste des utilisateurs après bannissement
             setUsers(users.map(u => u._id === userId ? { ...u, banned: true } : u));
         } catch (error) {

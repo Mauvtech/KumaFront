@@ -1,43 +1,40 @@
 // src/services/languageService.ts
-import {publicApi, api} from "./api";
+import { publicApi, api } from "./api";
 import { AxiosError } from "axios";
 import { handleAuthError } from "../utils/handleAuthError";
 import { ErrorResponse } from "../utils/types";
 
-export const getAllLanguages = async (navigate: (path: string) => void) => {
+export const getAllLanguages = async () => {
   try {
     const response = await api.get("/languages");
     return response.data;
   } catch (error) {
-    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+    handleAuthError(error as AxiosError<ErrorResponse>);
   }
 };
 
-export const getLanguages = async (navigate: (path:string) => void) => {
-  try{
+export const getLanguages = async () => {
+  try {
     const response = await publicApi.get("/languages/approved");
-    return response.data
+    return response.data;
   } catch (error) {
-    handleAuthError(error as AxiosError<ErrorResponse>, navigate)
+    handleAuthError(error as AxiosError<ErrorResponse>);
   }
-}
+};
 
 export const addLanguage = async (
   name: string,
   code: string,
-  navigate: (path: string) => void
 ) => {
   try {
     const response = await api.post("/languages", { name, code });
     return response.data;
   } catch (error) {
-    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+    handleAuthError(error as AxiosError<ErrorResponse>);
   }
 };
 
-export const approveLanguage = async (languageId: string,code: string) => {
- const response = await api.post(`/languages/${languageId}/approve`, {code});
- console.log("je suis passé par approvelangue")
- console.log("response.data",response.data)
- return response.data;
+export const approveLanguage = async (languageId: string, code: string) => {
+  const response = await api.post(`/languages/${languageId}/approve`, { code });
+  return response.data;
 };

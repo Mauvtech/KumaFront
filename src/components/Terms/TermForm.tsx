@@ -45,9 +45,9 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const categoriesData = await getCategories(navigate);
-                const themesData = await getThemes(navigate);
-                const languagesData = await getLanguages(navigate);
+                const categoriesData = await getCategories();
+                const themesData = await getThemes();
+                const languagesData = await getLanguages();
                 setCategories([...categoriesData, { _id: 'other', name: 'Other' }]);
                 setThemeOptions([...themesData, { _id: 'other', name: 'Other' }]);
                 setLanguageOptions(Array.isArray(languagesData) ? [...languagesData, { _id: 'other', name: 'Other', code: '' }] : []);
@@ -104,9 +104,9 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
 
         try {
             if (termId) {
-                await updateTerm(termId, termData, navigate);
+                await updateTerm(termId, termData);
             } else {
-                await addTerm(termData, navigate);
+                await addTerm(termData);
             }
             navigate('/');
         } catch (error) {

@@ -44,6 +44,45 @@ const UpvoteIcon: React.FC<{ isUpvoted: boolean }> = ({ isUpvoted }) => (
     )
 );
 
+const TermItem: React.FC<{ term: Term; user: any; handleUpvote: (id: string) => void }> = ({ term, user, handleUpvote }) => {
+    const userVote = user ? (term.upvotedBy.includes(user._id) ? 'upvote' : term.downvotedBy.includes(user._id) ? 'downvote' : null) : null;
+
+    return (
+        <li className="flex flex-col justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff] transition-transform transform hover:scale-105">
+            <div>
+                <Link to={`/terms/${term._id}`}>
+                    <h3 className="text-xl font-bold text-gray-800">{term.term}</h3>
+                    <p className="text-gray-600">{term.translation}</p>
+                    <p className="text-gray-800">{term.definition}</p>
+                    {term.language && (
+                        <p className="text-gray-800">Language {term.language.name} ({term.language.code})</p>
+                    )}
+                </Link>
+            </div>
+            <div>
+                <div className="mt-2">
+                    <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full mr-2">
+                        {term.grammaticalCategory.name}
+                    </span>
+                    <span className="inline-block bg-green-200 text-green-800 text-xs px-2 rounded-full">
+                        {term.theme.name}
+                    </span>
+                </div>
+                {user && (
+                    <div className="mt-4 flex justify-between items-center">
+                        <button
+                            onClick={() => handleUpvote(term._id)}
+                            className={`text-3xl rounded-md hover:bg-green-200 focus:outline-none transition duration-200 ${userVote === 'upvote' ? 'text-green-600' : ''}`}
+                        >
+                            <UpvoteIcon isUpvoted={userVote === 'upvote'} />
+                        </button>
+                    </div>
+                )}
+            </div>
+        </li>
+    );
+};
+
 function HomePage() {
     const { user } = useAuth();
     const [terms, setTerms] = useState<Term[]>([]);
@@ -63,7 +102,7 @@ function HomePage() {
     const fetchApprovedTerms = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await getApprovedTerms(navigate, {
+            const data = await getApprovedTerms( {
                 category: selectedCategory,
                 theme: selectedTheme,
                 language: selectedLanguage,
@@ -71,13 +110,12 @@ function HomePage() {
                 page: currentPage,
                 limit: termsPerPage,
             });
-            console.log('Response data:', data); // Ajoutez cette ligne pour vérifier la réponse
             if (data && data.terms) {
                 setTerms(data.terms);
                 setFilteredTerms(data.terms);
             }
         } catch (error) {
-            handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+            handleAuthError(error as AxiosError<ErrorResponse>);
         } finally {
             setLoading(false);
         }
@@ -86,7 +124,7 @@ function HomePage() {
     const fetchCategories = useCallback(async () => {
         setLoading(true);
         try {
-            const categoriesData = await getCategories(navigate);
+            const categoriesData = await getCategories();
             setCategories(categoriesData.filter((category: Category) => category.isApproved));
         } catch (error) {
             console.error('Erreur de chargement des catégories', error);
@@ -98,7 +136,7 @@ function HomePage() {
     const fetchThemes = useCallback(async () => {
         setLoading(true);
         try {
-            const themesData = await getThemes(navigate);
+            const themesData = await getThemes();
             setThemes(themesData.filter((theme: Theme) => theme.isApproved));
         } catch (error) {
             console.error('Erreur de chargement des thèmes', error);
@@ -110,8 +148,7 @@ function HomePage() {
     const fetchLanguages = useCallback(async () => {
         setLoading(true);
         try {
-            const languagesData = await getLanguages(navigate);
-            console.log('Fetched languages:', languagesData); // Ajoutez cette ligne pour vérifier les langues
+            const languagesData = await getLanguages();
             setLanguages(languagesData.filter((language: Language) => language.isApproved));
         } catch (error) {
             console.error('Erreur de chargement des langues', error);
@@ -151,8 +188,20 @@ function HomePage() {
 
     const handleUpvote = async (id: string) => {
         try {
-            await upvoteTerm(id, navigate);
-            fetchApprovedTerms();
+            await upvoteTerm(id);
+            setTerms(prevTerms =>
+                prevTerms.map(term => {
+                    if (term._id === id) {
+                        const isUpvoted = term.upvotedBy.includes(user!._id);
+                        const upvotedBy = isUpvoted
+                            ? term.upvotedBy.filter(userId => userId !== user!._id)
+                            : [...term.upvotedBy, user!._id];
+                        const downvotedBy = term.downvotedBy.filter(userId => userId !== user!._id);
+                        return { ...term, upvotedBy, downvotedBy };
+                    }
+                    return term;
+                })
+            );
         } catch (error) {
             console.error('Erreur lors de l\'upvote', error);
         }
@@ -208,44 +257,9 @@ function HomePage() {
                 <p className="text-center text-gray-500">No terms found.</p>
             ) : (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {currentTerms.map((term) => {
-                        const userVote = user ? (term.upvotedBy.includes(user._id) ? 'upvote' : term.downvotedBy.includes(user._id) ? 'downvote' : null) : null;
-                        return (
-                            <li key={term._id} className="flex flex-col justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff] transition-transform transform hover:scale-105">
-                                <div>
-                                    <Link to={`/terms/${term._id}`}>
-                                        <h3 className="text-xl font-bold text-gray-800">{term.term}</h3>
-                                        <p className="text-gray-600">{term.translation}</p>
-                                        <p className="text-gray-800">{term.definition}</p>
-                                        {term.language && (
-                                            <p className="text-gray-800">Language {term.language.name} ({term.language.code})</p>
-                                        )}
-                                    </Link>
-                                </div>
-                                <div>
-                                    <div className="mt-2">
-                                        <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full mr-2">
-                                            {term.grammaticalCategory.name}
-                                        </span>
-                                        <span className="inline-block bg-green-200 text-green-800 text-xs px-2 rounded-full">
-                                            {term.theme.name}
-                                        </span>
-                                    </div>
-                                    {user && (
-                                        <div className="mt-4 flex justify-between items-center">
-                                            <button
-                                                onClick={() => handleUpvote(term._id)}
-                                                className={`text-3xl rounded-md hover:bg-green-200 focus:outline-none transition duration-200 ${userVote === 'upvote' ? ' text-green-600' : ''
-                                                    }`}
-                                            >
-                                                <UpvoteIcon isUpvoted={userVote === 'upvote'} />
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            </li>
-                        );
-                    })}
+                    {currentTerms.map((term) => (
+                        <TermItem key={term._id} term={term} user={user} handleUpvote={handleUpvote} />
+                    ))}
                 </ul>
             )}
             <Pagination termsPerPage={termsPerPage} totalTerms={terms.length} paginate={paginate} />

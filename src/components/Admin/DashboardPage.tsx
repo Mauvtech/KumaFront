@@ -18,7 +18,7 @@ const DashboardPage: React.FC = () => {
             }
 
             try {
-                const data = await getStats(navigate);
+                const data = await getStats();
                 setStats(data);
             } catch (error) {
                 console.error('Erreur de chargement des statistiques', error);

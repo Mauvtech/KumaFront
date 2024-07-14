@@ -24,18 +24,18 @@ const PendingTermsPage: React.FC = () => {
             }
 
             try {
-                const response = await getPendingTerms(navigate);
+                const response = await getPendingTerms();
                 setTerms(response);
             } catch (error) {
                 console.error('Erreur de chargement des termes en attente', error);
                 if (error instanceof AxiosError) {
-                    handleAuthError(error, navigate);
+                    handleAuthError(error);
                 }
             }
         };
 
         fetchTerms();
-    }, [user.token, navigate]);
+    }, [user.token]);
 
     const handleApprove = async (termId: string) => {
         try {
@@ -47,12 +47,12 @@ const PendingTermsPage: React.FC = () => {
                 theme
             };
 
-            await approveTerm(termId, approveData, navigate);
+            await approveTerm(termId, approveData);
             setTerms(terms.filter((term: any) => term._id !== termId));
         } catch (error) {
             console.error('Erreur d\'approbation du terme', error);
             if (error instanceof AxiosError) {
-                handleAuthError(error, navigate);
+                handleAuthError(error);
             }
         } finally {
             setLoading(false);
@@ -62,12 +62,12 @@ const PendingTermsPage: React.FC = () => {
     const handleReject = async (termId: string) => {
         try {
             setLoading(true);
-            await rejectTerm(termId, navigate);
+            await rejectTerm(termId);
             setTerms(terms.filter((term: any) => term._id !== termId));
         } catch (error) {
             console.error('Erreur de rejet du terme', error);
             if (error instanceof AxiosError) {
-                handleAuthError(error, navigate);
+                handleAuthError(error);
             }
         } finally {
             setLoading(false);
