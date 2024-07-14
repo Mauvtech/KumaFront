@@ -17,7 +17,7 @@ const UpdateProfile: React.FC = () => {
         setError(null);
 
         try {
-            const updatedUser = await updateUserProfile({ username, password }, navigate);
+            const updatedUser = await updateUserProfile({ username, password });
             setUser(updatedUser); // Mettre à jour le contexte utilisateur avec les nouvelles informations
             logout();
         } catch (error) {

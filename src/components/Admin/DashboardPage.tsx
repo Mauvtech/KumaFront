@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getStats } from '../../services/statsService';
 import { useAuth } from '../../contexts/authContext';
 import { Link, useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const DashboardPage: React.FC = () => {
     const [stats, setStats] = useState<any>(null);
@@ -16,7 +18,7 @@ const DashboardPage: React.FC = () => {
             }
 
             try {
-                const data = await getStats(navigate);
+                const data = await getStats();
                 setStats(data);
             } catch (error) {
                 console.error('Erreur de chargement des statistiques', error);
@@ -29,7 +31,19 @@ const DashboardPage: React.FC = () => {
     }, [user, loading, navigate]);
 
     if (loading || !stats) {
-        return <p>Chargement...</p>;
+        return (
+            <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
+                <h2 className="text-3xl font-bold mb-6 text-gray-800">Dashboard</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Array(6).fill("Number").map((_, index) => (
+                        <div key={index} className="p-4 bg-blue-200 rounded-lg shadow-[3px_3px_6px_#b0c4de,-3px_-3px_6px_#ffffff]">
+                            <h3 className="text-lg font-bold text-gray-800"><Skeleton width={100} /></h3>
+                            <p className="text-2xl text-gray-700"><Skeleton width={50} /></p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
     }
 
     const isAdmin = user?.role === 'admin';

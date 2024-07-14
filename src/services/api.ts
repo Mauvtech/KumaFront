@@ -14,7 +14,6 @@ if (!apiBaseURL) {
   throw new Error("API base URL not defined in environment variables");
 }
 
-console.log("API Base URL:", apiBaseURL);
 
 export const api = axios.create({
   baseURL: apiBaseURL,

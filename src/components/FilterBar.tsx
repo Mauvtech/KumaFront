@@ -7,7 +7,7 @@ interface FilterBarProps {
     onFilterChange: (filters: { category: string; theme: string; language: string }) => void;
 }
 
-const FilterBar: React.FC<FilterBarProps> = ({ categories, themes, languages, onFilterChange }) => {
+function FilterBar ({ categories, themes, languages, onFilterChange }:FilterBarProps) {
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedTheme, setSelectedTheme] = useState('');
     const [selectedLanguage, setSelectedLanguage] = useState('');

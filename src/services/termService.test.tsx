@@ -1,7 +1,7 @@
 import { api, publicApi } from './api';
 import { AxiosError } from 'axios';
 import { handleAuthError } from '../utils/handleAuthError';
-import { addTerm, getAllTerms, getApprovedTerms, getPendingTerms, getTermById, updateTerm, deleteTerm, approveTerm, rejectTerm, upvoteTerm, downvoteTerm, addComment, addTag } from './termService';
+import { addTerm, getAllTerms, getPendingTerms, getTermById, updateTerm, deleteTerm, approveTerm, rejectTerm, upvoteTerm, downvoteTerm, addComment, addTag } from './termService';
 
 // Mock the api and publicApi objects
 jest.mock('./api', () => ({
@@ -21,7 +21,7 @@ jest.mock('../utils/handleAuthError', () => ({
     handleAuthError: jest.fn()
 }));
 
-const mockNavigate = jest.fn();
+
 
 describe('termService', () => {
     beforeEach(() => {
@@ -33,7 +33,7 @@ describe('termService', () => {
             const termData = { term: 'Test', definition: 'Test Definition', grammaticalCategory: 'Noun', theme: 'Test Theme' };
             (api.post as jest.Mock).mockResolvedValue({ data: termData });
 
-            const result = await addTerm(termData, mockNavigate);
+            const result = await addTerm(termData);
 
             expect(api.post).toHaveBeenCalledWith('/terms', termData);
             expect(result).toEqual(termData);
@@ -44,9 +44,9 @@ describe('termService', () => {
             const error = new AxiosError('Error');
             (api.post as jest.Mock).mockRejectedValue(error);
 
-            await addTerm(termData, mockNavigate);
+            await addTerm(termData);
 
-            expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
+            expect(handleAuthError).toHaveBeenCalledWith(error);
         });
     });
 
@@ -55,7 +55,7 @@ describe('termService', () => {
             const terms = [{ term: 'Test', definition: 'Test Definition' }];
             (api.get as jest.Mock).mockResolvedValue({ data: terms });
 
-            const result = await getAllTerms(mockNavigate);
+            const result = await getAllTerms();
 
             expect(api.get).toHaveBeenCalledWith('/terms');
             expect(result).toEqual(terms);
@@ -65,9 +65,9 @@ describe('termService', () => {
             const error = new AxiosError('Error');
             (api.get as jest.Mock).mockRejectedValue(error);
 
-            await getAllTerms(mockNavigate);
+            await getAllTerms();
 
-            expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
+            expect(handleAuthError).toHaveBeenCalledWith(error);
         });
     });
 
@@ -77,7 +77,7 @@ describe('termService', () => {
     //         const terms = [{ term: 'Test', definition: 'Test Definition' }];
     //         (publicApi.get as jest.Mock).mockResolvedValue({ data: terms });
 
-    //         const result = await getApprovedTerms(mockNavigate);
+    //         const result = await getApprovedTerms();
 
     //         expect(publicApi.get).toHaveBeenCalledWith('/terms/approved');
     //         expect(result).toEqual(terms);
@@ -87,9 +87,9 @@ describe('termService', () => {
     //         const error = new AxiosError('Error');
     //         (publicApi.get as jest.Mock).mockRejectedValue(error);
 
-    //         await getApprovedTerms(mockNavigate);
+    //         await getApprovedTerms();
 
-    //         expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
+    //         expect(handleAuthError).toHaveBeenCalledWith(error);
     //     });
     // });
 
@@ -98,7 +98,7 @@ describe('termService', () => {
             const terms = [{ term: 'Test', definition: 'Test Definition' }];
             (api.get as jest.Mock).mockResolvedValue({ data: terms });
 
-            const result = await getPendingTerms(mockNavigate);
+            const result = await getPendingTerms();
 
             expect(api.get).toHaveBeenCalledWith('/terms/pending');
             expect(result).toEqual(terms);
@@ -108,9 +108,9 @@ describe('termService', () => {
             const error = new AxiosError('Error');
             (api.get as jest.Mock).mockRejectedValue(error);
 
-            await getPendingTerms(mockNavigate);
+            await getPendingTerms();
 
-            expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
+            expect(handleAuthError).toHaveBeenCalledWith(error);
         });
     });
 
@@ -119,7 +119,7 @@ describe('termService', () => {
             const term = { term: 'Test', definition: 'Test Definition' };
             (publicApi.get as jest.Mock).mockResolvedValue({ data: term });
 
-            const result = await getTermById('1', mockNavigate);
+            const result = await getTermById('1');
 
             expect(publicApi.get).toHaveBeenCalledWith('/terms/1');
             expect(result).toEqual(term);
@@ -129,9 +129,9 @@ describe('termService', () => {
             const error = new AxiosError('Error');
             (publicApi.get as jest.Mock).mockRejectedValue(error);
 
-            await getTermById('1', mockNavigate);
+            await getTermById('1');
 
-            expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
+            expect(handleAuthError).toHaveBeenCalledWith(error);
         });
     });
 
@@ -140,7 +140,7 @@ describe('termService', () => {
             const termData = { term: 'Test', definition: 'Test Definition', grammaticalCategory: 'Noun', theme: 'Test Theme' };
             (api.put as jest.Mock).mockResolvedValue({ data: termData });
 
-            const result = await updateTerm('1', termData, mockNavigate);
+            const result = await updateTerm('1', termData);
 
             expect(api.put).toHaveBeenCalledWith('/terms/1', termData);
             expect(result).toEqual(termData);
@@ -151,9 +151,9 @@ describe('termService', () => {
             const error = new AxiosError('Error');
             (api.put as jest.Mock).mockRejectedValue(error);
 
-            await updateTerm('1', termData, mockNavigate);
+            await updateTerm('1', termData);
 
-            expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
+            expect(handleAuthError).toHaveBeenCalledWith(error);
         });
     });
 
@@ -162,7 +162,7 @@ describe('termService', () => {
             const response = { message: 'Deleted successfully' };
             (api.delete as jest.Mock).mockResolvedValue({ data: response });
 
-            const result = await deleteTerm('1', mockNavigate);
+            const result = await deleteTerm('1');
 
             expect(api.delete).toHaveBeenCalledWith('/terms/1');
             expect(result).toEqual(response);
@@ -172,9 +172,9 @@ describe('termService', () => {
             const error = new AxiosError('Error');
             (api.delete as jest.Mock).mockRejectedValue(error);
 
-            await deleteTerm('1', mockNavigate);
+            await deleteTerm('1');
 
-            expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
+            expect(handleAuthError).toHaveBeenCalledWith(error);
         });
     });
 
@@ -184,7 +184,7 @@ describe('termService', () => {
             const response = { message: 'Approved successfully' };
             (api.post as jest.Mock).mockResolvedValue({ data: response });
 
-            const result = await approveTerm('1', approveData, mockNavigate);
+            const result = await approveTerm('1', approveData);
 
             expect(api.post).toHaveBeenCalledWith('/terms/1/approve', approveData);
             expect(result).toEqual(response);
@@ -195,9 +195,9 @@ describe('termService', () => {
             const error = new AxiosError('Error');
             (api.post as jest.Mock).mockRejectedValue(error);
 
-            await approveTerm('1', approveData, mockNavigate);
+            await approveTerm('1', approveData);
 
-            expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
+            expect(handleAuthError).toHaveBeenCalledWith(error);
         });
     });
 
@@ -206,7 +206,7 @@ describe('termService', () => {
             const response = { message: 'Rejected successfully' };
             (api.post as jest.Mock).mockResolvedValue({ data: response });
 
-            const result = await rejectTerm('1', mockNavigate);
+            const result = await rejectTerm('1');
 
             expect(api.post).toHaveBeenCalledWith('/terms/1/reject');
             expect(result).toEqual(response);
@@ -216,9 +216,9 @@ describe('termService', () => {
             const error = new AxiosError('Error');
             (api.post as jest.Mock).mockRejectedValue(error);
 
-            await rejectTerm('1', mockNavigate);
+            await rejectTerm('1');
 
-            expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
+            expect(handleAuthError).toHaveBeenCalledWith(error);
         });
     });
 
@@ -227,7 +227,7 @@ describe('termService', () => {
             const response = { message: 'Upvoted successfully' };
             (api.post as jest.Mock).mockResolvedValue({ data: response });
 
-            const result = await upvoteTerm('1', mockNavigate);
+            const result = await upvoteTerm('1');
 
             expect(api.post).toHaveBeenCalledWith('/terms/1/upvote');
             expect(result).toEqual(response);
@@ -237,9 +237,9 @@ describe('termService', () => {
             const error = new AxiosError('Error');
             (api.post as jest.Mock).mockRejectedValue(error);
 
-            await upvoteTerm('1', mockNavigate);
+            await upvoteTerm('1');
 
-            expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
+            expect(handleAuthError).toHaveBeenCalledWith(error);
         });
     });
 
@@ -248,7 +248,7 @@ describe('termService', () => {
             const response = { message: 'Downvoted successfully' };
             (api.post as jest.Mock).mockResolvedValue({ data: response });
 
-            const result = await downvoteTerm('1', mockNavigate);
+            const result = await downvoteTerm('1');
 
             expect(api.post).toHaveBeenCalledWith('/terms/1/downvote');
             expect(result).toEqual(response);
@@ -258,9 +258,9 @@ describe('termService', () => {
             const error = new AxiosError('Error');
             (api.post as jest.Mock).mockRejectedValue(error);
 
-            await downvoteTerm('1', mockNavigate);
+            await downvoteTerm('1');
 
-            expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
+            expect(handleAuthError).toHaveBeenCalledWith(error);
         });
     });
 
@@ -270,7 +270,7 @@ describe('termService', () => {
             const response = { message: 'Comment added successfully' };
             (api.post as jest.Mock).mockResolvedValue({ data: response });
 
-            const result = await addComment('1', commentData, mockNavigate);
+            const result = await addComment('1', commentData);
 
             expect(api.post).toHaveBeenCalledWith('/terms/1/comment', commentData);
             expect(result).toEqual(response);
@@ -281,9 +281,9 @@ describe('termService', () => {
             const error = new AxiosError('Error');
             (api.post as jest.Mock).mockRejectedValue(error);
 
-            await addComment('1', commentData, mockNavigate);
+            await addComment('1', commentData);
 
-            expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
+            expect(handleAuthError).toHaveBeenCalledWith(error);
         });
     });
 
@@ -293,7 +293,7 @@ describe('termService', () => {
             const response = { message: 'Tag added successfully' };
             (api.post as jest.Mock).mockResolvedValue({ data: response });
 
-            const result = await addTag('1', tagData, mockNavigate);
+            const result = await addTag('1', tagData);
 
             expect(api.post).toHaveBeenCalledWith('/terms/1/tag', tagData);
             expect(result).toEqual(response);
@@ -304,9 +304,9 @@ describe('termService', () => {
             const error = new AxiosError('Error');
             (api.post as jest.Mock).mockRejectedValue(error);
 
-            await addTag('1', tagData, mockNavigate);
+            await addTag('1', tagData);
 
-            expect(handleAuthError).toHaveBeenCalledWith(error, mockNavigate);
+            expect(handleAuthError).toHaveBeenCalledWith(error);
         });
     });
 });

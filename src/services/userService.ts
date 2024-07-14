@@ -4,56 +4,56 @@ import { AxiosError } from "axios";
 import { handleAuthError } from "../utils/handleAuthError";
 import { ErrorResponse } from "../utils/types";
 
-export const getUserProfile = async (navigate: (path: string) => void) => {
+export const getUserProfile = async () => {
   try {
     const response = await api.get("/users/me");
     return response.data;
   } catch (error) {
-    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+    handleAuthError(error as AxiosError<ErrorResponse>);
   }
 };
 
-export const getUsers = async (navigate: (path: string) => void) => {
+export const getUsers = async () => {
   try {
     const response = await api.get("/users");
     return response.data;
   } catch (error) {
-    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+    handleAuthError(error as AxiosError<ErrorResponse>);
   }
 };
 
 export const updateUserProfile = async (
   userData: { username?: string; password?: string },
-  navigate: (path: string) => void
+  
 ) => {
   try {
     const response = await api.put("/users/me", userData);
     return response.data;
   } catch (error) {
-    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+    handleAuthError(error as AxiosError<ErrorResponse>);
   }
 };
 
 export const banUser = async (
   userId: string,
-  navigate: (path: string) => void
+  
 ) => {
   try {
     const response = await api.post(`/users/${userId}/ban`);
     return response.data;
   } catch (error) {
-    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+    handleAuthError(error as AxiosError<ErrorResponse>);
   }
 };
 
 export const promoteUser = async (
   userId: string,
-  navigate: (path: string) => void
+  
 ) => {
   try {
     const response = await api.post(`/users/promote/admin/${userId}`);
     return response.data;
   } catch (error) {
-    handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+    handleAuthError(error as AxiosError<ErrorResponse>);
   }
 };
