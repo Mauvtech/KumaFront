@@ -11,7 +11,7 @@ const FlashcardSerieParams: React.FC = () => {
 
     return (
         <div className="max-w-3xl mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Set Quiz Parameters</h2>
+            <h2 className="text-2xl font-bold mb-4">Set Quiz Parameters </h2>
             <label className="block mb-2 text-lg">Number of Questions</label>
             <input
                 type="number"
