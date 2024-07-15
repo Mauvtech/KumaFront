@@ -4,6 +4,8 @@ import { handleAuthError } from '../../utils/handleAuthError';
 import { AxiosError } from 'axios';
 import { Term } from '../../models/termModel';
 import { useLocation } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 
 const QuizPage: React.FC = () => {
@@ -14,6 +16,7 @@ const QuizPage: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
+    const [loading, setLoading] = useState(true);
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const numberOfQuestions = Number(queryParams.get('questions')) || 10;
@@ -32,6 +35,8 @@ const QuizPage: React.FC = () => {
             } else {
                 console.error('Unexpected error:', error);
             }
+        } finally {
+            setLoading(false);
         }
     }, [numberOfQuestions]);
 
@@ -96,6 +101,7 @@ const QuizPage: React.FC = () => {
 
     const handleFlip = () => {
         if (isAnimating) return;
+        setIsAnimating(true);
         setTimeout(() => {
             setIsFlipped(!isFlipped);
             setIsAnimating(false);
@@ -140,7 +146,23 @@ const QuizPage: React.FC = () => {
                     </div>
                 </div>
             ) : (
-                <p className="text-center text-gray-500">Loading...</p>
+                <div className="relative flex flex-col items-center">
+                    <div
+                        className={`flip-card-inner ${isAnimating ? 'animate-slide' : ''}`}
+                        style={{ width: '300px', height: '400px' }}
+                    >
+                        <div className="flip-card-front flex justify-center items-center w-full h-full bg-white shadow-md rounded-lg p-4">
+                            <Skeleton height={30} width="80%" />
+                        </div>
+                        <div className="flip-card-back flex justify-center items-center w-full h-full bg-white shadow-md rounded-lg p-4">
+                            <Skeleton height={30} width="80%" />
+                        </div>
+                    </div>
+                    <div className="mt-4 flex justify-between w-full px-6">
+                        <Skeleton height={40} width={100} />
+                        <Skeleton height={40} width={100} />
+                    </div>
+                </div>
             )}
         </div>
     );
