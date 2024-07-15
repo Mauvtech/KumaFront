@@ -29,12 +29,13 @@ function HomePage() {
     const [selectedLanguage, setSelectedLanguage] = useState<string>('');
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [termsLoading, setTermsLoading] = useState<boolean>(true);
+    const [filtersLoading, setFiltersLoading] = useState<boolean>(true);
     const termsPerPage: number = 10;
     const navigate = useNavigate();
 
     const fetchApprovedTerms = useCallback(async () => {
-        setLoading(true);
+        setTermsLoading(true);
         try {
             const data = await getApprovedTerms({
                 category: selectedCategory,
@@ -51,51 +52,51 @@ function HomePage() {
         } catch (error) {
             handleAuthError(error as AxiosError<ErrorResponse>);
         } finally {
-            setLoading(false);
+            setTermsLoading(false);
         }
     }, [selectedCategory, selectedTheme, selectedLanguage, searchTerm, currentPage]);
 
     const fetchCategories = useCallback(async () => {
-        setLoading(true);
+        setFiltersLoading(true);
         try {
             const categoriesData = await getCategories();
             setCategories(categoriesData.filter((category: Category) => category.isApproved));
         } catch (error) {
             console.error('Erreur de chargement des catégories', error);
         } finally {
-            setLoading(false);
+            setFiltersLoading(false);
         }
     }, []);
 
     const fetchThemes = useCallback(async () => {
-        setLoading(true);
+        setFiltersLoading(true);
         try {
             const themesData = await getThemes();
             setThemes(themesData.filter((theme: Theme) => theme.isApproved));
         } catch (error) {
             console.error('Erreur de chargement des thèmes', error);
         } finally {
-            setLoading(false);
+            setFiltersLoading(false);
         }
     }, []);
 
     const fetchLanguages = useCallback(async () => {
-        setLoading(true);
+        setFiltersLoading(true);
         try {
             const languagesData = await getLanguages();
             setLanguages(languagesData.filter((language: Language) => language.isApproved));
         } catch (error) {
             console.error('Erreur de chargement des langues', error);
         } finally {
-            setLoading(false);
+            setFiltersLoading(false);
         }
     }, []);
 
     useEffect(() => {
-        fetchApprovedTerms();
         fetchCategories();
         fetchThemes();
         fetchLanguages();
+        fetchApprovedTerms();
     }, [fetchApprovedTerms, fetchCategories, fetchThemes, fetchLanguages]);
 
     useEffect(() => {
@@ -209,23 +210,23 @@ function HomePage() {
                 options={categories.map(cat => cat.name)}
                 selectedOption={selectedCategory}
                 onSelectOption={(option) => setSelectedCategory(option === selectedCategory ? '' : option)}
-                loading={loading}
+                loading={filtersLoading}
             />
             <FilterButtons
                 title="Themes"
                 options={themes.map(theme => theme.name)}
                 selectedOption={selectedTheme}
                 onSelectOption={(option) => setSelectedTheme(option === selectedTheme ? '' : option)}
-                loading={loading}
+                loading={filtersLoading}
             />
             <FilterButtons
                 title="Languages"
                 options={languages.map(lang => lang.name)}
                 selectedOption={selectedLanguage}
                 onSelectOption={(option) => setSelectedLanguage(option === selectedLanguage ? '' : option)}
-                loading={loading}
+                loading={filtersLoading}
             />
-            {loading ? (
+            {termsLoading ? (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {Array.from({ length: termsPerPage }).map((_, index) => (
                         <li key={index} className="flex flex-col justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
