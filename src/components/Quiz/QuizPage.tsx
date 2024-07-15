@@ -5,9 +5,12 @@ import { AxiosError } from 'axios';
 import { Term } from '../../models/termModel';
 import { useLocation } from 'react-router-dom';
 
+
 const QuizPage: React.FC = () => {
     const [flashcardIds, setFlashcardIds] = useState<string[]>([]);
     const [currentFlashcard, setCurrentFlashcard] = useState<Term | null>(null);
+    const [nextFlashcard, setNextFlashcard] = useState<Term | null>(null);
+    const [prevFlashcard, setPrevFlashcard] = useState<Term | null>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -20,7 +23,8 @@ const QuizPage: React.FC = () => {
             const ids = await getQuiz(numberOfQuestions.toString());
             if (ids) {
                 setFlashcardIds(ids);
-                fetchFlashcard(ids[0]);
+                fetchFlashcard(ids[0], setCurrentFlashcard);
+                if (ids.length > 1) fetchFlashcard(ids[1], setNextFlashcard);
             }
         } catch (error) {
             if (error instanceof AxiosError) {
@@ -29,12 +33,12 @@ const QuizPage: React.FC = () => {
                 console.error('Unexpected error:', error);
             }
         }
-    }, []);
+    }, [numberOfQuestions]);
 
-    const fetchFlashcard = useCallback(async (id: string) => {
+    const fetchFlashcard = useCallback(async (id: string, setState: React.Dispatch<React.SetStateAction<Term | null>>) => {
         try {
             const flashcard = await getFlashcardById(id);
-            setCurrentFlashcard(flashcard);
+            setState(flashcard);
         } catch (error) {
             if (error instanceof AxiosError) {
                 handleAuthError(error);
@@ -49,33 +53,54 @@ const QuizPage: React.FC = () => {
     }, [fetchQuiz]);
 
     const handleNext = () => {
+        if (isAnimating) return;
+
         setIsAnimating(true);
         setTimeout(() => {
             const nextIndex = currentIndex + 1;
-            if (nextIndex < flashcardIds.length) {
-                setCurrentIndex(nextIndex);
-                fetchFlashcard(flashcardIds[nextIndex]);
-                setIsFlipped(false);
-                setIsAnimating(false);
+            setCurrentIndex(nextIndex);
+            setCurrentFlashcard(nextFlashcard);
+            setNextFlashcard(null);
+            setIsFlipped(false);
+            setIsAnimating(false);
+
+            if (nextIndex + 1 < flashcardIds.length) {
+                fetchFlashcard(flashcardIds[nextIndex + 1], setNextFlashcard);
+            }
+            if (nextIndex - 1 >= 0) {
+                fetchFlashcard(flashcardIds[nextIndex - 1], setPrevFlashcard);
             }
         }, 300);
     };
 
     const handlePrevious = () => {
+        if (isAnimating) return;
+
         setIsAnimating(true);
         setTimeout(() => {
             const prevIndex = currentIndex - 1;
-            if (prevIndex >= 0) {
-                setCurrentIndex(prevIndex);
-                fetchFlashcard(flashcardIds[prevIndex]);
-                setIsFlipped(false);
-                setIsAnimating(false);
+            setCurrentIndex(prevIndex);
+            setCurrentFlashcard(prevFlashcard);
+            setPrevFlashcard(null);
+            setIsFlipped(false);
+            setIsAnimating(false);
+
+            if (prevIndex - 1 >= 0) {
+                fetchFlashcard(flashcardIds[prevIndex - 1], setPrevFlashcard);
+            }
+            if (prevIndex + 1 < flashcardIds.length) {
+                fetchFlashcard(flashcardIds[prevIndex + 1], setNextFlashcard);
             }
         }, 300);
     };
 
     const handleFlip = () => {
-        setIsFlipped(!isFlipped);
+        if (isAnimating) return;
+        setIsAnimating(true);
+        setTimeout(() => {
+            setIsFlipped(!isFlipped);
+            setIsAnimating(false);
+        }, 300);
     };
 
     return (
@@ -102,14 +127,14 @@ const QuizPage: React.FC = () => {
                         <button
                             onClick={handlePrevious}
                             className="px-4 py-2 bg-gray-200 text-gray-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
-                            disabled={currentIndex === 0}
+                            disabled={currentIndex === 0 || isAnimating}
                         >
                             Previous
                         </button>
                         <button
                             onClick={handleNext}
                             className="px-4 py-2 bg-gray-200 text-gray-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
-                            disabled={currentIndex === flashcardIds.length - 1}
+                            disabled={currentIndex === flashcardIds.length - 1 || isAnimating}
                         >
                             Next
                         </button>
