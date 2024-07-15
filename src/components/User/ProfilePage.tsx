@@ -144,14 +144,13 @@ const ProfilePage: React.FC = () => {
     }
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-gray-200 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
-            <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">User Profile</h2>
-            <div className="space-y-6">
-                <div className="p-4 bg-gray-200 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
+        <div className="max-w-7xl mx-auto mt-10 p-6 flex flex-col bg-gray-200 justify-center items-center rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
+            <div className="space-y-6 flex flex-col w-1/3 text-center">
+                <div className="p-4 bg-gray-200 w-full rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
                     <span className="block text-lg font-semibold text-gray-700">Username</span>
                     <span className="block mt-2 text-xl text-gray-900">{userProfile.username}</span>
                 </div>
-                <div className="p-4 bg-gray-200 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
+                <div className="p-4 bg-gray-200 rounded-lg w-full shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
                     <span className="block text-lg font-semibold text-gray-700">Role</span>
                     <span className="block mt-2 text-xl text-gray-900">{userProfile.role}</span>
                 </div>
@@ -162,10 +161,10 @@ const ProfilePage: React.FC = () => {
                     Modify profile
                 </button>
             </div>
-            <div className="mt-10">
+            <div className="mt-10 w-full">
                 <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">Bookmarked Terms</h3>
                 {bookmarksLoading ? (
-                    <ul>
+                    <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {Array.from({ length: termsPerPage }).map((_, index) => (
                             <li key={index} className="flex flex-col justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
                                 <Skeleton height={30} width="80%" />
@@ -182,7 +181,7 @@ const ProfilePage: React.FC = () => {
                 ) : bookmarkedTerms.length === 0 ? (
                     <p className="text-center text-gray-500">No bookmarks found.</p>
                 ) : (
-                    <ul>
+                    <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {bookmarkedTerms.map(term => (
                             <TermItem
                                 key={term._id}
