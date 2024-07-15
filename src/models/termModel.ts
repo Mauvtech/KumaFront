@@ -12,6 +12,7 @@ export interface Term {
   language: Language;
   status: string;
   isApproved: boolean;
+  bookmarkedBy: string[];
   comments?: Array<{ author: string; text: string; createdAt: Date }>;
   upvotedBy: string[];
   downvotedBy: string[];

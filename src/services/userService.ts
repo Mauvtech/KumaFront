@@ -24,7 +24,7 @@ export const getUsers = async () => {
 
 export const updateUserProfile = async (
   userData: { username?: string; password?: string },
-  
+
 ) => {
   try {
     const response = await api.put("/users/me", userData);
@@ -34,9 +34,10 @@ export const updateUserProfile = async (
   }
 };
 
+
 export const banUser = async (
   userId: string,
-  
+
 ) => {
   try {
     const response = await api.post(`/users/${userId}/ban`);
@@ -48,7 +49,7 @@ export const banUser = async (
 
 export const promoteUser = async (
   userId: string,
-  
+
 ) => {
   try {
     const response = await api.post(`/users/promote/admin/${userId}`);

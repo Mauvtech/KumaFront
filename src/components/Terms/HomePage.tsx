@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { downvoteTerm, getApprovedTerms, upvoteTerm } from '../../services/termService';
+import { downvoteTerm, getApprovedTerms, upvoteTerm, bookmarkTerm, unbookmarkTerm } from '../../services/termService';
 import { getCategories } from '../../services/categoryService';
 import { getThemes } from '../../services/themeService';
 import { getLanguages } from '../../services/languageService';
@@ -17,8 +17,6 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import TermItem from './TermItem';
 
-
-
 function HomePage() {
     const { user } = useAuth();
     const [terms, setTerms] = useState<Term[]>([]);
@@ -32,7 +30,6 @@ function HomePage() {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [loading, setLoading] = useState<boolean>(true);
-    const [votes, setVotes] = useState< { upvotes: number; downvotes: number } >();
     const termsPerPage: number = 10;
     const navigate = useNavigate();
 
@@ -56,7 +53,7 @@ function HomePage() {
         } finally {
             setLoading(false);
         }
-    }, [navigate, selectedCategory, selectedTheme, selectedLanguage, searchTerm, currentPage]);
+    }, [selectedCategory, selectedTheme, selectedLanguage, searchTerm, currentPage]);
 
     const fetchCategories = useCallback(async () => {
         setLoading(true);
@@ -68,7 +65,7 @@ function HomePage() {
         } finally {
             setLoading(false);
         }
-    }, [navigate]);
+    }, []);
 
     const fetchThemes = useCallback(async () => {
         setLoading(true);
@@ -80,7 +77,7 @@ function HomePage() {
         } finally {
             setLoading(false);
         }
-    }, [navigate]);
+    }, []);
 
     const fetchLanguages = useCallback(async () => {
         setLoading(true);
@@ -92,7 +89,7 @@ function HomePage() {
         } finally {
             setLoading(false);
         }
-    }, [navigate]);
+    }, []);
 
     useEffect(() => {
         fetchApprovedTerms();
@@ -163,7 +160,39 @@ function HomePage() {
         } catch (error) {
             console.error('Erreur lors de l\'downvote', error);
         }
-    }
+    };
+
+    const handleBookmark = async (id: string) => {
+        try {
+            await bookmarkTerm(id);
+            setTerms(prevTerms =>
+                prevTerms.map(term => {
+                    if (term._id === id) {
+                        return { ...term, bookmarkedBy: [...term.bookmarkedBy, user!._id] };
+                    }
+                    return term;
+                })
+            );
+        } catch (error) {
+            console.error('Erreur lors de l\'bookmark', error);
+        }
+    };
+
+    const handleUnbookmark = async (id: string) => {
+        try {
+            await unbookmarkTerm(id);
+            setTerms(prevTerms =>
+                prevTerms.map(term => {
+                    if (term._id === id) {
+                        return { ...term, bookmarkedBy: term.bookmarkedBy.filter(userId => userId !== user!._id) };
+                    }
+                    return term;
+                })
+            );
+        } catch (error) {
+            console.error('Erreur lors de l\'unbookmark', error);
+        }
+    };
 
     return (
         <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
@@ -216,7 +245,15 @@ function HomePage() {
             ) : (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {currentTerms.map((term) => (
-                        <TermItem key={term._id} term={term} user={user} handleUpvote={handleUpvote} handleDownvote={handleDownvote} />
+                        <TermItem
+                            key={term._id}
+                            term={term}
+                            user={user}
+                            handleUpvote={handleUpvote}
+                            handleDownvote={handleDownvote}
+                            handleBookmark={handleBookmark}
+                            handleUnbookmark={handleUnbookmark}
+                        />
                     ))}
                 </ul>
             )}
