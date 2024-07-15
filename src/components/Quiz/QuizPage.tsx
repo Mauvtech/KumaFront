@@ -96,7 +96,6 @@ const QuizPage: React.FC = () => {
 
     const handleFlip = () => {
         if (isAnimating) return;
-        setIsAnimating(true);
         setTimeout(() => {
             setIsFlipped(!isFlipped);
             setIsAnimating(false);
