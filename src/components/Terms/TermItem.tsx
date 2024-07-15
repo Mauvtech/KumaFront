@@ -6,10 +6,11 @@ import UpvoteIcon from "./UpvoteIcon";
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { Term } from "../../models/termModel";
+import { User } from "../../models/userModel";
 
 interface TermItemProps {
     term: Term;
-    user: any;
+    user: User | null;
     handleUpvote: (termId: string) => void;
     handleDownvote: (termId: string) => void;
     handleBookmark: (termId: string) => void;
@@ -18,9 +19,9 @@ interface TermItemProps {
 
 const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDownvote, handleBookmark, handleUnbookmark }) => {
     const [votes, setVotes] = useState<{ upvotes: number; downvotes: number }>({ upvotes: 0, downvotes: 0 });
-    const [userHasUpvoted, setUserHasUpvoted] = useState(term.upvotedBy.includes(user?._id));
-    const [userHasDownvoted, setUserHasDownvoted] = useState(term.downvotedBy.includes(user?._id));
-    const [userHasBookmarked, setUserHasBookmarked] = useState(term.bookmarkedBy.includes(user?._id));
+    const [userHasUpvoted, setUserHasUpvoted] = useState(term.upvotedBy.includes(user!._id));
+    const [userHasDownvoted, setUserHasDownvoted] = useState(term.downvotedBy.includes(user!._id));
+    const [userHasBookmarked, setUserHasBookmarked] = useState(term.bookmarkedBy.includes(user!._id));
 
     useEffect(() => {
         const fetchVotes = async () => {

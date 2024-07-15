@@ -1,12 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { getCurrentUser, logout as authLogout, isTokenExpired } from '../services/authService';
+import { User } from '../models/userModel';
 
-interface User {
-  token: string;
-  username: string;
-  role: string;
-  _id: string;
-}
+
 
 export interface AuthContextType {
   setUser: (user: User | null) => void;
