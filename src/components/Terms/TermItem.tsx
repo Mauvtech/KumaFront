@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getVotes } from "../../services/termService";
 import DownvoteIcon from "./DownvoteIcon";
 import UpvoteIcon from "./UpvoteIcon";
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { Term } from "../../models/termModel";
 
 interface TermItemProps {
@@ -10,12 +12,15 @@ interface TermItemProps {
     user: any;
     handleUpvote: (termId: string) => void;
     handleDownvote: (termId: string) => void;
+    handleBookmark: (termId: string) => void;
+    handleUnbookmark: (termId: string) => void;
 }
 
-const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDownvote }) => {
+const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDownvote, handleBookmark, handleUnbookmark }) => {
     const [votes, setVotes] = useState<{ upvotes: number; downvotes: number }>({ upvotes: 0, downvotes: 0 });
     const [userHasUpvoted, setUserHasUpvoted] = useState(term.upvotedBy.includes(user?._id));
     const [userHasDownvoted, setUserHasDownvoted] = useState(term.downvotedBy.includes(user?._id));
+    const [userHasBookmarked, setUserHasBookmarked] = useState(term.bookmarkedBy.includes(user?._id));
 
     useEffect(() => {
         const fetchVotes = async () => {
@@ -49,6 +54,16 @@ const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDow
         setUserHasDownvoted(!userHasDownvoted);
     };
 
+    const handleBookmarkClick = () => {
+        if (userHasBookmarked) {
+            handleUnbookmark(term._id);
+            setUserHasBookmarked(false);
+        } else {
+            handleBookmark(term._id);
+            setUserHasBookmarked(true);
+        }
+    };
+
     return (
         <li className="flex flex-col justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff] transition-transform transform hover:scale-105">
             <div>
@@ -71,21 +86,30 @@ const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDow
                     </span>
                 </div>
                 {user && (
-                    <div className="mt-4 flex items-center justify-end space-x-4">
-                        <span className="text-green-600">{votes.upvotes}</span>
+                    <div className="mt-4 flex items-center space-x-4 ">
                         <button
-                            onClick={handleUpvoteClick}
-                            className={`flex justify-center items-center w-10 h-10 rounded-full hover:text-green-600 bg-gray-100 hover:bg-green-100 focus:outline-none transition duration-200 ${userHasUpvoted ? 'text-green-600' : 'text-gray-300'} shadow-neumorphic hover:shadow-neumorphic-inset`}
+                            onClick={handleBookmarkClick}
+                            className={`flex justify-center items-center justify-self-start w-10 h-10 rounded-full hover:text-yellow-600 bg-gray-100 hover:bg-yellow-100 focus:outline-none transition duration-200 ${userHasBookmarked ? 'text-yellow-600' : 'text-gray-300'} shadow-neumorphic hover:shadow-neumorphic-inset`}
+                            style={{ order: -1 }}
                         >
-                            <UpvoteIcon isUpvoted={userHasUpvoted} />
+                            {userHasBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                         </button>
-                        <button
-                            onClick={handleDownvoteClick}
-                            className={`flex justify-center items-center w-10 h-10 rounded-full hover:text-red-600 bg-gray-100 hover:bg-red-100 focus:outline-none transition duration-200 ${userHasDownvoted ? 'text-red-600' : 'text-gray-300'} shadow-neumorphic hover:shadow-neumorphic-inset`}
-                        >
-                            <DownvoteIcon isDownvoted={userHasDownvoted} />
-                        </button>
-                        <span className="text-red-600">{votes.downvotes}</span>
+                        <div className="flex items-center space-x-2 justify-end w-full"><span className="text-green-600">{votes.upvotes}</span>
+                            <button
+                                onClick={handleUpvoteClick}
+                                className={`flex justify-center items-center w-10 h-10 rounded-full hover:text-green-600 bg-gray-100 hover:bg-green-100 focus:outline-none transition duration-200 ${userHasUpvoted ? 'text-green-600' : 'text-gray-300'} shadow-neumorphic hover:shadow-neumorphic-inset`}
+                            >
+                                <UpvoteIcon isUpvoted={userHasUpvoted} />
+                            </button>
+                            <button
+                                onClick={handleDownvoteClick}
+                                className={`flex justify-center items-center w-10 h-10 rounded-full hover:text-red-600 bg-gray-100 hover:bg-red-100 focus:outline-none transition duration-200 ${userHasDownvoted ? 'text-red-600' : 'text-gray-300'} shadow-neumorphic hover:shadow-neumorphic-inset`}
+                            >
+                                <DownvoteIcon isDownvoted={userHasDownvoted} />
+                            </button>
+                            <span className="text-red-600">{votes.downvotes}</span></div>
+
+
                     </div>
                 )}
             </div>
