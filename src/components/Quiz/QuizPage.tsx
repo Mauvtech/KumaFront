@@ -88,23 +88,27 @@ const QuizPage: React.FC = () => {
                         style={{ width: '300px', height: '400px' }}
                     >
                         <div className="flip-card-front flex justify-center items-center w-full h-full bg-white shadow-md rounded-lg p-4">
-                            <h3 className="text-xl font-bold mb-4">{currentFlashcard.term}</h3>
+                            <h3 className={`text-xl font-bold mb-4 ${isAnimating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}>
+                                {currentFlashcard.term}
+                            </h3>
                         </div>
                         <div className="flip-card-back flex justify-center items-center w-full h-full bg-white shadow-md rounded-lg p-4">
-                            <h3 className="text-xl font-bold mb-2">{currentFlashcard.translation}</h3>
+                            <h3 className={`text-xl font-bold mb-2 ${isAnimating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}>
+                                {currentFlashcard.translation}
+                            </h3>
                         </div>
                     </div>
                     <div className="mt-4 flex justify-between w-full px-6">
                         <button
                             onClick={handlePrevious}
-                            className="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
+                            className="px-4 py-2 bg-gray-200 text-gray-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
                             disabled={currentIndex === 0}
                         >
                             Previous
                         </button>
                         <button
                             onClick={handleNext}
-                            className="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
+                            className="px-4 py-2 bg-gray-200 text-gray-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
                             disabled={currentIndex === flashcardIds.length - 1}
                         >
                             Next

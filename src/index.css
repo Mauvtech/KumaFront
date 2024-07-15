@@ -30,8 +30,14 @@
   }
 
   .animate-slide {
+    opacity: 0;
     animation: slide-in 0.3s ease-in-out, fade-in 0.3s ease-in-out;
+    transition: opacity 0.6s ease-in-out;
   }
+
+  .animate-slide:not(.rotate-y-180) {
+    opacity: 1;
+}
 
   @keyframes slide-in {
     0% {
