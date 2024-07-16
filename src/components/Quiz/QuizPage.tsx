@@ -16,6 +16,7 @@ const QuizPage: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
+    const [isFading, setIsFading] = useState(false);
     const [loading, setLoading] = useState(true);
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -101,10 +102,8 @@ const QuizPage: React.FC = () => {
 
     const handleFlip = () => {
         if (isAnimating) return;
-        setIsAnimating(true);
         setTimeout(() => {
             setIsFlipped(!isFlipped);
-            setIsAnimating(false);
         }, 300);
     };
 
