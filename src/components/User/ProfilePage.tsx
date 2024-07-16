@@ -31,12 +31,12 @@ const ProfilePage: React.FC = () => {
         } finally {
             setBookmarksLoading(false);
         }
-    }, []);
+    }, [termsPerPage]);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
             if (!user || !user.token) {
-                navigate('/login'); // Rediriger vers la page de connexion si l'utilisateur n'est pas authentifié
+                navigate('/login');
                 return;
             }
             try {
@@ -135,31 +135,33 @@ const ProfilePage: React.FC = () => {
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-    if (loading) {
-        return <p className="text-center mt-10">Loading...</p>;
-    }
-
-    if (error) {
-        return <p className="text-center text-red-500 mt-10">{error}</p>;
-    }
-
     return (
         <div className="max-w-7xl mx-auto mt-10 p-6 flex flex-col bg-gray-200 justify-center items-center rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
             <div className="space-y-6 flex flex-col w-1/3 text-center">
-                <div className="p-4 bg-gray-200 w-full rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
-                    <span className="block text-lg font-semibold text-gray-700">Username</span>
-                    <span className="block mt-2 text-xl text-gray-900">{userProfile.username}</span>
-                </div>
-                <div className="p-4 bg-gray-200 rounded-lg w-full shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
-                    <span className="block text-lg font-semibold text-gray-700">Role</span>
-                    <span className="block mt-2 text-xl text-gray-900">{userProfile.role}</span>
-                </div>
-                <button
-                    onClick={() => navigate('/update-profile')}
-                    className="w-full mt-6 py-2 px-4 bg-gray-300 text-gray-800 font-semibold rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff] hover:bg-gray-400 transform hover:scale-105 transition-transform duration-200"
-                >
-                    Modify profile
-                </button>
+                {loading ? (
+                    <>
+                        <Skeleton height={80} width="100%" />
+                        <Skeleton height={80} width="100%" />
+                        <Skeleton height={50} width="100%" />
+                    </>
+                ) : (
+                    <>
+                        <div className="p-4 bg-gray-200 w-full rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
+                            <span className="block text-lg font-semibold text-gray-700">Username</span>
+                            <span className="block mt-2 text-xl text-gray-900">{userProfile.username}</span>
+                        </div>
+                        <div className="p-4 bg-gray-200 rounded-lg w-full shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
+                            <span className="block text-lg font-semibold text-gray-700">Role</span>
+                            <span className="block mt-2 text-xl text-gray-900">{userProfile.role}</span>
+                        </div>
+                        <button
+                            onClick={() => navigate('/update-profile')}
+                            className="w-full mt-6 py-2 px-4 bg-gray-300 text-gray-800 font-semibold rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff] hover:bg-gray-400 transform hover:scale-105 transition-transform duration-200"
+                        >
+                            Modify profile
+                        </button>
+                    </>
+                )}
             </div>
             <div className="mt-10 w-full">
                 <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">Bookmarked Terms</h3>
