@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/authContext';
-import { FaUser, FaSpinner, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaPlus, FaTachometerAlt, FaListAlt, FaCommentDots, FaChevronDown, FaBars, FaTimes, FaQuestion } from 'react-icons/fa';
+import { FaUser, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaPlus, FaTachometerAlt, FaListAlt, FaCommentDots, FaChevronDown, FaBars, FaTimes, FaQuestion } from 'react-icons/fa';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 function Navbar() {
     const { user, loading, logout } = useAuth();
@@ -55,8 +57,8 @@ function Navbar() {
                 <div ref={menuRef} className={`md:flex ${menuOpen ? 'block' : 'hidden'} md:items-center md:space-x-4 absolute md:relative top-0 left-0 w-full md:w-auto bg-gray-200 md:bg-transparent p-4 md:p-0 shadow-lg md:shadow-none z-10`}>
                     {loading ? (
                         <div className="text-gray-700 flex items-center mt-4 md:mt-0">
-                            <FaSpinner className="animate-spin mr-2" />
-                            Loading...
+                            <Skeleton circle={true} height={40} width={40} />
+                            <Skeleton height={40} width={100} className="ml-2" />
                         </div>
                     ) : user ? (
                         <>
