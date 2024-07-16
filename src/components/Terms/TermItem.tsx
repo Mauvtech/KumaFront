@@ -19,9 +19,9 @@ interface TermItemProps {
 
 const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDownvote, handleBookmark, handleUnbookmark }) => {
     const [votes, setVotes] = useState<{ upvotes: number; downvotes: number }>({ upvotes: 0, downvotes: 0 });
-    const [userHasUpvoted, setUserHasUpvoted] = useState(false);
-    const [userHasDownvoted, setUserHasDownvoted] = useState(false);
-    const [userHasBookmarked, setUserHasBookmarked] = useState(false);
+    const [userHasUpvoted, setUserHasUpvoted] = useState(user ? term.upvotedBy.includes(user!._id):false);
+    const [userHasDownvoted, setUserHasDownvoted] = useState(user ? term.downvotedBy.includes(user!._id): false);
+    const [userHasBookmarked, setUserHasBookmarked] = useState(user ? term.bookmarkedBy.includes(user!._id): false);
 
     useEffect(() => {
         const fetchVotes = async () => {
