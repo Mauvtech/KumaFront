@@ -3,7 +3,6 @@ import { downvoteTerm, getApprovedTerms, upvoteTerm, bookmarkTerm, unbookmarkTer
 import { getCategories } from '../../services/categoryService';
 import { getThemes } from '../../services/themeService';
 import { getLanguages } from '../../services/languageService';
-import { Link, useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import { handleAuthError } from '../../utils/handleAuthError';
 import FilterButtons from '../FilterButtons';
@@ -28,11 +27,12 @@ function HomePage() {
     const [languages, setLanguages] = useState<Language[]>([]);
     const [selectedLanguage, setSelectedLanguage] = useState<string>('');
     const [searchTerm, setSearchTerm] = useState<string>('');
-    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [currentPage, setCurrentPage] = useState<number>(parseInt(sessionStorage.getItem('currentPage') || '1'));
     const [termsLoading, setTermsLoading] = useState<boolean>(true);
     const [filtersLoading, setFiltersLoading] = useState<boolean>(true);
-    const termsPerPage: number = 10;
-    const navigate = useNavigate();
+    const [totalTerms, setTotalTerms] = useState<number>(0);
+    const termsPerPage: number = 9;
+
 
     const fetchApprovedTerms = useCallback(async () => {
         setTermsLoading(true);
@@ -47,14 +47,14 @@ function HomePage() {
             });
             if (data && data.terms) {
                 setTerms(data.terms);
-                setFilteredTerms(data.terms);
+                setTotalTerms(data.totalTerms);
             }
         } catch (error) {
             handleAuthError(error as AxiosError<ErrorResponse>);
         } finally {
             setTermsLoading(false);
         }
-    }, [selectedCategory, selectedTheme, selectedLanguage, searchTerm, currentPage]);
+    }, [selectedCategory, selectedTheme, selectedLanguage, searchTerm, currentPage, termsPerPage]);
 
     const fetchCategories = useCallback(async () => {
         setFiltersLoading(true);
@@ -96,11 +96,14 @@ function HomePage() {
         fetchCategories();
         fetchThemes();
         fetchLanguages();
-        fetchApprovedTerms();
-    }, [fetchApprovedTerms, fetchCategories, fetchThemes, fetchLanguages]);
+    }, [fetchCategories, fetchThemes, fetchLanguages]);
 
     useEffect(() => {
-        if (terms && terms.length > 0) {
+        fetchApprovedTerms();
+    }, [fetchApprovedTerms]);
+
+    useEffect(() => {
+        if (!termsLoading) {
             const filtered = terms.filter((term: Term) =>
                 (selectedCategory ? term.grammaticalCategory.name === selectedCategory : true) &&
                 (selectedTheme ? term.theme.name === selectedTheme : true) &&
@@ -109,17 +112,16 @@ function HomePage() {
             );
             setFilteredTerms(filtered);
         }
-    }, [selectedCategory, selectedTheme, selectedLanguage, searchTerm, terms]);
+    }, [terms, selectedCategory, selectedTheme, selectedLanguage, searchTerm, termsLoading]);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
     };
 
-    const indexOfLastTerm = currentPage * termsPerPage;
-    const indexOfFirstTerm = indexOfLastTerm - termsPerPage;
-    const currentTerms = filteredTerms.length > 0 ? filteredTerms.slice(indexOfFirstTerm, indexOfLastTerm) : [];
-
-    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+    const paginate = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+        sessionStorage.setItem('currentPage', pageNumber.toString());
+    };
 
     const handleUpvote = async (id: string) => {
         try {
@@ -245,7 +247,7 @@ function HomePage() {
                 <p className="text-center text-gray-500">No terms found.</p>
             ) : (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {currentTerms.map((term) => (
+                    {filteredTerms.map((term) => (
                         <TermItem
                             key={term._id}
                             term={term}
@@ -258,7 +260,7 @@ function HomePage() {
                     ))}
                 </ul>
             )}
-            <Pagination termsPerPage={termsPerPage} totalTerms={terms.length} paginate={paginate} />
+            <Pagination termsPerPage={termsPerPage} totalTerms={totalTerms} paginate={paginate} currentPage={currentPage} />
         </div>
     );
 }
@@ -267,9 +269,10 @@ interface PaginationProps {
     termsPerPage: number;
     totalTerms: number;
     paginate: (pageNumber: number) => void;
+    currentPage: number;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ termsPerPage, totalTerms, paginate }) => {
+const Pagination: React.FC<PaginationProps> = ({ termsPerPage, totalTerms, paginate, currentPage }) => {
     const pageNumbers = [];
 
     for (let i = 1; i <= Math.ceil(totalTerms / termsPerPage); i++) {
@@ -283,7 +286,7 @@ const Pagination: React.FC<PaginationProps> = ({ termsPerPage, totalTerms, pagin
                     <li key={number}>
                         <button
                             onClick={() => paginate(number)}
-                            className="px-3 py-2 leading-tight text-gray-500 bg-gray-100 border border-gray-300 hover:bg-gray-200 hover:text-gray-700 rounded-lg shadow-lg"
+                            className={`px-3 py-2 leading-tight text-gray-500 bg-gray-100 border border-gray-300 hover:bg-gray-200 hover:text-gray-700 rounded-lg shadow-lg ${currentPage === number ? 'bg-gray-300' : ''}`}
                         >
                             {number}
                         </button>
