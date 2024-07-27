@@ -7,6 +7,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { FaCheck, FaTimes } from 'react-icons/fa';
+import Modal from 'react-modal';
+import GaugeChart from 'react-gauge-chart';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+
+Modal.setAppElement('#root'); // Cette ligne est nécessaire pour l'accessibilité
+
 
 const QuizPage: React.FC = () => {
     const [flashcardIds, setFlashcardIds] = useState<string[]>([]);
@@ -18,9 +24,12 @@ const QuizPage: React.FC = () => {
     const [showDefinition, setShowDefinition] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const numberOfQuestions = Number(queryParams.get('questions')) || 10;
+    const [correctAnswers, setCorrectAnswers] = useState(0);
+    const [incorrectAnswers, setIncorrectAnswers] = useState(0);
     const navigate = useNavigate();
 
     const fetchQuiz = useCallback(async () => {
@@ -117,20 +126,36 @@ const QuizPage: React.FC = () => {
     };
 
     const handleMarkCorrect = () => {
+        setCorrectAnswers(correctAnswers + 1);
         if (currentIndex === flashcardIds.length - 1) {
-            navigate('/');
+            setIsModalOpen(true);
         } else {
             handleNext();
         }
     };
 
     const handleMarkIncorrect = () => {
+        setIncorrectAnswers(incorrectAnswers + 1);
         if (currentIndex === flashcardIds.length - 1) {
-            navigate('/');
+            setIsModalOpen(true);
         } else {
             handleNext();
         }
     };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        navigate('/');
+    };
+
+    const getGaugeColor = () => {
+        const score = (correctAnswers / numberOfQuestions) * 100;
+        if (score >= 70) return '#00FF00'; // green
+        if (score >= 30) return '#FFA500'; // orange
+        return '#FF0000'; // red
+    };
+
+
     return (
         <div className="max-w-3xl mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
             {currentFlashcard ? (
@@ -219,6 +244,43 @@ const QuizPage: React.FC = () => {
                     </div>
                 </div>
             )}
+            <Modal
+                isOpen={isModalOpen}
+                onRequestClose={closeModal}
+                contentLabel="Quiz Summary"
+                className="modal bg-white p-6 rounded-lg shadow-lg"
+                overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+                style={{ overlay: {}, content: {} }}
+            >
+                <h2 className="text-2xl font-bold mb-4">Quiz Summary</h2>
+                <div className="flex justify-center items-center mb-4">
+                    <div className="w-32 h-32 relative">
+                        <CircularProgressbar
+                            value={correctAnswers / numberOfQuestions * 100}
+                            styles={buildStyles({
+                                textSize: '24px',
+                                pathColor: getGaugeColor(),
+                                textColor: getGaugeColor(),
+                                trailColor: '#d6d6d6',
+                            })}
+                        />
+                        <div className="absolute inset-0 flex justify-center items-center text-xl" style={{ color: getGaugeColor() }}>
+                            {`${Math.round(correctAnswers / numberOfQuestions * 100)}%`}
+                        </div>
+                    </div>
+
+
+                </div>
+                <p className="text-lg text-green-500 mb-2"><span className='font-bold text-3xl'>{correctAnswers}</span> Correct Answers </p>
+                <p className="text-lg mb-2 text-red-500"><span className='font-bold text-3xl'>{incorrectAnswers}</span> Incorrect Answers </p>
+                <p className="text-lg text-gray-500 mb-2"><span className='font-bold text-3xl'>{numberOfQuestions}</span> Flashcards</p>
+                <button
+                    onClick={closeModal}
+                    className="mt-4 px-4 py-2 bg-blue-200 text-blue-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
+                >
+                    Close
+                </button>
+            </Modal>
         </div>
     );
 };
