@@ -3,7 +3,7 @@ import { getQuiz, getFlashcardById } from '../../services/termService';
 import { handleAuthError } from '../../utils/handleAuthError';
 import { AxiosError } from 'axios';
 import { Term } from '../../models/termModel';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { FaCheck, FaTimes } from 'react-icons/fa';
@@ -21,6 +21,7 @@ const QuizPage: React.FC = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const numberOfQuestions = Number(queryParams.get('questions')) || 10;
+    const navigate = useNavigate();
 
     const fetchQuiz = useCallback(async () => {
         try {
@@ -116,13 +117,20 @@ const QuizPage: React.FC = () => {
     };
 
     const handleMarkCorrect = () => {
-        handleNext();
+        if (currentIndex === flashcardIds.length - 1) {
+            navigate('/');
+        } else {
+            handleNext();
+        }
     };
 
     const handleMarkIncorrect = () => {
-        handleNext();
+        if (currentIndex === flashcardIds.length - 1) {
+            navigate('/');
+        } else {
+            handleNext();
+        }
     };
-
     return (
         <div className="max-w-3xl mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
             {currentFlashcard ? (
@@ -163,7 +171,8 @@ const QuizPage: React.FC = () => {
                         <button
                             onClick={handlePrevious}
                             className="px-4 py-2 bg-gray-200 text-gray-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
-                            disabled={currentIndex === 0 || isAnimating}
+                            style={{ visibility: currentIndex === 0 ? 'hidden' : 'visible' }}
+                            disabled={isAnimating}
                         >
                             Previous
                         </button>
@@ -184,7 +193,8 @@ const QuizPage: React.FC = () => {
                         <button
                             onClick={handleNext}
                             className="px-4 py-2 bg-gray-200 text-gray-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
-                            disabled={currentIndex === flashcardIds.length - 1 || isAnimating}
+                            style={{ visibility: currentIndex === flashcardIds.length - 1 ? 'hidden' : 'visible' }}
+                            disabled={isAnimating}
                         >
                             Next
                         </button>
