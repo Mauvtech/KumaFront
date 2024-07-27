@@ -7,6 +7,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { Term } from "../../models/termModel";
 import { User } from "../../models/userModel";
+import Avatar from '@mui/material/Avatar'; // Importation de l'avatar de Material-UI
 
 interface TermItemProps {
     term: Term;
@@ -19,9 +20,9 @@ interface TermItemProps {
 
 const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDownvote, handleBookmark, handleUnbookmark }) => {
     const [votes, setVotes] = useState<{ upvotes: number; downvotes: number }>({ upvotes: 0, downvotes: 0 });
-    const [userHasUpvoted, setUserHasUpvoted] = useState(user ? term.upvotedBy.includes(user!._id):false);
-    const [userHasDownvoted, setUserHasDownvoted] = useState(user ? term.downvotedBy.includes(user!._id): false);
-    const [userHasBookmarked, setUserHasBookmarked] = useState(user ? term.bookmarkedBy.includes(user!._id): false);
+    const [userHasUpvoted, setUserHasUpvoted] = useState(user ? term.upvotedBy.includes(user!._id) : false);
+    const [userHasDownvoted, setUserHasDownvoted] = useState(user ? term.downvotedBy.includes(user!._id) : false);
+    const [userHasBookmarked, setUserHasBookmarked] = useState(user ? term.bookmarkedBy.includes(user!._id) : false);
 
     useEffect(() => {
         const fetchVotes = async () => {
@@ -66,8 +67,14 @@ const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDow
     };
 
     return (
-        <li className="flex flex-col justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff] transition-transform transform hover:scale-105">
-            <div>
+        <li className="flex flex-col justify-between mb-4 p-4 bg-white rounded-lg shadow-md transition-transform transform hover:scale-105">
+            <div className="flex items-center mb-4">
+                <Avatar alt={term.author.username} className="mr-3" />
+                <Link to={`/profile/${term.author.username}`} className="text-blue-500 hover:underline">
+                    <h4 className="font-semibold">{term.author.username}</h4>
+                </Link>
+            </div>
+            <div className="mb-4">
                 <Link to={`/terms/${term._id}`}>
                     <h3 className="text-xl font-bold text-gray-800">{term.term}</h3>
                     <p className="text-gray-600">{term.translation}</p>
@@ -77,8 +84,8 @@ const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDow
                     )}
                 </Link>
             </div>
-            <div>
-                <div className="mt-2">
+            <div className="flex justify-between items-center">
+                <div className="flex items-center">
                     <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full mr-2">
                         {term.grammaticalCategory.name}
                     </span>
@@ -87,15 +94,15 @@ const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDow
                     </span>
                 </div>
                 {user && (
-                    <div className="mt-4 flex items-center space-x-4 ">
+                    <div className="flex items-center space-x-4">
                         <button
                             onClick={handleBookmarkClick}
-                            className={`flex justify-center items-center justify-self-start w-10 h-10 rounded-full hover:text-yellow-600 bg-gray-100 hover:bg-yellow-100 focus:outline-none transition duration-200 ${userHasBookmarked ? 'text-yellow-600' : 'text-gray-300'} shadow-neumorphic hover:shadow-neumorphic-inset`}
-                            style={{ order: -1 }}
+                            className={`flex justify-center items-center w-10 h-10 rounded-full hover:text-yellow-600 bg-gray-100 hover:bg-yellow-100 focus:outline-none transition duration-200 ${userHasBookmarked ? 'text-yellow-600' : 'text-gray-300'} shadow-neumorphic hover:shadow-neumorphic-inset`}
                         >
                             {userHasBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                         </button>
-                        <div className="flex items-center space-x-2 justify-end w-full"><span className="text-green-600">{votes.upvotes}</span>
+                        <div className="flex items-center space-x-2">
+                            <span className="text-green-600">{votes.upvotes}</span>
                             <button
                                 onClick={handleUpvoteClick}
                                 className={`flex justify-center items-center w-10 h-10 rounded-full hover:text-green-600 bg-gray-100 hover:bg-green-100 focus:outline-none transition duration-200 ${userHasUpvoted ? 'text-green-600' : 'text-gray-300'} shadow-neumorphic hover:shadow-neumorphic-inset`}
@@ -108,9 +115,8 @@ const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDow
                             >
                                 <DownvoteIcon isDownvoted={userHasDownvoted} />
                             </button>
-                            <span className="text-red-600">{votes.downvotes}</span></div>
-
-
+                            <span className="text-red-600">{votes.downvotes}</span>
+                        </div>
                     </div>
                 )}
             </div>
