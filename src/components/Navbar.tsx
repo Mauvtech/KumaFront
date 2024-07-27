@@ -60,7 +60,7 @@ function Navbar() {
                             <Skeleton circle={true} height={40} width={40} />
                             <Skeleton height={40} width={100} className="ml-2" />
                         </div>
-                    ) : user ? (
+                    ) : (
                         <>
                             <Link to="/new-term" className="text-gray-700 flex items-center mt-4 md:mt-0">
                                 <FaPlus className="mr-2" />
@@ -70,62 +70,67 @@ function Navbar() {
                                 <FaQuestion className="mr-2" />
                                 Quiz
                             </Link>
-                            {user.role === 'admin' && (
-                                <Link to="/dashboard" className="text-gray-700 flex items-center mt-4 md:mt-0">
-                                    <FaTachometerAlt className="mr-2" />
-                                    Dashboard
-                                </Link>
-                            )}
-                            {(user.role === 'admin' || user.role === 'moderator') && (
-                                <Link to="/terms" className="text-gray-700 flex items-center mt-4 md:mt-0">
-                                    <FaListAlt className="mr-2" />
-                                    Term Management
-                                </Link>
-                            )}
-                            <Link to="/bookmarks" className="text-gray-700 flex items-center mt-4 md:mt-0">
-                                <FaBookmark className="mr-2" />
-                                Bookmarks
-                            </Link>
-                            <div className="relative mt-4 md:mt-0" ref={dropdownRef}>
-                                <button
-                                    onClick={toggleDropdown}
-                                    className="text-gray-700 flex items-center focus:outline-none"
-                                >
-                                    <FaUser className="mr-2" />
-                                    <span>{user.username}</span>
-                                    <FaChevronDown className="ml-2" />
-                                </button>
-                                {dropdownOpen && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-20">
-                                        <Link
+                            {user && (
+                                <>
+                                    {user.role === 'admin' && (
+                                        <Link to="/dashboard" className="text-gray-700 flex items-center mt-4 md:mt-0">
+                                            <FaTachometerAlt className="mr-2" />
+                                            Dashboard
+                                        </Link>
+                                    )}
+                                    {(user.role === 'admin' || user.role === 'moderator') && (
+                                        <Link to="/terms" className="text-gray-700 flex items-center mt-4 md:mt-0">
+                                            <FaListAlt className="mr-2" />
+                                            Term Management
+                                        </Link>
+                                    )}
+                                    <Link to="/bookmarks" className="text-gray-700 flex items-center mt-4 md:mt-0">
+                                        <FaBookmark className="mr-2" />
+                                        Bookmarks
+                                    </Link>
+                                    <div className="relative mt-4 md:mt-0" ref={dropdownRef}>
+                                        <button
                                             onClick={toggleDropdown}
-                                            to="/profile"
-                                            className="block px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center"
+                                            className="text-gray-700 flex items-center focus:outline-none"
                                         >
                                             <FaUser className="mr-2" />
-                                            Profile
-                                        </Link>
-                                        <button
-                                            onClick={handleLogout}
-                                            className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center"
-                                        >
-                                            <FaSignOutAlt className="mr-2" />
-                                            Logout
+                                            <span>{user.username}</span>
+                                            <FaChevronDown className="ml-2" />
                                         </button>
+                                        {dropdownOpen && (
+                                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-20">
+                                                <Link
+                                                    onClick={toggleDropdown}
+                                                    to="/profile"
+                                                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center"
+                                                >
+                                                    <FaUser className="mr-2" />
+                                                    Profile
+                                                </Link>
+                                                <button
+                                                    onClick={handleLogout}
+                                                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center"
+                                                >
+                                                    <FaSignOutAlt className="mr-2" />
+                                                    Logout
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            <Link to="/login" className="text-gray-700 flex items-center mt-4 md:mt-0">
-                                <FaSignInAlt className="mr-2" />
-                                Login
-                            </Link>
-                            <Link to="/register" className="text-gray-700 flex items-center mt-4 md:mt-0">
-                                <FaUserPlus className="mr-2" />
-                                Signin
-                            </Link>
+                                </>
+                            )}
+                            {!user && (
+                                <>
+                                    <Link to="/login" className="text-gray-700 flex items-center mt-4 md:mt-0">
+                                        <FaSignInAlt className="mr-2" />
+                                        Login
+                                    </Link>
+                                    <Link to="/register" className="text-gray-700 flex items-center mt-4 md:mt-0">
+                                        <FaUserPlus className="mr-2" />
+                                        Signin
+                                    </Link>
+                                </>
+                            )}
                         </>
                     )}
                 </div>
