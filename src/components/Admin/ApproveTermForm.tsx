@@ -91,9 +91,9 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
 
     const validateField = (fieldName: string, value: string): string | null => {
         if (!value && fieldName !== 'Language Code') return `${fieldName} ne doit pas être vide.`;
-        if (fieldName !== 'Definition' && !/^[A-Z][a-z]*(\s[A-Z][a-z]*)*$/.test(value) && fieldName !== 'Language Code') return `${fieldName} doit commencer par une majuscule suivie de lettres minuscules.`;
+        if (fieldName !== 'Definition' && fieldName !== 'Term' && !/^[A-Z][a-z]*(\s[A-Z][a-z]*)*$/.test(value) && fieldName !== 'Language Code') return `${fieldName} doit commencer par une majuscule suivie de lettres minuscules.`;
         if (fieldName === 'Language Code' && value && !/^[A-Z]+$/.test(value)) return `${fieldName} doit être en majuscules.`;
-        if (fieldName !== 'Definition' && /[^a-zA-Z\s]/.test(value) && fieldName !== 'Language Code') return `${fieldName} ne doit pas contenir de caractères spéciaux.`;
+        if (fieldName !== 'Definition' && fieldName !== 'Term' && /[^a-zA-Z\s]/.test(value) && fieldName !== 'Language Code') return `${fieldName} ne doit pas contenir de caractères spéciaux.`;
         return null;
     };
 
@@ -123,6 +123,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
 
         const finalApproveData = {
             ...approveData,
+            term: updatedTerm.term,
             theme: updatedTerm.theme === 'Other' ? newTheme : approveData.theme,
             grammaticalCategory: updatedTerm.grammaticalCategory === 'Other' ? newCategory : approveData.grammaticalCategory,
             language: updatedTerm.language === 'Other' ? newLanguage.name : (updatedTerm.language as Language).name,
