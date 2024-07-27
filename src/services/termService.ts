@@ -52,14 +52,26 @@ export const getPendingTerms = async () => {
   }
 };
 
-export const getQuiz = async (numberOfQuesions:string) => {
+export const getQuiz = async (
+  numberOfQuestions: string,
+  grammaticalCategory?: string,
+  language?: string,
+  theme?: string
+) => {
   try {
-    const response = await api.get("/terms/quiz", { params: { number:numberOfQuesions } });
+    const response = await api.get("/terms/quiz", {
+      params: {
+        number: numberOfQuestions,
+        grammaticalCategory,
+        language,
+        theme,
+      },
+    });
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>);
   }
-}
+};
 
 export const getFlashcardById = async (id: string) => {
   try {

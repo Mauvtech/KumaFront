@@ -55,6 +55,14 @@ const TermDetails: React.FC = () => {
         }
     };
 
+    const handleAddCommentClick = () => {
+        if (!user) {
+            navigate('/login');
+        } else {
+            handleAddComment();
+        }
+    };
+
     return (
         <div className="max-w-4xl mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
             {termLoading ? (
@@ -100,25 +108,23 @@ const TermDetails: React.FC = () => {
                     <button onClick={() => navigate(-1)} className="mt-4 p-3 bg-gray-400 text-white rounded-lg shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-gray-500 focus:outline-none">
                         Retour
                     </button>
-                    {user && (
-                        <div className="mt-8">
-                            <h3 className="text-xl font-bold mb-4">Add comment</h3>
-                            {error && <div className="mb-4 text-red-500">{error}</div>}
-                            <textarea
-                                value={commentText}
-                                onChange={(e) => setCommentText(e.target.value)}
-                                className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 mb-4"
-                                placeholder="Votre commentaire"
-                            ></textarea>
-                            <button
-                                onClick={handleAddComment}
-                                className="p-3 bg-gray-400 text-white rounded-lg shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-gray-500 focus:outline-none"
-                                disabled={loading}
-                            >
-                                {loading ? 'Chargement...' : 'Ajouter Commentaire'}
-                            </button>
-                        </div>
-                    )}
+                    <div className="mt-8">
+                        <h3 className="text-xl font-bold mb-4">Add comment</h3>
+                        {error && <div className="mb-4 text-red-500">{error}</div>}
+                        <textarea
+                            value={commentText}
+                            onChange={(e) => setCommentText(e.target.value)}
+                            className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 mb-4"
+                            placeholder="Votre commentaire"
+                        ></textarea>
+                        <button
+                            onClick={handleAddCommentClick}
+                            className="p-3 bg-gray-400 text-white rounded-lg shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-gray-500 focus:outline-none"
+                            disabled={loading}
+                        >
+                            {loading ? 'Chargement...' : 'Ajouter Commentaire'}
+                        </button>
+                    </div>
                     <div className="mt-8">
                         <h3 className="text-xl font-bold mb-4">Commentaires</h3>
                         {term?.comments && term?.comments.length > 0 ? (
