@@ -1,68 +1,46 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { getUserProfile } from '../../services/userService';
-import { downvoteTerm, getAuthoredTerms, upvoteTerm } from '../../services/termService';
+import { getBookmarks, upvoteTerm, downvoteTerm, unbookmarkTerm } from '../../services/termService';
 import { useAuth } from '../../contexts/authContext';
 import { useNavigate } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import TermItem from '../Terms/TermItem';
 
-const ProfilePage: React.FC = () => {
-    const [userProfile, setUserProfile] = useState<any>(null);
+const BookmarksPage: React.FC = () => {
+    const [bookmarkedTerms, setBookmarkedTerms] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-    const [authoredTerms, setAuthoredTerms] = useState<any[]>([]);
-    const [termsLoading, setTermsLoading] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
     const { user } = useAuth();
     const navigate = useNavigate();
-    const termsPerPage: number = 10;
+    const termsPerPage: number = 9;
 
-    const fetchAuthoredTerms = useCallback(async (page: number) => {
-        setTermsLoading(true);
+    const fetchBookmarks = useCallback(async (page: number) => {
+        setLoading(true);
         try {
-            const data = await getAuthoredTerms(page.toString(), termsPerPage.toString());
-            setAuthoredTerms(data.terms);
+            const data = await getBookmarks(page.toString(), termsPerPage.toString());
+            setBookmarkedTerms(data.bookmarks);
             setCurrentPage(data.currentPage);
             setTotalPages(data.totalPages);
         } catch (error) {
-            console.error('Erreur de chargement des termes de l\'auteur', error);
+            console.error('Erreur de chargement des bookmarks', error);
         } finally {
-            setTermsLoading(false);
+            setLoading(false);
         }
     }, [termsPerPage]);
 
     useEffect(() => {
-        const fetchUserProfile = async () => {
-            if (!user || !user.token) {
-                navigate('/login');
-                return;
-            }
-            try {
-                const data = await getUserProfile();
-                setUserProfile(data);
-            } catch (error) {
-                console.error('Erreur de chargement du profil utilisateur', error);
-                setError('Erreur de chargement du profil utilisateur.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUserProfile();
-    }, [user, navigate]);
-
-    useEffect(() => {
         if (user) {
-            fetchAuthoredTerms(currentPage);
+            fetchBookmarks(currentPage);
+        } else {
+            navigate('/login');
         }
-    }, [user, currentPage, fetchAuthoredTerms]);
+    }, [user, currentPage, fetchBookmarks, navigate]);
 
     const handleUpvote = async (id: string) => {
         try {
             await upvoteTerm(id);
-            setAuthoredTerms(prevTerms =>
+            setBookmarkedTerms(prevTerms =>
                 prevTerms.map(term => {
                     if (term._id === id) {
                         const isUpvoted = term.upvotedBy.includes(user!._id);
@@ -83,7 +61,7 @@ const ProfilePage: React.FC = () => {
     const handleDownvote = async (id: string) => {
         try {
             await downvoteTerm(id);
-            setAuthoredTerms(prevTerms =>
+            setBookmarkedTerms(prevTerms =>
                 prevTerms.map(term => {
                     if (term._id === id) {
                         const isDownvoted = term.downvotedBy.includes(user!._id);
@@ -101,39 +79,22 @@ const ProfilePage: React.FC = () => {
         }
     };
 
+    const handleUnbookmark = async (id: string) => {
+        try {
+            await unbookmarkTerm(id);
+            setBookmarkedTerms(prevTerms => prevTerms.filter(term => term._id !== id));
+        } catch (error) {
+            console.error('Erreur lors de l\'unbookmark', error);
+        }
+    };
+
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
     return (
         <div className="max-w-7xl mx-auto mt-10 p-6 flex flex-col bg-gray-200 justify-center items-center rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
-            <div className="space-y-6 flex flex-col w-1/3 text-center">
-                {loading ? (
-                    <>
-                        <Skeleton height={80} width="100%" />
-                        <Skeleton height={80} width="100%" />
-                        <Skeleton height={50} width="100%" />
-                    </>
-                ) : (
-                    <>
-                        <div className="p-4 bg-gray-200 w-full rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
-                            <span className="block text-lg font-semibold text-gray-700">Username</span>
-                            <span className="block mt-2 text-xl text-gray-900">{userProfile.username}</span>
-                        </div>
-                        <div className="p-4 bg-gray-200 rounded-lg w-full shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
-                            <span className="block text-lg font-semibold text-gray-700">Role</span>
-                            <span className="block mt-2 text-xl text-gray-900">{userProfile.role}</span>
-                        </div>
-                        <button
-                            onClick={() => navigate('/update-profile')}
-                            className="w-full mt-6 py-2 px-4 bg-gray-300 text-gray-800 font-semibold rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff] hover:bg-gray-400 transform hover:scale-105 transition-transform duration-200"
-                        >
-                            Modify profile
-                        </button>
-                    </>
-                )}
-            </div>
             <div className="mt-10 w-full">
-                <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">Authored Terms</h3>
-                {termsLoading ? (
+                <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">Bookmarked Terms</h3>
+                {loading ? (
                     <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {Array.from({ length: termsPerPage }).map((_, index) => (
                             <li key={index} className="flex flex-col justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
@@ -148,11 +109,11 @@ const ProfilePage: React.FC = () => {
                             </li>
                         ))}
                     </ul>
-                ) : authoredTerms.length === 0 ? (
-                    <p className="text-center text-gray-500">No terms found.</p>
+                ) : bookmarkedTerms.length === 0 ? (
+                    <p className="text-center text-gray-500">No bookmarks found.</p>
                 ) : (
                     <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {authoredTerms.map(term => (
+                        {bookmarkedTerms.map(term => (
                             <TermItem
                                 key={term._id}
                                 term={term}
@@ -160,7 +121,7 @@ const ProfilePage: React.FC = () => {
                                 handleUpvote={handleUpvote}
                                 handleDownvote={handleDownvote}
                                 handleBookmark={() => { }}
-                                handleUnbookmark={() => { }}
+                                handleUnbookmark={handleUnbookmark}
                             />
                         ))}
                     </ul>
@@ -192,4 +153,4 @@ const Pagination: React.FC<{ currentPage: number; totalPages: number; paginate: 
     );
 };
 
-export default ProfilePage;
+export default BookmarksPage;

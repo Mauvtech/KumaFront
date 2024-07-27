@@ -124,7 +124,7 @@ const TermDetails: React.FC = () => {
                         {term?.comments && term?.comments.length > 0 ? (
                             term?.comments.map((comment, index) => (
                                 <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
-                                    <p className="text-sm text-gray-600">{comment.author}</p>
+                                    <p className="text-sm text-gray-600">{comment.author.username}</p>
                                     <p>{comment.text}</p>
                                     <p className="text-xs text-gray-600">{new Date(comment.createdAt).toLocaleDateString()}</p>
                                 </div>

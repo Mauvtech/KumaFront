@@ -15,6 +15,8 @@ import TermDetails from './components/Terms/TermDetails';
 import UpdateProfile from './components/User/UpdateProfile';
 import QuizPage from './components/Quiz/QuizPage';
 import FlashcardSerieParams from './components/Quiz/FlashcardSerieParams';
+import BookmarksPage from './components/Terms/BookmarksPage';
+import UserProfilePage from './components/User/UserProfilePage';
 
 function App() {
   return (
@@ -23,6 +25,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/profile/:username" element={<UserProfilePage />} />
           <Route path="/terms/:id" element={<TermDetails />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -55,6 +58,7 @@ function App() {
             element={<ProtectedRoute element={<TermForm />} />}
           />
           <Route path="/update-profile" element={<ProtectedRoute element={<UpdateProfile/>}/>} />
+          <Route path='/bookmarks' element={<ProtectedRoute element={<BookmarksPage/>}/>} />
         </Routes>
       </Router>
     </AuthProvider>

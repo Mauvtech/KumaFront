@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/authContext';
-import { FaUser, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaPlus, FaTachometerAlt, FaListAlt, FaCommentDots, FaChevronDown, FaBars, FaTimes, FaQuestion } from 'react-icons/fa';
+import { FaUser, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaPlus, FaTachometerAlt, FaListAlt, FaCommentDots, FaChevronDown, FaBars, FaTimes, FaQuestion, FaBookmark } from 'react-icons/fa';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
@@ -82,6 +82,10 @@ function Navbar() {
                                     Term Management
                                 </Link>
                             )}
+                            <Link to="/bookmarks" className="text-gray-700 flex items-center mt-4 md:mt-0">
+                                <FaBookmark className="mr-2" />
+                                Bookmarks
+                            </Link>
                             <div className="relative mt-4 md:mt-0" ref={dropdownRef}>
                                 <button
                                     onClick={toggleDropdown}

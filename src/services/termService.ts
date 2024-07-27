@@ -212,3 +212,21 @@ export const getBookmarks = async (page:string,limit:string) => {
     handleAuthError(error as AxiosError<ErrorResponse>);
   }
 };
+
+export const getAuthoredTerms = async (page:string,limit:string) => {
+  try {
+    const response = await api.get("/terms/authored",{params:{page,limit}});
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>);
+  }
+}
+
+export const getUserApprovedTerms = async (username:string,page:string,limit:string) => {
+  try {
+    const response = await api.get(`/terms/user/${username}/approved`,{params:{page,limit}});
+    return response.data;
+  } catch (error) {
+    handleAuthError(error as AxiosError<ErrorResponse>);
+  }
+}
