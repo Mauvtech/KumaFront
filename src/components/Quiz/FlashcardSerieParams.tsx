@@ -7,7 +7,7 @@ import { Category } from '../../models/categoryModel';
 import { Language } from '../../models/languageModel';
 import { Theme } from '../../models/themeModel';
 
-const FlashcardSerieParams: React.FC = () => {
+function FlashcardSerieParams()  {
     const [numberOfQuestions, setNumberOfQuestions] = useState<number>(10);
     const [grammaticalCategories, setGrammaticalCategories] = useState<Category[]>([]);
     const [languages, setLanguages] = useState<Language[]>([]);
