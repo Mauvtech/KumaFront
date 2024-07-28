@@ -36,6 +36,7 @@ const QuizPage: React.FC = () => {
 
     const fetchQuiz = useCallback(async () => {
         try {
+            console.log('Fetching quiz... number of questions', numberOfQuestions,'grammaticalCategory', grammaticalCategory,'language', language,'theme', theme);
             const ids = await getQuiz(numberOfQuestions.toString(), grammaticalCategory, language, theme);
             if (ids) {
                 setFlashcardIds(ids);

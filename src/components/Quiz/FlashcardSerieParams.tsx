@@ -60,7 +60,7 @@ function FlashcardSerieParams()  {
             >
                 <option value="">All Categories</option>
                 {grammaticalCategories.map((category) => (
-                    <option key={category._id} value={category._id}>{category.name}</option>
+                    <option key={category._id} value={category.name}>{category.name}</option>
                 ))}
             </select>
             <label className="block mb-2 text-lg">Language</label>
@@ -71,7 +71,7 @@ function FlashcardSerieParams()  {
             >
                 <option value="">All Languages</option>
                 {languages.map((lang) => (
-                    <option key={lang._id} value={lang._id}>{lang.name}</option>
+                    <option key={lang._id} value={lang.name}>{lang.name}</option>
                 ))}
             </select>
             <label className="block mb-2 text-lg">Theme</label>
@@ -82,7 +82,7 @@ function FlashcardSerieParams()  {
             >
                 <option value="">All Themes</option>
                 {themes.map((theme) => (
-                    <option key={theme._id} value={theme._id}>{theme.name}</option>
+                    <option key={theme._id} value={theme.name}>{theme.name}</option>
                 ))}
             </select>
             <button
