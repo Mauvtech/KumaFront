@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getVotes } from "../../services/termService";
 import DownvoteIcon from "./DownvoteIcon";
@@ -7,7 +7,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { Term } from "../../models/termModel";
 import { User } from "../../models/userModel";
-import Avatar from '@mui/material/Avatar'; // Importation de l'avatar de Material-UI
+import Avatar from '@mui/material/Avatar';
 
 interface TermItemProps {
     term: Term;
@@ -20,9 +20,11 @@ interface TermItemProps {
 
 const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDownvote, handleBookmark, handleUnbookmark }) => {
     const [votes, setVotes] = useState<{ upvotes: number; downvotes: number }>({ upvotes: 0, downvotes: 0 });
-    const [userHasUpvoted, setUserHasUpvoted] = useState(user ? term.upvotedBy.includes(user!._id) : false);
-    const [userHasDownvoted, setUserHasDownvoted] = useState(user ? term.downvotedBy.includes(user!._id) : false);
-    const [userHasBookmarked, setUserHasBookmarked] = useState(user ? term.bookmarkedBy.includes(user!._id) : false);
+    const [userHasUpvoted, setUserHasUpvoted] = useState(user ? term.upvotedBy.includes(user._id) : false);
+    const [userHasDownvoted, setUserHasDownvoted] = useState(user ? term.downvotedBy.includes(user._id) : false);
+    const [userHasBookmarked, setUserHasBookmarked] = useState(user ? term.bookmarkedBy.includes(user._id) : false);
+
+    const MAX_DEFINITION_LENGTH = 100;
 
     useEffect(() => {
         const fetchVotes = async () => {
@@ -66,30 +68,43 @@ const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDow
         }
     };
 
+    const truncateDefinition = (definition: string) => {
+        if (definition.length > MAX_DEFINITION_LENGTH) {
+            return definition.substring(0, MAX_DEFINITION_LENGTH) + "...";
+        }
+        return definition;
+    };
+
     return (
-        <li className="flex flex-col justify-between mb-4 p-4 bg-white rounded-lg shadow-md transition-transform transform hover:scale-105">
+        <li className="flex flex-col justify-between mb-4 p-4 bg-background rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 min-h-[300px]">
             <div className="flex items-center mb-4">
-                <Avatar alt={term.author.username} className="mr-3" />
-                <Link to={`/profile/${term.author.username}`} className="text-blue-500 hover:underline">
-                    <h4 className="font-semibold">{term.author.username}</h4>
+                <Avatar alt={term.author.username} className="mr-1" />
+                <Link to={`/profile/${term.author.username}`} className="text-primary hover:underline">
+                    <h4 className="font-semibold text-text">{term.author.username}</h4>
                 </Link>
             </div>
-            <div className="mb-4">
-                <Link to={`/terms/${term._id}`}>
-                    <h3 className="text-xl font-bold text-gray-800">{term.term}</h3>
-                    <p className="text-gray-600">{term.translation}</p>
-                    <p className="text-gray-800">{term.definition}</p>
-                    {term.language && (
-                        <p className="text-gray-800">Language {term.language.name} ({term.language.code})</p>
-                    )}
-                </Link>
+            <div className="flex-1 flex flex-col justify-between mb-4">
+                <div>
+                    <Link to={`/terms/${term._id}`}>
+                        <h3 className="text-xl font-bold text-text">{term.term}</h3>
+                        <p className="text-accent font-bold">{term.translation}</p>
+                        <p className="text-text">{truncateDefinition(term.definition)}</p>
+                    </Link>
+                </div>
+                {term.language && (
+                    <div className="mt-2">
+                        <span className="bg-accentLight text-accent font-bold text-xs px-2 rounded-full">
+                            {term.language.name} ({term.language.code})
+                        </span>
+                    </div>
+                )}
             </div>
-            <div className="flex justify-between items-center">
-                <div className="flex items-center">
-                    <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full mr-2">
+            <div className="flex justify-between items-end">
+                <div className="flex items-center font-bold">
+                    <span className="inline-block bg-primaryLight text-primary text-xs px-2 rounded-full mr-2">
                         {term.grammaticalCategory.name}
                     </span>
-                    <span className="inline-block bg-green-200 text-green-800 text-xs px-2 rounded-full">
+                    <span className="inline-block bg-secondaryLight text-secondary text-xs px-2 rounded-full">
                         {term.theme.name}
                     </span>
                 </div>
@@ -97,25 +112,25 @@ const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDow
                     <div className="flex items-center space-x-4">
                         <button
                             onClick={handleBookmarkClick}
-                            className={`flex justify-center items-center w-10 h-10 rounded-full hover:text-yellow-600 bg-gray-100 hover:bg-yellow-100 focus:outline-none transition duration-200 ${userHasBookmarked ? 'text-yellow-600' : 'text-gray-300'} shadow-neumorphic hover:shadow-neumorphic-inset`}
+                            className={`flex justify-center items-center w-10 h-10 rounded-full focus:outline-none transition duration-200 ${userHasBookmarked ? 'text-warning' : 'text-text'} hover:bg-warningHover hover:text-warning shadow-neumorphic`}
                         >
                             {userHasBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                         </button>
                         <div className="flex items-center space-x-2">
-                            <span className="text-green-600">{votes.upvotes}</span>
+                            <span className="text-success">{votes.upvotes}</span>
                             <button
                                 onClick={handleUpvoteClick}
-                                className={`flex justify-center items-center w-10 h-10 rounded-full hover:text-green-600 bg-gray-100 hover:bg-green-100 focus:outline-none transition duration-200 ${userHasUpvoted ? 'text-green-600' : 'text-gray-300'} shadow-neumorphic hover:shadow-neumorphic-inset`}
+                                className={`flex justify-center items-center w-10 h-10 rounded-full focus:outline-none transition duration-200 ${userHasUpvoted ? 'text-success' : 'text-text'} hover:bg-successHover hover:text-success shadow-neumorphic`}
                             >
                                 <UpvoteIcon isUpvoted={userHasUpvoted} />
                             </button>
                             <button
                                 onClick={handleDownvoteClick}
-                                className={`flex justify-center items-center w-10 h-10 rounded-full hover:text-red-600 bg-gray-100 hover:bg-red-100 focus:outline-none transition duration-200 ${userHasDownvoted ? 'text-red-600' : 'text-gray-300'} shadow-neumorphic hover:shadow-neumorphic-inset`}
+                                className={`flex justify-center items-center w-10 h-10 rounded-full focus:outline-none transition duration-200 ${userHasDownvoted ? 'text-error' : 'text-text'} hover:bg-errorHover hover:text-error shadow-neumorphic`}
                             >
                                 <DownvoteIcon isDownvoted={userHasDownvoted} />
                             </button>
-                            <span className="text-red-600">{votes.downvotes}</span>
+                            <span className="text-error">{votes.downvotes}</span>
                         </div>
                     </div>
                 )}

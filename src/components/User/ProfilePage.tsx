@@ -104,7 +104,7 @@ const ProfilePage: React.FC = () => {
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
     return (
-        <div className="max-w-7xl mx-auto mt-10 p-6 flex flex-col bg-gray-200 justify-center items-center rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
+        <div className="max-w-7xl mx-auto mt-10 p-6 flex flex-col bg-background justify-center items-center rounded-lg shadow-neumorphic">
             <div className="space-y-6 flex flex-col w-1/3 text-center">
                 {loading ? (
                     <>
@@ -114,17 +114,17 @@ const ProfilePage: React.FC = () => {
                     </>
                 ) : (
                     <>
-                        <div className="p-4 bg-gray-200 w-full rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
-                            <span className="block text-lg font-semibold text-gray-700">Username</span>
-                            <span className="block mt-2 text-xl text-gray-900">{userProfile.username}</span>
+                        <div className="p-4 bg-background w-full rounded-lg shadow-neumorphic">
+                            <span className="block text-lg font-semibold text-text">Username</span>
+                            <span className="block mt-2 text-xl text-text">{userProfile.username}</span>
                         </div>
-                        <div className="p-4 bg-gray-200 rounded-lg w-full shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
-                            <span className="block text-lg font-semibold text-gray-700">Role</span>
-                            <span className="block mt-2 text-xl text-gray-900">{userProfile.role}</span>
+                        <div className="p-4 bg-background rounded-lg w-full shadow-neumorphic">
+                            <span className="block text-lg font-semibold text-text">Role</span>
+                            <span className="block mt-2 text-xl text-text">{userProfile.role}</span>
                         </div>
                         <button
                             onClick={() => navigate('/update-profile')}
-                            className="w-full mt-6 py-2 px-4 bg-gray-300 text-gray-800 font-semibold rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff] hover:bg-gray-400 transform hover:scale-105 transition-transform duration-200"
+                            className="w-full mt-6 py-2 px-4 bg-primary text-white font-semibold rounded-lg shadow-neumorphic hover:bg-primaryLight transform hover:scale-105 transition-transform duration-200"
                         >
                             Modify profile
                         </button>
@@ -132,11 +132,11 @@ const ProfilePage: React.FC = () => {
                 )}
             </div>
             <div className="mt-10 w-full">
-                <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">Authored Terms</h3>
+                <h3 className="text-2xl font-bold mb-4 text-center text-text">Authored Terms</h3>
                 {termsLoading ? (
                     <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {Array.from({ length: termsPerPage }).map((_, index) => (
-                            <li key={index} className="flex flex-col justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
+                            <li key={index} className="flex flex-col justify-between mb-4 p-4 bg-backgroundHover rounded-lg shadow-neumorphic">
                                 <Skeleton height={30} width="80%" />
                                 <Skeleton height={20} width="60%" />
                                 <Skeleton height={20} width="100%" />
@@ -149,7 +149,7 @@ const ProfilePage: React.FC = () => {
                         ))}
                     </ul>
                 ) : authoredTerms.length === 0 ? (
-                    <p className="text-center text-gray-500">No terms found.</p>
+                    <p className="text-center text-text">No terms found.</p>
                 ) : (
                     <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {authoredTerms.map(term => (
@@ -181,7 +181,7 @@ const Pagination: React.FC<{ currentPage: number; totalPages: number; paginate: 
                     <li key={number}>
                         <button
                             onClick={() => paginate(number)}
-                            className={`px-3 py-2 leading-tight text-gray-500 bg-gray-100 border border-gray-300 hover:bg-gray-200 hover:text-gray-700 rounded-lg shadow-lg ${currentPage === number ? 'bg-blue-500 text-white' : ''}`}
+                            className={`px-3 py-2 leading-tight text-text bg-backgroundHover border border-background hover:bg-background focus:outline-none transition duration-200 rounded-lg shadow-lg ${currentPage === number ? 'bg-primary text-white' : ''}`}
                         >
                             {number}
                         </button>

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { updateUserProfile } from '../../services/userService';
 import { useAuth } from '../../contexts/authContext';
 
@@ -9,7 +8,6 @@ const UpdateProfile: React.FC = () => {
     const [password, setPassword] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const navigate = useNavigate();
 
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -18,46 +16,46 @@ const UpdateProfile: React.FC = () => {
 
         try {
             const updatedUser = await updateUserProfile({ username, password });
-            setUser(updatedUser); // Mettre à jour le contexte utilisateur avec les nouvelles informations
+            setUser(updatedUser); 
             logout();
         } catch (error) {
-            console.error('Error while uploading profile', error);
-            setError('Erreh while uploading profile.');
+            console.error('Error while updating profile', error);
+            setError('Error while updating profile.');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <form onSubmit={handleUpdateProfile} className="max-w-md mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">Upload profile</h2>
-            {error && <div className="mb-4 text-red-500">{error}</div>}
+        <form onSubmit={handleUpdateProfile} className="max-w-md mx-auto mt-10 p-6 bg-background rounded-lg shadow-neumorphic">
+            <h2 className="text-2xl font-bold mb-4 text-text">Update Profile</h2>
+            {error && <div className="mb-4 text-error">{error}</div>}
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800" htmlFor="username">Username</label>
+                <label className="block mb-2 text-text" htmlFor="username">Username</label>
                 <input
                     type="text"
                     id="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primary"
                 />
             </div>
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800" htmlFor="password">Password</label>
+                <label className="block mb-2 text-text" htmlFor="password">Password</label>
                 <input
                     type="password"
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primary"
                 />
             </div>
             <button
                 type="submit"
-                className="w-full p-3 text-white rounded-lg bg-gray-400 shadow-[3px_3px_6px_#b3b3b3,-3px_-3px_6px_#ffffff] hover:bg-gray-500 focus:outline-none"
+                className="w-full p-3 text-white rounded-lg bg-primary shadow-neumorphic hover:bg-primaryLight focus:outline-none"
                 disabled={loading}
             >
-                {loading ? 'Chargement...' : 'Mettre à jour'}
+                {loading ? 'Loading...' : 'Update'}
             </button>
         </form>
     );

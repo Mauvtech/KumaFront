@@ -45,71 +45,71 @@ function Navbar() {
     }, []);
 
     return (
-        <nav className="bg-gray-200 p-4 shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
+        <nav className="bg-background p-4 shadow-neumorphic">
             <div className="container mx-auto flex justify-between items-center">
-                <Link to="/" className="text-gray-700 text-xl font-bold flex items-center">
+                <Link to="/" className="text-primary text-xl font-bold flex items-center">
                     <FaCommentDots className="mr-2" />
                     KUMA
                 </Link>
-                <button className="md:hidden text-gray-700" onClick={toggleMenu}>
+                <button className="md:hidden text-primary" onClick={toggleMenu}>
                     {menuOpen ? <FaTimes /> : <FaBars />}
                 </button>
-                <div ref={menuRef} className={`md:flex ${menuOpen ? 'block' : 'hidden'} md:items-center md:space-x-4 absolute md:relative top-0 left-0 w-full md:w-auto bg-gray-200 md:bg-transparent p-4 md:p-0 shadow-lg md:shadow-none z-10`}>
+                <div ref={menuRef} className={`md:flex ${menuOpen ? 'block' : 'hidden'} md:items-center md:space-x-4 absolute md:relative top-0 left-0 w-full md:w-auto bg-background md:bg-transparent p-4 md:p-0 shadow-lg md:shadow-none z-10`}>
                     {loading ? (
-                        <div className="text-gray-700 flex items-center mt-4 md:mt-0">
+                        <div className="text-text flex items-center mt-4 md:mt-0">
                             <Skeleton circle={true} height={40} width={40} />
                             <Skeleton height={40} width={100} className="ml-2" />
                         </div>
                     ) : (
                         <>
-                            <Link to="/new-term" className="text-gray-700 flex items-center mt-4 md:mt-0">
+                            <Link to="/new-term" className="text-text flex items-center mt-4 md:mt-0">
                                 <FaPlus className="mr-2" />
                                 New Term
                             </Link>
-                            <Link to="/terms/flashcard-serie" className="text-gray-700 flex items-center mt-4 md:mt-0">
+                            <Link to="/terms/flashcard-serie" className="text-text flex items-center mt-4 md:mt-0">
                                 <FaQuestion className="mr-2" />
                                 Quiz
                             </Link>
                             {user && (
                                 <>
                                     {user.role === 'admin' && (
-                                        <Link to="/dashboard" className="text-gray-700 flex items-center mt-4 md:mt-0">
+                                        <Link to="/dashboard" className="text-text flex items-center mt-4 md:mt-0">
                                             <FaTachometerAlt className="mr-2" />
                                             Dashboard
                                         </Link>
                                     )}
                                     {(user.role === 'admin' || user.role === 'moderator') && (
-                                        <Link to="/terms" className="text-gray-700 flex items-center mt-4 md:mt-0">
+                                        <Link to="/terms" className="text-text flex items-center mt-4 md:mt-0">
                                             <FaListAlt className="mr-2" />
                                             Term Management
                                         </Link>
                                     )}
-                                    <Link to="/bookmarks" className="text-gray-700 flex items-center mt-4 md:mt-0">
+                                    <Link to="/bookmarks" className="text-text flex items-center mt-4 md:mt-0">
                                         <FaBookmark className="mr-2" />
                                         Bookmarks
                                     </Link>
                                     <div className="relative mt-4 md:mt-0" ref={dropdownRef}>
                                         <button
                                             onClick={toggleDropdown}
-                                            className="text-gray-700 flex items-center focus:outline-none"
+                                            className="text-text flex items-center focus:outline-none"
                                         >
                                             <FaUser className="mr-2" />
                                             <span>{user.username}</span>
                                             <FaChevronDown className="ml-2" />
                                         </button>
                                         {dropdownOpen && (
-                                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-20">
+                                            <div className="absolute right-0 mt-2 w-48 bg-background rounded-md shadow-neumorphic py-2 z-20">
                                                 <Link
                                                     onClick={toggleDropdown}
                                                     to="/profile"
-                                                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center"
+                                                    className="block px-4 py-2 text-text hover:bg-secondary hover:text-background flex items-center"
                                                 >
                                                     <FaUser className="mr-2" />
                                                     Profile
                                                 </Link>
                                                 <button
                                                     onClick={handleLogout}
-                                                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center"
+                                                    className="block w-full text-left px-4 py-2 text-text hover:bg-secondary hover:text-background flex items-center"
                                                 >
                                                     <FaSignOutAlt className="mr-2" />
                                                     Logout
@@ -121,11 +121,11 @@ function Navbar() {
                             )}
                             {!user && (
                                 <>
-                                    <Link to="/login" className="text-gray-700 flex items-center mt-4 md:mt-0">
+                                    <Link to="/login" className="text-text flex items-center mt-4 md:mt-0">
                                         <FaSignInAlt className="mr-2" />
                                         Login
                                     </Link>
-                                    <Link to="/register" className="text-gray-700 flex items-center mt-4 md:mt-0">
+                                    <Link to="/register" className="text-text flex items-center mt-4 md:mt-0">
                                         <FaUserPlus className="mr-2" />
                                         Signin
                                     </Link>
@@ -137,6 +137,6 @@ function Navbar() {
             </div>
         </nav>
     );
-};
+}
 
 export default Navbar;

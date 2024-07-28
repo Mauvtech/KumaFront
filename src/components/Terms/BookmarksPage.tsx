@@ -91,13 +91,13 @@ const BookmarksPage: React.FC = () => {
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
     return (
-        <div className="max-w-7xl mx-auto mt-10 p-6 flex flex-col bg-gray-200 justify-center items-center rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
+        <div className="max-w-7xl mx-auto mt-10 p-6 flex flex-col bg-background justify-center items-center rounded-lg shadow-neumorphic">
             <div className="mt-10 w-full">
-                <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">Bookmarked Terms</h3>
+                <h3 className="text-2xl font-bold mb-4 text-center text-text">Bookmarked Terms</h3>
                 {loading ? (
                     <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {Array.from({ length: termsPerPage }).map((_, index) => (
-                            <li key={index} className="flex flex-col justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
+                            <li key={index} className="flex flex-col justify-between mb-4 p-4 bg-backgroundHover rounded-lg shadow-neumorphic">
                                 <Skeleton height={30} width="80%" />
                                 <Skeleton height={20} width="60%" />
                                 <Skeleton height={20} width="100%" />
@@ -110,7 +110,7 @@ const BookmarksPage: React.FC = () => {
                         ))}
                     </ul>
                 ) : bookmarkedTerms.length === 0 ? (
-                    <p className="text-center text-gray-500">No bookmarks found.</p>
+                    <p className="text-center text-text">No bookmarks found.</p>
                 ) : (
                     <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {bookmarkedTerms.map(term => (
@@ -142,7 +142,7 @@ const Pagination: React.FC<{ currentPage: number; totalPages: number; paginate: 
                     <li key={number}>
                         <button
                             onClick={() => paginate(number)}
-                            className={`px-3 py-2 leading-tight text-gray-500 bg-gray-100 border border-gray-300 hover:bg-gray-200 hover:text-gray-700 rounded-lg shadow-lg ${currentPage === number ? 'bg-blue-500 text-white' : ''}`}
+                            className={`px-3 py-2 leading-tight text-text bg-backgroundHover border border-background hover:bg-background focus:outline-none transition duration-200 rounded-lg shadow-lg ${currentPage === number ? 'bg-primary text-white' : ''}`}
                         >
                             {number}
                         </button>

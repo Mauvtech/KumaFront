@@ -128,40 +128,40 @@ const QuizPage: React.FC = () => {
     };
 
     return (
-        <div className="max-w-3xl mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
+        <div className="max-w-3xl mx-auto mt-10 p-6 bg-background rounded-lg shadow-neumorphic">
             {currentFlashcard ? (
-                <div className="relative flex flex-col items-center">
+                <div className="relative flex flex-col items-center bg-background">
                     <div
                         className={`flip-card-inner cursor-pointer ${isFlipped ? 'rotate-y-180' : ''} ${isAnimating ? 'animate-slide' : ''}`}
                         onClick={handleFlip}
                         style={{ width: '300px', height: '400px' }}
                     >
-                        <div className="flip-card-front flex flex-col justify-center items-center w-full h-full bg-white shadow-md rounded-lg p-4">
-                            <h3 className={`text-xl font-bold mb-4 ${isAnimating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}>
+                        <div className="flip-card-front flex flex-col justify-center items-center w-full h-full bg-backgroundHover shadow-md rounded-lg p-4">
+                            <h3 className={`text-xl font-bold mb-4 text-text ${isAnimating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}>
                                 {currentFlashcard.term}
                             </h3>
                             {currentFlashcard.language && (
-                                <p className="absolute top-2 right-2 inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full">
+                                <p className="absolute top-2 right-2 inline-block bg-accentLight text-accent text-xs px-2 rounded-full">
                                     {currentFlashcard.language.name} ({currentFlashcard.language.code})
                                 </p>
                             )}
-                            <p className="text-gray-500">Click to see the translation</p>
+                            <p className="text-accent">Click to see the translation</p>
                         </div>
-                        <div className="flip-card-back flex flex-col justify-center items-center w-full h-full bg-white shadow-md rounded-lg p-4">
-                            <h3 className={`text-xl font-bold mb-2 ${isAnimating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}>
+                        <div className="flip-card-back flex flex-col justify-center items-center w-full h-full bg-backgroundHover shadow-md rounded-lg p-4">
+                            <h3 className={`text-xl font-bold mb-2 text-text ${isAnimating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}>
                                 {currentFlashcard.translation}
                             </h3>
                             {showDefinition && (
-                                <h3 className="text-xl text-gray-600">{currentFlashcard.definition}</h3>
+                                <h3 className="text-xl text-text">{currentFlashcard.definition}</h3>
                             )}
                             {currentFlashcard.language && (
-                                <p className="absolute top-2 right-2 inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full">
+                                <p className="absolute top-2 right-2 inline-block bg-accentLight text-accent text-xs px-2 rounded-full">
                                     {currentFlashcard.language.name} ({currentFlashcard.language.code})
                                 </p>
                             )}
                             <button
                                 onClick={handleShowDefinition}
-                                className="mt-2 px-4 py-2 bg-gray-200 text-gray-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
+                                className="mt-2 px-4 py-2 bg-backgroundHover text-text font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
                             >
                                 {showDefinition ? 'Hide Definition' : 'Show Definition'}
                             </button>
@@ -170,7 +170,7 @@ const QuizPage: React.FC = () => {
                     <div className="mt-4 flex justify-between w-full px-6">
                         <button
                             onClick={handlePrevious}
-                            className="px-4 py-2 bg-gray-200 text-gray-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
+                            className="px-4 py-2 bg-backgroundHover text-text font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
                             style={{ visibility: currentIndex === 0 ? 'hidden' : 'visible' }}
                             disabled={isAnimating}
                         >
@@ -178,21 +178,21 @@ const QuizPage: React.FC = () => {
                         </button>
                         <button
                             onClick={handleMarkIncorrect}
-                            className="px-4 py-2 bg-red-200 text-red-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
+                            className="px-4 py-2 bg-errorHover text-error font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
                             disabled={isAnimating}
                         >
                             <FaTimes />
                         </button>
                         <button
                             onClick={handleMarkCorrect}
-                            className="px-4 py-2 bg-green-200 text-green-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
+                            className="px-4 py-2 bg-successHover text-success font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
                             disabled={isAnimating}
                         >
                             <FaCheck />
                         </button>
                         <button
                             onClick={handleNext}
-                            className="px-4 py-2 bg-gray-200 text-gray-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
+                            className="px-4 py-2 bg-backgroundHover text-text font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
                             style={{ visibility: currentIndex === flashcardIds.length - 1 ? 'hidden' : 'visible' }}
                             disabled={isAnimating}
                         >
@@ -206,10 +206,10 @@ const QuizPage: React.FC = () => {
                         className={`flip-card-inner ${isAnimating ? 'animate-slide' : ''}`}
                         style={{ width: '300px', height: '400px' }}
                     >
-                        <div className="flip-card-front flex justify-center items-center w-full h-full bg-white shadow-md rounded-lg p-4">
+                        <div className="flip-card-front flex justify-center items-center w-full h-full bg-backgroundHover shadow-md rounded-lg p-4">
                             <Skeleton height={30} width="80%" />
                         </div>
-                        <div className="flip-card-back flex justify-center items-center w-full h-full bg-white shadow-md rounded-lg p-4">
+                        <div className="flip-card-back flex justify-center items-center w-full h-full bg-backgroundHover shadow-md rounded-lg p-4">
                             <Skeleton height={30} width="80%" />
                         </div>
                     </div>
@@ -223,11 +223,11 @@ const QuizPage: React.FC = () => {
                 isOpen={isModalOpen}
                 onRequestClose={closeModal}
                 contentLabel="Quiz Summary"
-                className="modal bg-white p-6 rounded-lg shadow-lg"
+                className="modal bg-background p-6 rounded-lg shadow-neumorphic"
                 overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
                 style={{ overlay: {}, content: {} }}
             >
-                <h2 className="text-2xl font-bold mb-4">Quiz Summary</h2>
+                <h2 className="text-2xl font-bold mb-4 text-text">Quiz Summary</h2>
                 <div className="flex justify-center items-center mb-4">
                     <div className="w-32 h-32 relative">
                         <CircularProgressbar
@@ -244,18 +244,18 @@ const QuizPage: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                <p className="text-lg text-green-500 mb-2">
+                <p className="text-lg text-success mb-2">
                     <span className="font-bold text-3xl">{correctAnswers}</span> Correct Answers
                 </p>
-                <p className="text-lg mb-2 text-red-500">
+                <p className="text-lg mb-2 text-error">
                     <span className="font-bold text-3xl">{incorrectAnswers}</span> Incorrect Answers
                 </p>
-                <p className="text-lg text-gray-500 mb-2">
+                <p className="text-lg text-text mb-2">
                     <span className="font-bold text-3xl">{numberOfQuestions}</span> Flashcards
                 </p>
                 <button
                     onClick={closeModal}
-                    className="mt-4 px-4 py-2 bg-blue-200 text-blue-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
+                    className="mt-4 px-4 py-2 bg-accentLight text-accent font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
                 >
                     Close
                 </button>

@@ -15,6 +15,7 @@ import { Term } from '../../models/termModel';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import TermItem from './TermItem';
+import Input from '../Common/Input';
 
 function HomePage() {
     const { user } = useAuth();
@@ -32,7 +33,6 @@ function HomePage() {
     const [filtersLoading, setFiltersLoading] = useState<boolean>(true);
     const [totalTerms, setTotalTerms] = useState<number>(0);
     const termsPerPage: number = 9;
-
 
     const fetchApprovedTerms = useCallback(async () => {
         setTermsLoading(true);
@@ -198,14 +198,12 @@ function HomePage() {
     };
 
     return (
-        <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
-            <h2 className="text-3xl font-bold mb-6 text-gray-700">The Words World</h2>
-            <input
-                type="text"
-                placeholder="Rechercher un terme ou une définition..."
+        <div className="max-w-6xl mx-auto mt-10 p-6 bg-background shadow-lg rounded-lg">
+            <h2 className="text-3xl font-bold mb-6 text-text">The Words World</h2>
+            <Input
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="w-full p-3 mb-6 bg-gray-200 border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-400"
+                placeholder="Rechercher un terme ou une définition..."
             />
             <FilterButtons
                 title="Categories"
@@ -231,7 +229,7 @@ function HomePage() {
             {termsLoading ? (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {Array.from({ length: termsPerPage }).map((_, index) => (
-                        <li key={index} className="flex flex-col justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff]">
+                        <li key={index} className="flex flex-col justify-between mb-4 p-4 bg-background rounded-lg shadow-neumorphic">
                             <Skeleton height={30} width="80%" />
                             <Skeleton height={20} width="60%" />
                             <Skeleton height={20} width="100%" />
@@ -244,7 +242,7 @@ function HomePage() {
                     ))}
                 </ul>
             ) : filteredTerms.length === 0 ? (
-                <p className="text-center text-gray-500">No terms found.</p>
+                <p className="text-center text-text">No terms found.</p>
             ) : (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredTerms.map((term) => (
@@ -286,7 +284,7 @@ const Pagination: React.FC<PaginationProps> = ({ termsPerPage, totalTerms, pagin
                     <li key={number}>
                         <button
                             onClick={() => paginate(number)}
-                            className={`px-3 py-2 leading-tight text-gray-500 bg-gray-100 border border-gray-300 hover:bg-gray-200 hover:text-gray-700 rounded-lg shadow-lg ${currentPage === number ? 'bg-gray-300' : ''}`}
+                            className={`px-3 py-2 leading-tight text-text bg-background border border-gray-300 hover:bg-gray-200 hover:text-gray-700 rounded-lg shadow-md ${currentPage === number ? 'bg-gray-300' : ''}`}
                         >
                             {number}
                         </button>

@@ -22,44 +22,50 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/profile/:username" element={<UserProfilePage />} />
-          <Route path="/terms/:id" element={<TermDetails />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+        <div className="min-h-screen bg-background text-text font-sans">
+          <Navbar />
+          <div className="container mx-auto p-4">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/profile/:username" element={<UserProfilePage />} />
+              <Route path="/terms/:id" element={<TermDetails />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
 
-          {/* Routes protégées */}
-          <Route
-            path="/profile"
-            element={<ProtectedRoute element={<ProfilePage />} />}
-          />
-          <Route
-            path="/dashboard"
-            element={<ProtectedRoute element={<DashboardPage />} allowedRoles={['admin']} />}
-          />
-          <Route
-            path="/users"
-            element={<ProtectedRoute element={<UsersPage />} allowedRoles={['admin']} />}
-          />
-          <Route
-            path="/terms/flashcard-serie"
-            element={<ProtectedRoute element={<FlashcardSerieParams/>} allowedRoles={['admin', 'moderator', 'user']} />} />
-          <Route
-            path="/terms/quiz"
-            element={<ProtectedRoute element={<QuizPage />}allowedRoles={['admin','moderator','user']} />} />
-
-          <Route  path="/terms"
-            element={<ProtectedRoute element={<TermsPage />} allowedRoles={['admin','moderator']} />}
-          />
-          <Route
-            path="/new-term"
-            element={<ProtectedRoute element={<TermForm />} />}
-          />
-          <Route path="/update-profile" element={<ProtectedRoute element={<UpdateProfile/>}/>} />
-          <Route path='/bookmarks' element={<ProtectedRoute element={<BookmarksPage/>}/>} />
-        </Routes>
+              {/* Routes protégées */}
+              <Route
+                path="/profile"
+                element={<ProtectedRoute element={<ProfilePage />} />}
+              />
+              <Route
+                path="/dashboard"
+                element={<ProtectedRoute element={<DashboardPage />} allowedRoles={['admin']} />}
+              />
+              <Route
+                path="/users"
+                element={<ProtectedRoute element={<UsersPage />} allowedRoles={['admin']} />}
+              />
+              <Route
+                path="/terms/flashcard-serie"
+                element={<ProtectedRoute element={<FlashcardSerieParams />} allowedRoles={['admin', 'moderator', 'user']} />}
+              />
+              <Route
+                path="/terms/quiz"
+                element={<ProtectedRoute element={<QuizPage />} allowedRoles={['admin', 'moderator', 'user']} />}
+              />
+              <Route
+                path="/terms"
+                element={<ProtectedRoute element={<TermsPage />} allowedRoles={['admin', 'moderator']} />}
+              />
+              <Route
+                path="/new-term"
+                element={<ProtectedRoute element={<TermForm />} />}
+              />
+              <Route path="/update-profile" element={<ProtectedRoute element={<UpdateProfile />} />} />
+              <Route path='/bookmarks' element={<ProtectedRoute element={<BookmarksPage />} />} />
+            </Routes>
+          </div>
+        </div>
       </Router>
     </AuthProvider>
   );
