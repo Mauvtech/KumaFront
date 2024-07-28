@@ -60,44 +60,44 @@ function FlashcardSerieParams() {
     };
 
     return (
-        <div className="max-w-3xl mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Set Quiz Parameters</h2>
-            <label className="block mb-2 text-lg">Number of Questions</label>
+        <div className="max-w-3xl mx-auto mt-10 p-6 bg-background rounded-lg shadow-neumorphic">
+            <h2 className="text-2xl font-bold mb-4 text-text">Set Quiz Parameters</h2>
+            <label className="block mb-2 text-lg text-text">Number of Questions</label>
             <input
                 type="number"
                 value={numberOfQuestions}
                 onChange={handleNumberChange}
-                className="w-full p-3 bg-gray-200 border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500 mb-4"
+                className="w-full p-3 bg-backgroundHover border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-primaryLight mb-4"
                 min="1"
                 max="50"
             />
-            <label className="block mb-2 text-lg">Grammatical Category</label>
+            <label className="block mb-2 text-lg text-text">Grammatical Category</label>
             <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full p-3 bg-gray-200 border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500 mb-4"
+                className="w-full p-3 bg-backgroundHover border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-primaryLight mb-4"
             >
                 <option value="">All Categories</option>
                 {grammaticalCategories.map((category) => (
                     <option key={category._id} value={category.name}>{category.name}</option>
                 ))}
             </select>
-            <label className="block mb-2 text-lg">Language</label>
+            <label className="block mb-2 text-lg text-text">Language</label>
             <select
                 value={selectedLanguage}
                 onChange={(e) => setSelectedLanguage(e.target.value)}
-                className="w-full p-3 bg-gray-200 border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500 mb-4"
+                className="w-full p-3 bg-backgroundHover border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-primaryLight mb-4"
             >
                 <option value="">All Languages</option>
                 {languages.map((lang) => (
                     <option key={lang._id} value={lang.name}>{lang.name}</option>
                 ))}
             </select>
-            <label className="block mb-2 text-lg">Theme</label>
+            <label className="block mb-2 text-lg text-text">Theme</label>
             <select
                 value={selectedTheme}
                 onChange={(e) => setSelectedTheme(e.target.value)}
-                className="w-full p-3 bg-gray-200 border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500 mb-4"
+                className="w-full p-3 bg-backgroundHover border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-primaryLight mb-4"
             >
                 <option value="">All Themes</option>
                 {themes.map((theme) => (
@@ -106,7 +106,7 @@ function FlashcardSerieParams() {
             </select>
             <button
                 onClick={handleStartQuiz}
-                className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff] hover:bg-gray-300 transition-transform transform hover:scale-105 focus:outline-none"
+                className="w-full px-4 py-2 bg-backgroundHover text-text rounded-lg shadow-neumorphic hover:bg-background focus:outline-none transition-transform transform hover:scale-105"
             >
                 Start Quiz
             </button>
