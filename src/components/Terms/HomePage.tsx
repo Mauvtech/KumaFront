@@ -116,6 +116,26 @@ function HomePage() {
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
+        setCurrentPage(1); // Reset page number when search term changes
+        sessionStorage.setItem('currentPage', '1');
+    };
+
+    const handleCategoryChange = (category: string) => {
+        setSelectedCategory(category === selectedCategory ? '' : category);
+        setCurrentPage(1); // Reset page number when category changes
+        sessionStorage.setItem('currentPage', '1');
+    };
+
+    const handleThemeChange = (theme: string) => {
+        setSelectedTheme(theme === selectedTheme ? '' : theme);
+        setCurrentPage(1); // Reset page number when theme changes
+        sessionStorage.setItem('currentPage', '1');
+    };
+
+    const handleLanguageChange = (language: string) => {
+        setSelectedLanguage(language === selectedLanguage ? '' : language);
+        setCurrentPage(1); // Reset page number when language changes
+        sessionStorage.setItem('currentPage', '1');
     };
 
     const paginate = (pageNumber: number) => {
@@ -209,21 +229,21 @@ function HomePage() {
                 title="Categories"
                 options={categories.map(cat => cat.name)}
                 selectedOption={selectedCategory}
-                onSelectOption={(option) => setSelectedCategory(option === selectedCategory ? '' : option)}
+                onSelectOption={handleCategoryChange}
                 loading={filtersLoading}
             />
             <FilterButtons
                 title="Themes"
                 options={themes.map(theme => theme.name)}
                 selectedOption={selectedTheme}
-                onSelectOption={(option) => setSelectedTheme(option === selectedTheme ? '' : option)}
+                onSelectOption={handleThemeChange}
                 loading={filtersLoading}
             />
             <FilterButtons
                 title="Languages"
                 options={languages.map(lang => lang.name)}
                 selectedOption={selectedLanguage}
-                onSelectOption={(option) => setSelectedLanguage(option === selectedLanguage ? '' : option)}
+                onSelectOption={handleLanguageChange}
                 loading={filtersLoading}
             />
             {termsLoading ? (

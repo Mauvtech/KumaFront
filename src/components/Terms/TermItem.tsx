@@ -83,8 +83,8 @@ const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDow
                     <h4 className="font-semibold text-text">{term.author.username}</h4>
                 </Link>
             </div>
-            <div className="flex-1 flex flex-col justify-between mb-4">
-                <div>
+            <div className="flex-1 flex flex-col justify-between  mb-4">
+                <div className="">
                     <Link to={`/terms/${term._id}`}>
                         <h3 className="text-xl font-bold text-text">{term.term}</h3>
                         <p className="text-accent font-bold">{term.translation}</p>
@@ -92,7 +92,7 @@ const TermItem: React.FC<TermItemProps> = ({ term, user, handleUpvote, handleDow
                     </Link>
                 </div>
                 {term.language && (
-                    <div className="mt-2">
+                    <div >
                         <span className="bg-accentLight text-accent font-bold text-xs px-2 rounded-full">
                             {term.language.name} ({term.language.code})
                         </span>
