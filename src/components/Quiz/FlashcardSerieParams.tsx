@@ -7,7 +7,7 @@ import { Category } from '../../models/categoryModel';
 import { Language } from '../../models/languageModel';
 import { Theme } from '../../models/themeModel';
 
-function FlashcardSerieParams()  {
+function FlashcardSerieParams() {
     const [numberOfQuestions, setNumberOfQuestions] = useState<number>(10);
     const [grammaticalCategories, setGrammaticalCategories] = useState<Category[]>([]);
     const [languages, setLanguages] = useState<Language[]>([]);
@@ -37,7 +37,26 @@ function FlashcardSerieParams()  {
     }, []);
 
     const handleStartQuiz = () => {
+        if (numberOfQuestions < 1) {
+            setNumberOfQuestions(1);
+            return;
+        }
+        if (numberOfQuestions > 50) {
+            setNumberOfQuestions(50);
+            return;
+        }
         navigate(`/terms/quiz?questions=${numberOfQuestions}&grammaticalCategory=${selectedCategory}&language=${selectedLanguage}&theme=${selectedTheme}`);
+    };
+
+    const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Number(e.target.value);
+        if (value >= 1 && value <= 50) {
+            setNumberOfQuestions(value);
+        } else if (value < 1) {
+            setNumberOfQuestions(1);
+        } else {
+            setNumberOfQuestions(50);
+        }
     };
 
     return (
@@ -47,7 +66,7 @@ function FlashcardSerieParams()  {
             <input
                 type="number"
                 value={numberOfQuestions}
-                onChange={(e) => setNumberOfQuestions(Number(e.target.value))}
+                onChange={handleNumberChange}
                 className="w-full p-3 bg-gray-200 border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500 mb-4"
                 min="1"
                 max="50"
@@ -93,6 +112,6 @@ function FlashcardSerieParams()  {
             </button>
         </div>
     );
-};
+}
 
 export default FlashcardSerieParams;
