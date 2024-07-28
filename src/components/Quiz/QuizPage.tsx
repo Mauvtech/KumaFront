@@ -11,13 +11,12 @@ import Modal from 'react-modal';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-Modal.setAppElement('#root'); // Cette ligne est nécessaire pour l'accessibilité
+Modal.setAppElement('#root');
 
 const QuizPage: React.FC = () => {
     const [flashcardIds, setFlashcardIds] = useState<string[]>([]);
+    const [flashcards, setFlashcards] = useState<Term[]>([]);
     const [currentFlashcard, setCurrentFlashcard] = useState<Term | null>(null);
-    const [nextFlashcard, setNextFlashcard] = useState<Term | null>(null);
-    const [prevFlashcard, setPrevFlashcard] = useState<Term | null>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
     const [showDefinition, setShowDefinition] = useState(false);
@@ -36,12 +35,13 @@ const QuizPage: React.FC = () => {
 
     const fetchQuiz = useCallback(async () => {
         try {
-            console.log('Fetching quiz... number of questions', numberOfQuestions,'grammaticalCategory', grammaticalCategory,'language', language,'theme', theme);
             const ids = await getQuiz(numberOfQuestions.toString(), grammaticalCategory, language, theme);
             if (ids) {
                 setFlashcardIds(ids);
-                fetchFlashcard(ids[0], setCurrentFlashcard);
-                if (ids.length > 1) fetchFlashcard(ids[1], setNextFlashcard);
+                const flashcardPromises = ids.map((id: string) => getFlashcardById(id));
+                const flashcards = await Promise.all(flashcardPromises);
+                setFlashcards(flashcards);
+                setCurrentFlashcard(flashcards[0]);
             }
         } catch (error) {
             if (error instanceof AxiosError) {
@@ -54,73 +54,42 @@ const QuizPage: React.FC = () => {
         }
     }, [numberOfQuestions, grammaticalCategory, language, theme]);
 
-    const fetchFlashcard = useCallback(async (id: string, setState: React.Dispatch<React.SetStateAction<Term | null>>) => {
-        try {
-            const flashcard = await getFlashcardById(id);
-            setState(flashcard);
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                handleAuthError(error);
-            } else {
-                console.error('Unexpected error:', error);
-            }
-        }
-    }, []);
-
     useEffect(() => {
         fetchQuiz();
     }, [fetchQuiz]);
 
     const handleNext = () => {
-        if (isAnimating) return;
+        if (isAnimating || currentIndex >= flashcardIds.length - 1) return;
 
         setIsAnimating(true);
         setTimeout(() => {
             const nextIndex = currentIndex + 1;
             setCurrentIndex(nextIndex);
-            setCurrentFlashcard(nextFlashcard);
-            setNextFlashcard(null);
+            setCurrentFlashcard(flashcards[nextIndex]);
             setIsFlipped(false);
             setShowDefinition(false);
             setIsAnimating(false);
-
-            if (nextIndex + 1 < flashcardIds.length) {
-                fetchFlashcard(flashcardIds[nextIndex + 1], setNextFlashcard);
-            }
-            if (nextIndex - 1 >= 0) {
-                fetchFlashcard(flashcardIds[nextIndex - 1], setPrevFlashcard);
-            }
         }, 300);
     };
 
     const handlePrevious = () => {
-        if (isAnimating) return;
+        if (isAnimating || currentIndex <= 0) return;
 
         setIsAnimating(true);
         setTimeout(() => {
             const prevIndex = currentIndex - 1;
             setCurrentIndex(prevIndex);
-            setCurrentFlashcard(prevFlashcard);
-            setPrevFlashcard(null);
+            setCurrentFlashcard(flashcards[prevIndex]);
             setIsFlipped(false);
             setShowDefinition(false);
             setIsAnimating(false);
-
-            if (prevIndex - 1 >= 0) {
-                fetchFlashcard(flashcardIds[prevIndex - 1], setPrevFlashcard);
-            }
-            if (prevIndex + 1 < flashcardIds.length) {
-                fetchFlashcard(flashcardIds[prevIndex + 1], setNextFlashcard);
-            }
         }, 300);
     };
 
     const handleFlip = () => {
         if (isAnimating) return;
-        setTimeout(() => {
-            setIsFlipped(!isFlipped);
-            setShowDefinition(false); // Hide the definition when flipping
-        }, 300);
+        setIsFlipped(!isFlipped);
+        setShowDefinition(false);
     };
 
     const handleShowDefinition = (event: React.MouseEvent) => {
@@ -153,7 +122,7 @@ const QuizPage: React.FC = () => {
 
     const getGaugeColor = () => {
         const score = (correctAnswers / numberOfQuestions) * 100;
-        if (score >= 70) return '#1C4F36'; // green
+        if (score >= 70) return '#00FF00'; // green
         if (score >= 30) return '#FFA500'; // orange
         return '#FF0000'; // red
     };
@@ -172,7 +141,9 @@ const QuizPage: React.FC = () => {
                                 {currentFlashcard.term}
                             </h3>
                             {currentFlashcard.language && (
-                                <p className="absolute top-2 right-2 inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full">{currentFlashcard.language.name} ({currentFlashcard.language.code})</p>
+                                <p className="absolute top-2 right-2 inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full">
+                                    {currentFlashcard.language.name} ({currentFlashcard.language.code})
+                                </p>
                             )}
                             <p className="text-gray-500">Click to see the translation</p>
                         </div>
@@ -184,7 +155,9 @@ const QuizPage: React.FC = () => {
                                 <h3 className="text-xl text-gray-600">{currentFlashcard.definition}</h3>
                             )}
                             {currentFlashcard.language && (
-                                <p className="absolute top-2 right-2 inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full">{currentFlashcard.language.name} ({currentFlashcard.language.code})</p>
+                                <p className="absolute top-2 right-2 inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full">
+                                    {currentFlashcard.language.name} ({currentFlashcard.language.code})
+                                </p>
                             )}
                             <button
                                 onClick={handleShowDefinition}
@@ -250,34 +223,42 @@ const QuizPage: React.FC = () => {
                 isOpen={isModalOpen}
                 onRequestClose={closeModal}
                 contentLabel="Quiz Summary"
-                className="modal bg-white p-6 rounded-lg shadow-lg flex justify-center items-center"
+                className="modal bg-white p-6 rounded-lg shadow-lg"
                 overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+                style={{ overlay: {}, content: {} }}
             >
-                <div className="text-center">
-                    <h2 className="text-2xl font-bold mb-4">Quiz Summary</h2>
-                    <div className="w-32 h-32 relative mx-auto">
+                <h2 className="text-2xl font-bold mb-4">Quiz Summary</h2>
+                <div className="flex justify-center items-center mb-4">
+                    <div className="w-32 h-32 relative">
                         <CircularProgressbar
                             value={(correctAnswers / numberOfQuestions) * 100}
-                            text={`${Math.round((correctAnswers / numberOfQuestions) * 100)}%`}
                             styles={buildStyles({
                                 textSize: '24px',
                                 pathColor: getGaugeColor(),
                                 textColor: getGaugeColor(),
                                 trailColor: '#d6d6d6',
-                                backgroundColor: '#3e98c7',
                             })}
                         />
+                        <div className="absolute inset-0 flex justify-center items-center text-xl" style={{ color: getGaugeColor() }}>
+                            {`${Math.round((correctAnswers / numberOfQuestions) * 100)}%`}
+                        </div>
                     </div>
-                    <p className="text-lg text-green-900 mb-2"><span className='font-bold text-3xl'>{correctAnswers}</span> Correct Answers</p>
-                    <p className="text-lg text-red-500 mb-2"><span className='font-bold text-3xl'>{incorrectAnswers}</span> Incorrect Answers</p>
-                    <p className="text-lg text-gray-500 mb-2"><span className='font-bold text-3xl'>{numberOfQuestions}</span> Flashcards</p>
-                    <button
-                        onClick={closeModal}
-                        className="mt-4 px-4 py-2 bg-blue-200 text-blue-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
-                    >
-                        Close
-                    </button>
                 </div>
+                <p className="text-lg text-green-500 mb-2">
+                    <span className="font-bold text-3xl">{correctAnswers}</span> Correct Answers
+                </p>
+                <p className="text-lg mb-2 text-red-500">
+                    <span className="font-bold text-3xl">{incorrectAnswers}</span> Incorrect Answers
+                </p>
+                <p className="text-lg text-gray-500 mb-2">
+                    <span className="font-bold text-3xl">{numberOfQuestions}</span> Flashcards
+                </p>
+                <button
+                    onClick={closeModal}
+                    className="mt-4 px-4 py-2 bg-blue-200 text-blue-600 font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
+                >
+                    Close
+                </button>
             </Modal>
         </div>
     );
