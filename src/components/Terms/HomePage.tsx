@@ -16,6 +16,7 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import TermItem from './TermItem';
 import Input from '../Common/Input';
+import { Pagination } from '../Common/Pagination';
 
 function HomePage() {
     const { user } = useAuth();
@@ -282,37 +283,5 @@ function HomePage() {
         </div>
     );
 }
-
-interface PaginationProps {
-    termsPerPage: number;
-    totalTerms: number;
-    paginate: (pageNumber: number) => void;
-    currentPage: number;
-}
-
-const Pagination: React.FC<PaginationProps> = ({ termsPerPage, totalTerms, paginate, currentPage }) => {
-    const pageNumbers = [];
-
-    for (let i = 1; i <= Math.ceil(totalTerms / termsPerPage); i++) {
-        pageNumbers.push(i);
-    }
-
-    return (
-        <nav className="mt-4">
-            <ul className="inline-flex -space-x-px">
-                {pageNumbers.map((number) => (
-                    <li key={number}>
-                        <button
-                            onClick={() => paginate(number)}
-                            className={`px-3 py-2 leading-tight text-text bg-background border border-gray-300 hover:bg-gray-200 hover:text-gray-700 rounded-lg shadow-md ${currentPage === number ? 'bg-gray-300' : ''}`}
-                        >
-                            {number}
-                        </button>
-                    </li>
-                ))}
-            </ul>
-        </nav>
-    );
-};
 
 export default HomePage;
