@@ -5,16 +5,16 @@ interface PaginationProps {
     totalTerms: number;
     paginate: (pageNumber: number) => void;
     currentPage: number;
+    totalPages: number;
 }
 
-export const Pagination: React.FC<PaginationProps> = ({ termsPerPage, totalTerms, paginate, currentPage }) => {
-    const pageNumbers = [];
-    const totalPages = Math.ceil(totalTerms / termsPerPage);
+export const Pagination: React.FC<PaginationProps> = ({ termsPerPage, totalTerms, paginate, currentPage, totalPages }) => {
+
     const maxPagesToShow = 5;
 
     const getPageNumbers = () => {
         const pages = [];
-
+console.log("totalPages", totalPages)
         if (totalPages <= maxPagesToShow) {
             for (let i = 1; i <= totalPages; i++) {
                 pages.push(i);
@@ -23,8 +23,10 @@ export const Pagination: React.FC<PaginationProps> = ({ termsPerPage, totalTerms
             if (currentPage <= Math.ceil(maxPagesToShow / 2)) {
                 for (let i = 1; i < maxPagesToShow; i++) {
                     pages.push(i);
+                    console.log("j'ai bien pushé")
                 }
                 pages.push('...');
+                console.log("j'ai bien pushé")
                 pages.push(totalPages);
             } else if (currentPage > totalPages - Math.floor(maxPagesToShow / 2)) {
                 pages.push(1);

@@ -4,6 +4,7 @@ import { getUserApprovedTerms } from '../../services/termService';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import TermItem from '../Terms/TermItem';
+import { Pagination } from '../Common/Pagination';
 
 interface UserProfilePageParams extends Record<string, string | undefined> {
     username: string;
@@ -15,8 +16,9 @@ const UserProfilePage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
+    const [totalTerms, setTotalTerms] = useState<number>(0);
     const navigate = useNavigate();
-    const termsPerPage: number = 10;
+    const termsPerPage: number = 9;
 
     const fetchApprovedTerms = useCallback(async (username: string, page: number) => {
         setLoading(true);
@@ -25,6 +27,7 @@ const UserProfilePage: React.FC = () => {
             setApprovedTerms(data.terms);
             setCurrentPage(data.currentPage);
             setTotalPages(data.totalPages);
+            setTotalTerms(data.totalTerms);
         } catch (error) {
             console.error('Erreur de chargement des termes approuvés de l\'utilisateur', error);
         } finally {
@@ -78,30 +81,9 @@ const UserProfilePage: React.FC = () => {
                         ))}
                     </ul>
                 )}
-                <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
+                <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} termsPerPage={termsPerPage} totalTerms={totalTerms} />
             </div>
         </div>
-    );
-};
-
-const Pagination: React.FC<{ currentPage: number; totalPages: number; paginate: (pageNumber: number) => void }> = ({ currentPage, totalPages, paginate }) => {
-    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
-    return (
-        <nav className="mt-4">
-            <ul className="inline-flex -space-x-px">
-                {pageNumbers.map(number => (
-                    <li key={number}>
-                        <button
-                            onClick={() => paginate(number)}
-                            className={`px-3 py-2 leading-tight text-text bg-backgroundHover border border-gray-300 hover:bg-background focus:outline-none rounded-lg shadow-lg ${currentPage === number ? 'bg-primary text-background' : ''}`}
-                        >
-                            {number}
-                        </button>
-                    </li>
-                ))}
-            </ul>
-        </nav>
     );
 };
 

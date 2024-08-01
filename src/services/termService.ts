@@ -34,7 +34,7 @@ export const getAllTerms = async (page: number = 1, limit: number = 10) => {
 
 export const getApprovedTerms = async (
   params?: { [key: string]: any }
-): Promise<{ terms: Term[]; totalTerms: number } | void> => {
+): Promise<{ terms: Term[]; totalTerms: number ; totalPages: number} | void> => {
   try {
     const response = await api.get(`/terms/approved`, { params });
     return response.data;
