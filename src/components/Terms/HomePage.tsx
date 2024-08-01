@@ -33,6 +33,7 @@ function HomePage() {
     const [termsLoading, setTermsLoading] = useState<boolean>(true);
     const [filtersLoading, setFiltersLoading] = useState<boolean>(true);
     const [totalTerms, setTotalTerms] = useState<number>(0);
+    const [totalPages, setTotalPages] = useState<number>(1);
     const termsPerPage: number = 9;
 
     const fetchApprovedTerms = useCallback(async () => {
@@ -49,6 +50,7 @@ function HomePage() {
             if (data && data.terms) {
                 setTerms(data.terms);
                 setTotalTerms(data.totalTerms);
+                setTotalPages(data.totalPages);
             }
         } catch (error) {
             handleAuthError(error as AxiosError<ErrorResponse>);
@@ -279,7 +281,7 @@ function HomePage() {
                     ))}
                 </ul>
             )}
-            <Pagination termsPerPage={termsPerPage} totalTerms={totalTerms} paginate={paginate} currentPage={currentPage} />
+            <Pagination termsPerPage={termsPerPage} totalPages={totalPages} totalTerms={totalTerms} paginate={paginate} currentPage={currentPage} />
         </div>
     );
 }

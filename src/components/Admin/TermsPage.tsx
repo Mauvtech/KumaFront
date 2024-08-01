@@ -11,6 +11,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { Category } from '../../models/categoryModel';
 import { Theme } from '../../models/themeModel';
 import { Language } from '../../models/languageModel';
+import { Pagination } from '../Common/Pagination';
 
 interface TermsPageProps {
     setSelectedTerm: (term: any) => void;
@@ -29,6 +30,7 @@ const TermsPage: React.FC<TermsPageProps> = ({ setSelectedTerm }) => {
     const [editMode, setEditMode] = useState<string | null>(null);
     const [editedData, setEditedData] = useState<any>({});
     const [saving, setSaving] = useState<string | null>(null);
+    const [totalTerms, setTotalTerms] = useState<number>(0);
 
     const fetchTerms = async (page: number) => {
         setTermsLoading(true);
@@ -38,6 +40,7 @@ const TermsPage: React.FC<TermsPageProps> = ({ setSelectedTerm }) => {
                 setTerms(data.terms);
                 setCurrentPage(data.currentPage);
                 setTotalPages(data.totalPages);
+                setTotalTerms(data.totalTerms);
             }
         } catch (error) {
             console.error('Erreur de chargement des termes', error);
@@ -273,32 +276,13 @@ const TermsPage: React.FC<TermsPageProps> = ({ setSelectedTerm }) => {
                         )}
                     </tbody>
                 </table>
-                <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
+                <Pagination currentPage={currentPage} totalPages={totalPages} termsPerPage={15} totalTerms={totalTerms} paginate={paginate} />
             </div>
         </div>
     );
 };
 
-const Pagination: React.FC<{ currentPage: number; totalPages: number; paginate: (pageNumber: number) => void }> = ({ currentPage, totalPages, paginate }) => {
-    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-    return (
-        <nav className="mt-4">
-            <ul className="inline-flex -space-x-px">
-                {pageNumbers.map(number => (
-                    <li key={number}>
-                        <button
-                            onClick={() => paginate(number)}
-                            className={`px-3 py-2 leading-tight text-gray-500 bg-gray-100 border border-gray-300 hover:bg-gray-200 hover:text-gray-700 rounded-lg shadow-lg ${currentPage === number ? 'bg-blue-500 text-white' : ''}`}
-                        >
-                            {number}
-                        </button>
-                    </li>
-                ))}
-            </ul>
-        </nav>
-    );
-};
 
 const TermsManagement: React.FC = () => {
     const [selectedTerm, setSelectedTerm] = useState<any>(null);
