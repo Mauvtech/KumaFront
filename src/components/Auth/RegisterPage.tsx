@@ -45,7 +45,7 @@ const RegisterPage: React.FC = () => {
             navigate('/login'); // Redirect to login page after successful registration
         } catch (error) {
             if (error instanceof AxiosError) {
-                if (error.response?.status === 400) {
+                if (error.code === '400') {
                     setErrors({ general: "Invalid credentials" }   );
                 } else { setErrors({ general: 'Registration failed' }); }
             } else { console.error('Registration error', error); }
@@ -58,10 +58,11 @@ const RegisterPage: React.FC = () => {
             <h2 className="text-2xl font-bold mb-4 text-gray-800">Sign Up</h2>
             {errors.general && <div className="mb-4 text-red-500">{errors.general}</div>}
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800">Username</label>
+                <label htmlFor="username" className="block mb-2 text-gray-800">Username</label>
                 <input
                     type="text"
                     value={username}
+                    id='username'
                     onChange={(e) => setUsername(e.target.value)}
                     className={`w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 ${errors.username ? 'border-red-500' : ''}`}
                     required
@@ -69,9 +70,10 @@ const RegisterPage: React.FC = () => {
                 {errors.username && <div className="text-red-500">{errors.username}</div>}
             </div>
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800">Password</label>
+                <label htmlFor='password' className="block mb-2 text-gray-800">Password</label>
                 <input
                     type="password"
+                    id='password'
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className={`w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 ${errors.password ? 'border-red-500' : ''}`}
@@ -80,9 +82,10 @@ const RegisterPage: React.FC = () => {
                 {errors.password && <div className="text-red-500">{errors.password}</div>}
             </div>
             <div className="mb-4">
-                <label className="block mb-2 text-gray-800">Confirm Password</label>
+                <label htmlFor='confirmPassword' className="block mb-2 text-gray-800">Confirm Password</label>
                 <input
                     type="password"
+                    id='confirmPassword'
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className={`w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 ${errors.confirmPassword ? 'border-red-500' : ''}`}

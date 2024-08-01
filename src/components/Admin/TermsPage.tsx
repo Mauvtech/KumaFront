@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { getAllTerms, approveTerm, rejectTerm } from '../../services/termService';
+import { getAllTerms, approveTerm, rejectTerm, updateTerm } from '../../services/termService';
+import { getCategories } from '../../services/categoryService';
+import { getThemes } from '../../services/themeService';
+import { getLanguages } from '../../services/languageService';
 import { useAuth } from '../../contexts/authContext';
 import { useNavigate } from 'react-router-dom';
 import ApproveTermForm from './ApproveTermForm';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { Category } from '../../models/categoryModel';
+import { Theme } from '../../models/themeModel';
+import { Language } from '../../models/languageModel';
 
 interface TermsPageProps {
     setSelectedTerm: (term: any) => void;
@@ -12,11 +18,17 @@ interface TermsPageProps {
 
 const TermsPage: React.FC<TermsPageProps> = ({ setSelectedTerm }) => {
     const [terms, setTerms] = useState<any[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [themes, setThemes] = useState<Theme[]>([]);
+    const [languages, setLanguages] = useState<Language[]>([]);
     const { user, loading } = useAuth();
     const navigate = useNavigate();
     const [termsLoading, setTermsLoading] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
+    const [editMode, setEditMode] = useState<string | null>(null);
+    const [editedData, setEditedData] = useState<any>({});
+    const [saving, setSaving] = useState<string | null>(null);
 
     const fetchTerms = async (page: number) => {
         setTermsLoading(true);
@@ -34,9 +46,25 @@ const TermsPage: React.FC<TermsPageProps> = ({ setSelectedTerm }) => {
         }
     };
 
+    const fetchFilters = async () => {
+        try {
+            const [categoriesData, themesData, languagesData] = await Promise.all([
+                getCategories(),
+                getThemes(),
+                getLanguages(),
+            ]);
+            setCategories(categoriesData);
+            setThemes(themesData);
+            setLanguages(languagesData);
+        } catch (error) {
+            console.error('Erreur de chargement des filtres', error);
+        }
+    };
+
     useEffect(() => {
         if (user && !loading) {
             fetchTerms(currentPage);
+            fetchFilters();
         }
     }, [user, loading, currentPage]);
 
@@ -57,6 +85,33 @@ const TermsPage: React.FC<TermsPageProps> = ({ setSelectedTerm }) => {
         } catch (error) {
             console.error('Erreur de rejet du terme', error);
         }
+    };
+
+    const handleEdit = (termId: string) => {
+        setEditMode(termId);
+        setEditedData(terms.find(term => term._id === termId));
+    };
+
+    const handleSave = async (termId: string) => {
+        setSaving(termId);
+        try {
+            const updatedTerm = { ...editedData };
+            setTerms(terms.map(term => term._id === termId ? updatedTerm : term));
+            await updateTerm(termId, updatedTerm);
+            setEditMode(null);
+            setSaving(null);
+        } catch (error) {
+            console.error('Erreur de mise à jour du terme', error);
+            setSaving(null);
+        }
+    };
+
+    const handleCancel = () => {
+        setEditMode(null);
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>, field: string) => {
+        setEditedData({ ...editedData, [field]: e.target.value });
     };
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -91,26 +146,125 @@ const TermsPage: React.FC<TermsPageProps> = ({ setSelectedTerm }) => {
                         ) : (
                             terms.map(term => (
                                 <tr key={term._id} className="hover:bg-gray-300 transition-colors duration-300">
-                                    <td className="py-2 px-4 border-b cursor-pointer" onClick={() => setSelectedTerm(term)}>{term.term}</td>
-                                    <td className="py-2 px-4 border-b">{term.definition}</td>
-                                    <td className="py-2 px-4 border-b">{term.grammaticalCategory?.name}</td>
-                                    <td className="py-2 px-4 border-b">{term.theme?.name}</td>
-                                    <td className="py-2 px-4 border-b">{term.language?.name}</td>
                                     <td className="py-2 px-4 border-b">
-                                        {term.status === 'pending' && (
+                                        {saving === term._id ? (
+                                            <Skeleton height={20} width={100} />
+                                        ) : editMode === term._id ? (
+                                            <input
+                                                type="text"
+                                                value={editedData.term}
+                                                onChange={(e) => handleInputChange(e, 'term')}
+                                                className="w-full bg-gray-100 p-1 rounded"
+                                            />
+                                        ) : (
+                                            <span onClick={() => setSelectedTerm(term)}>{term.term}</span>
+                                        )}
+                                    </td>
+                                    <td className="py-2 px-4 border-b">
+                                        {saving === term._id ? (
+                                            <Skeleton height={20} width={200} />
+                                        ) : editMode === term._id ? (
+                                            <input
+                                                type="text"
+                                                value={editedData.definition}
+                                                onChange={(e) => handleInputChange(e, 'definition')}
+                                                className="w-full bg-gray-100 p-1 rounded"
+                                            />
+                                        ) : (
+                                            term.definition
+                                        )}
+                                    </td>
+                                    <td className="py-2 px-4 border-b">
+                                        {saving === term._id ? (
+                                            <Skeleton height={20} width={150} />
+                                        ) : editMode === term._id ? (
+                                            <select
+                                                value={editedData.grammaticalCategory}
+                                                onChange={(e) => handleInputChange(e, 'grammaticalCategory')}
+                                                className="w-full bg-gray-100 p-1 rounded"
+                                            >
+                                                {categories.map(category => (
+                                                    <option key={category._id} value={category._id}>
+                                                        {category.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            term.grammaticalCategory?.name
+                                        )}
+                                    </td>
+                                    <td className="py-2 px-4 border-b">
+                                        {saving === term._id ? (
+                                            <Skeleton height={20} width={100} />
+                                        ) : editMode === term._id ? (
+                                            <select
+                                                value={editedData.theme}
+                                                onChange={(e) => handleInputChange(e, 'theme')}
+                                                className="w-full bg-gray-100 p-1 rounded"
+                                            >
+                                                {themes.map(theme => (
+                                                    <option key={theme._id} value={theme._id}>
+                                                        {theme.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            term.theme?.name
+                                        )}
+                                    </td>
+                                    <td className="py-2 px-4 border-b">
+                                        {saving === term._id ? (
+                                            <Skeleton height={20} width={100} />
+                                        ) : editMode === term._id ? (
+                                            <select
+                                                value={editedData.language}
+                                                onChange={(e) => handleInputChange(e, 'language')}
+                                                className="w-full bg-gray-100 p-1 rounded"
+                                            >
+                                                {languages.map(language => (
+                                                    <option key={language._id} value={language._id}>
+                                                        {language.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            term.language?.name
+                                        )}
+                                    </td>
+                                    <td className="py-2 px-4 border-b">
+                                        {saving === term._id ? (
+                                            <Skeleton height={40} width={100} />
+                                        ) : editMode === term._id ? (
                                             <div className="flex space-x-2">
                                                 <button
-                                                    onClick={() => setSelectedTerm(term)}
+                                                    onClick={() => handleSave(term._id)}
+                                                    className="bg-green-500 text-white px-2 py-1 rounded-md shadow-[2px_2px_5px_#d1d9e6,-2px_-2px_5px_#ffffff]"
+                                                >
+                                                    Save
+                                                </button>
+                                                <button
+                                                    onClick={handleCancel}
+                                                    className="bg-red-500 text-white px-2 py-1 rounded-md shadow-[2px_2px_5px_#d1d9e6,-2px_-2px_5px_#ffffff]"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="flex space-x-2">
+                                                <button
+                                                    onClick={() => handleEdit(term._id)}
                                                     className="bg-blue-500 text-white px-2 py-1 rounded-md shadow-[2px_2px_5px_#d1d9e6,-2px_-2px_5px_#ffffff]"
                                                 >
                                                     Modify
                                                 </button>
-                                                <button
-                                                    onClick={() => handleReject(term._id)}
-                                                    className="bg-red-500 text-white px-2 py-1 rounded-md shadow-[2px_2px_5px_#d1d9e6,-2px_-2px_5px_#ffffff]"
-                                                >
-                                                    Reject
-                                                </button>
+                                                {term.status === 'pending' && (
+                                                    <button
+                                                        onClick={() => handleReject(term._id)}
+                                                        className="bg-red-500 text-white px-2 py-1 rounded-md shadow-[2px_2px_5px_#d1d9e6,-2px_-2px_5px_#ffffff]"
+                                                    >
+                                                        Reject
+                                                    </button>
+                                                )}
                                             </div>
                                         )}
                                     </td>
