@@ -1,7 +1,7 @@
 const UpvoteIcon: React.FC<{ isUpvoted: boolean }> = ({ isUpvoted }) => (
     isUpvoted ? (
         <svg
-            className="w-7 h-7 pointer-events-none text-green-600"
+            className="w-12 h-12 pointer-events-none text-green-600"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             style={{ verticalAlign: 'middle' }}
@@ -14,7 +14,7 @@ const UpvoteIcon: React.FC<{ isUpvoted: boolean }> = ({ isUpvoted }) => (
         </svg>
     ) : (
         <svg
-            className="w-7 h-7 pointer-events-none "
+            className="w-12 h-12 pointer-events-none "
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             style={{ verticalAlign: 'middle' }}

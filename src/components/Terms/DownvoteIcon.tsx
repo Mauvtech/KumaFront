@@ -3,7 +3,7 @@
 const DownvoteIcon: React.FC<{ isDownvoted: boolean }> = ({ isDownvoted }) => (
     isDownvoted ? (
         <svg
-            className="w-7 h-7 pointer-events-none text-red-600"
+            className="w-12 h-12 pointer-events-none text-red-600"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             style={{ transform: 'rotate(180deg)' }}
@@ -16,7 +16,7 @@ const DownvoteIcon: React.FC<{ isDownvoted: boolean }> = ({ isDownvoted }) => (
         </svg>
     ) : (
         <svg
-            className="w-7 h-7 pointer-events-none "
+            className="w-12 h-12 pointer-events-none "
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             style={{ transform: 'rotate(180deg)' }}
