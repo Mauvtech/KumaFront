@@ -60,7 +60,7 @@ function FlashcardSerieParams() {
     };
 
     return (
-        <div className="max-w-3xl mx-auto mt-10 p-6 bg-background rounded-lg shadow-neumorphic">
+        <div className=" h-fit mt-10 p-6 flex justify-center items-center flex-col bg-background rounded-lg shadow-neumorphic">
             <h2 className="text-2xl font-bold mb-4 text-text">Set Quiz Parameters</h2>
             <label className="block mb-2 text-lg text-text">Number of Questions</label>
             <input

@@ -71,6 +71,18 @@ body {
 
 }
 
-body {
-  @apply bg-gray-50 text-gray-900;
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  50.01%, 100% {
+    opacity: 0;
+  }
+}
+
+.placeholder-blink::placeholder {
+  /* Animate the cursor */
+  animation: blink 1s infinite;
+  font-size: inherit; /* Ensure font size matches text */
+  line-height: inherit; /* Ensure line height is consistent */
 }

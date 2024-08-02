@@ -16,7 +16,7 @@ const UpdateProfile: React.FC = () => {
 
         try {
             const updatedUser = await updateUserProfile({ username, password });
-            setUser(updatedUser); 
+            setUser(updatedUser);
             logout();
         } catch (error) {
             console.error('Error while updating profile', error);

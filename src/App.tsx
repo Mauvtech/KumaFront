@@ -23,15 +23,15 @@ function App() {
     <AuthProvider>
       <Router>
         <Navbar />
-        <div className="min-h-screen w-screen flex justify-center bg-background text-text font-sans">
-         <Routes>
+        <div className="min-h-screen w-full flex justify-center items-center bg-background text-text font-sans">
+          <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/profile/:username" element={<UserProfilePage />} />
             <Route path="/terms/:id" element={<TermDetails />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
 
-            {/* Routes protégées */}
+            {/* Protected Routes */}
             <Route
               path="/profile"
               element={<ProtectedRoute element={<ProfilePage />} />}
@@ -56,10 +56,7 @@ function App() {
               path="/terms"
               element={<ProtectedRoute element={<TermsPage />} allowedRoles={['admin', 'moderator']} />}
             />
-            <Route
-              path="/new-term"
-              element={<ProtectedRoute element={<TermForm />} />}
-            />
+            <Route path="/new-term" element={<ProtectedRoute element={<TermForm />} />} />
             <Route path="/update-profile" element={<ProtectedRoute element={<UpdateProfile />} />} />
             <Route path='/bookmarks' element={<ProtectedRoute element={<BookmarksPage />} />} />
           </Routes>
@@ -67,6 +64,6 @@ function App() {
       </Router>
     </AuthProvider>
   );
-};
+}
 
 export default App;
