@@ -45,7 +45,7 @@ function Navbar() {
     }, []);
 
     return (
-        <nav className="bg-background p-4 shadow-neumorphic">
+        <nav className="bg-background p-4 ">
             <div className="container mx-auto flex justify-between items-center">
                 <Link to="/" className="text-primary text-xl font-bold flex items-center">
                     <FaCommentDots className="mr-2" />
