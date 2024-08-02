@@ -70,6 +70,7 @@ const UserProfilePage: React.FC = () => {
                     <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {approvedTerms.map(term => (
                             <TermItem
+                                isFeed={false}
                                 key={term._id}
                                 term={term}
                                 user={null} // Passer null car ce n'est pas le profil de l'utilisateur connecté

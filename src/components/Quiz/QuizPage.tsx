@@ -128,7 +128,7 @@ const QuizPage: React.FC = () => {
     };
 
     return (
-        <div className="max-w-3xl mx-auto mt-10 p-6 bg-background rounded-lg shadow-neumorphic">
+        <div className=" mt-10 p-6 bg-background flex justify-center items-center rounded-lg ">
             {currentFlashcard ? (
                 <div className="relative flex flex-col items-center bg-background">
                     <div
@@ -167,7 +167,7 @@ const QuizPage: React.FC = () => {
                             </button>
                         </div>
                     </div>
-                    <div className="mt-4 flex justify-between w-full px-6">
+                    <div className="mt-4 flex justify-evenly gap-3 w-full px-6">
                         <button
                             onClick={handlePrevious}
                             className="px-4 py-2 bg-backgroundHover text-text font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"

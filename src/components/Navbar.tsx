@@ -1,9 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/authContext';
-import { FaUser, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaPlus, FaTachometerAlt, FaListAlt, FaCommentDots, FaChevronDown, FaBars, FaTimes, FaQuestion, FaBookmark } from 'react-icons/fa';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/authContext";
+import {
+    FaUser,
+    FaSignOutAlt,
+    FaSignInAlt,
+    FaUserPlus,
+    FaPlus,
+    FaTachometerAlt,
+    FaListAlt,
+    FaCommentDots,
+    FaChevronDown,
+    FaBars,
+    FaTimes,
+    FaQuestion,
+    FaBookmark,
+} from "react-icons/fa";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 function Navbar() {
     const { user, loading, logout } = useAuth();
@@ -17,44 +31,48 @@ function Navbar() {
         logout();
         setDropdownOpen(false);
         setMenuOpen(false);
-        navigate('/login');
+        navigate("/login");
     };
 
-    function toggleDropdown() {
-        setDropdownOpen(!dropdownOpen);
+    const toggleDropdown = () => {
+        setDropdownOpen((prev) => !prev);
     };
 
-    function toggleMenu() {
-        setMenuOpen(!menuOpen);
-    };
-
-    function handleClickOutside(event: MouseEvent) {
-        if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-            setMenuOpen(false);
-        }
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-            setDropdownOpen(false);
-        }
+    const toggleMenu = () => {
+        setMenuOpen((prev) => !prev);
     };
 
     useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setMenuOpen(false);
+            }
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
 
     return (
-        <nav className="bg-background p-4 ">
-            <div className="container mx-auto flex justify-between items-center">
+        <nav className="bg-transparent text-lg fixed z-20 w-full shadow-lg">
+            <div className="container mx-auto flex justify-between items-center h-16 px-4">
                 <Link to="/" className="text-primary text-xl font-bold flex items-center">
                     <FaCommentDots className="mr-2" />
                     KUMA
                 </Link>
-                <button className="md:hidden text-primary" onClick={toggleMenu}>
+                <button className="md:hidden text-primary focus:outline-none" onClick={toggleMenu}>
                     {menuOpen ? <FaTimes /> : <FaBars />}
                 </button>
-                <div ref={menuRef} className={`md:flex ${menuOpen ? 'block' : 'hidden'} md:items-center md:space-x-4 absolute md:relative top-0 left-0 w-full md:w-auto bg-background md:bg-transparent p-4 md:p-0 shadow-lg md:shadow-none z-10`}>
+                <div
+                    ref={menuRef}
+                    className={`md:flex ${menuOpen ? "block" : "hidden"
+                        } md:items-center md:space-x-4 absolute md:static top-16 left-0 w-full md:w-auto bg-background md:bg-transparent p-4 md:p-0 z-10 transition-all duration-200 ease-in-out`}
+                >
                     {loading ? (
                         <div className="text-text flex items-center mt-4 md:mt-0">
                             <Skeleton circle={true} height={40} width={40} />
@@ -72,13 +90,13 @@ function Navbar() {
                             </Link>
                             {user && (
                                 <>
-                                    {user.role === 'admin' && (
+                                    {user.role === "admin" && (
                                         <Link to="/dashboard" className="text-text flex items-center mt-4 md:mt-0">
                                             <FaTachometerAlt className="mr-2" />
                                             Dashboard
                                         </Link>
                                     )}
-                                    {(user.role === 'admin' || user.role === 'moderator') && (
+                                    {(user.role === "admin" || user.role === "moderator") && (
                                         <Link to="/terms" className="text-text flex items-center mt-4 md:mt-0">
                                             <FaListAlt className="mr-2" />
                                             Term Management

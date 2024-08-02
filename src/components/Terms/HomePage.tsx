@@ -72,7 +72,7 @@ function HomePage() {
                 setTotalTerms(data.totalTerms);
                 setTotalPages(data.totalPages);
                 if (!currentWord) {
-                    setCurrentWord(data.terms[0]?.term || "LES MOTS");
+                    setCurrentWord(data.terms[0]?.term || "LES MOTS.");
                 }
             }
         } catch (error) {
@@ -278,8 +278,10 @@ function HomePage() {
     useEffect(() => {
         const interval = setInterval(() => {
             if (filteredTerms.length > 0) {
-                const randomIndex = Math.floor(Math.random() * filteredTerms.length);
-                setCurrentWord(filteredTerms[randomIndex].term);
+                // Shuffle the filteredTerms array
+                const shuffledTerms = [...filteredTerms].sort(() => 0.5 - Math.random());
+                const randomIndex = Math.floor(Math.random() * shuffledTerms.length);
+                setCurrentWord(shuffledTerms[randomIndex].term);
             }
         }, 3000); // Change word every 3 seconds
 
@@ -296,7 +298,7 @@ function HomePage() {
                 <AnimatePresence mode="wait">
                     <motion.h1
                         key={currentWord}
-                        className="text-8xl md:text-10xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary leading-tight"
+                        className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary leading-none"
                         initial="hidden"
                         animate="visible"
                         exit="exit"
@@ -309,15 +311,15 @@ function HomePage() {
             </div>
 
             {/* Main Content */}
-            <div className="max-w-screen mx-auto mt-10 p-6 bg-background rounded-lg">
+            <div className="max-w-screen-lg mx-auto mt-10 p-6 bg-background rounded-lg">
                 <Input
                     value={searchTerm}
                     onChange={handleSearchChange}
                     placeholder="Rechercher un terme ou une définition..."
                 />
 
-                <div className="flex flex-row justify-evenly space-x-4 mb-12 mt-8">
-                    <div className="relative w-full md:w-1/3 mb-4 md:mb-0">
+                <div className="flex flex-col sm:flex-row justify-evenly space-y-4 sm:space-y-0 sm:space-x-4 mb-12 mt-8">
+                    <div className="relative w-full sm:w-1/3 mb-4 sm:mb-0">
                         <Selector
                             options={categories.map((cat) => cat.name)}
                             selectedOption={selectedCategory}
@@ -325,7 +327,7 @@ function HomePage() {
                             placeholder="Select Category"
                         />
                     </div>
-                    <div className="relative w-full md:w-1/3 mb-4 md:mb-0">
+                    <div className="relative w-full sm:w-1/3 mb-4 sm:mb-0">
                         <Selector
                             options={themes.map((theme) => theme.name)}
                             selectedOption={selectedTheme}
@@ -333,7 +335,7 @@ function HomePage() {
                             placeholder="Select Theme"
                         />
                     </div>
-                    <div className="relative w-full md:w-1/3">
+                    <div className="relative w-full sm:w-1/3">
                         <Selector
                             options={languages.map((lang) => lang.name)}
                             selectedOption={selectedLanguage}
@@ -366,12 +368,13 @@ function HomePage() {
                 ) : (
                     <ul
                         className={`grid ${filteredTerms.length > 5
-                            ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6"
-                            : "grid-cols-1"
+                                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-1 gap-6"
+                                : "grid-cols-1"
                             }`}
                     >
                         {filteredTerms.map((term) => (
                             <TermItem
+                                isFeed={true}
                                 key={term._id}
                                 term={term}
                                 user={user}
