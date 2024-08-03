@@ -25,11 +25,25 @@ const Selector: React.FC<SelectorProps> = ({
 }) => {
     const [isOpen, setIsOpen] = useState(false);
 
+    // Helper function to abbreviate options for mobile devices
+    const abbreviateOptionForMobile = (option: string) => {
+        const words = option.split(" ");
+        if (words.length > 1) {
+            // Truncate the first word to 6 letters, if necessary
+            const firstWord = words[0].length > 6 ? words[0].slice(0, 6) : words[0];
+            // Use the first letter of the second word
+            const secondLetter = words[1][0].toUpperCase();
+            return `${firstWord} ${secondLetter}.`;
+        }
+        // Truncate single-word options if they're too long
+        return option.length > 6 ? `${option.slice(0, 6)}...` : option;
+    };
+
     return (
         <motion.nav
             initial={false}
             animate={isOpen ? "open" : "closed"}
-            className="relative "
+            className="relative"
         >
             <motion.button
                 whileTap={{ scale: 0.97 }}
@@ -46,7 +60,7 @@ const Selector: React.FC<SelectorProps> = ({
                     style={{ originY: 0.55 }}
                 >
                     <svg width="15" height="15" viewBox="0 0 20 20" className="ml-2">
-                        <path d="M0 7 L 20 7 L 10 16" fill="white"/>
+                        <path d="M0 7 L 20 7 L 10 16" fill="white" />
                     </svg>
                 </motion.div>
             </motion.button>
@@ -72,13 +86,10 @@ const Selector: React.FC<SelectorProps> = ({
                     },
                 }}
                 style={{ pointerEvents: isOpen ? "auto" : "none" }}
-                className="absolute z-10 w-full mt-2 bg-secondaryLight rounded-lg shadow-lg"
+                className="absolute z-10 w-full mt-2 bg-background sm:bg-secondaryLight rounded-lg shadow-lg"
             >
                 <div
-                    className={`grid gap-2 p-4 ${options.length > 5
-                            ? "grid-cols-1 md:grid-cols-3"
-                            : "grid-cols-1"
-                        } md:flex md:flex-wrap`}
+                    className={`grid gap-2 p-4 grid-cols-3 md:grid-cols-1 md:flex md:flex-wrap`}
                 >
                     {options.map((option, index) => (
                         <motion.li
@@ -90,7 +101,13 @@ const Selector: React.FC<SelectorProps> = ({
                                 setIsOpen(false);
                             }}
                         >
-                            {option}
+                            {/* Show abbreviated option on mobile and full option on larger screens */}
+                            <span className="block md:hidden">
+                                {abbreviateOptionForMobile(option)}
+                            </span>
+                            <span className="hidden md:block">
+                                {option}
+                            </span>
                         </motion.li>
                     ))}
                 </div>
