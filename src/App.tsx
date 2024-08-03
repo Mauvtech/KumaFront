@@ -23,7 +23,7 @@ function App() {
     <AuthProvider>
       <Router>
         <Navbar />
-        <div className="min-h-screen w-full flex justify-center items-center bg-background text-text font-sans">
+        <div className="min-h-screen w-full flex justify-center items-center  text-text font-sans">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/profile/:username" element={<UserProfilePage />} />

@@ -24,6 +24,7 @@ import Input from "../Common/Input";
 import { Pagination } from "../Common/Pagination";
 import { motion, AnimatePresence } from "framer-motion";
 import Selector from "../Common/Selector";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 
 function HomePage() {
     const { user } = useAuth();
@@ -43,6 +44,7 @@ function HomePage() {
     const [filtersLoading, setFiltersLoading] = useState<boolean>(true);
     const [totalTerms, setTotalTerms] = useState<number>(0);
     const [totalPages, setTotalPages] = useState<number>(1);
+    const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
     const termsPerPage: number = 9;
 
     // State for managing word slideshow
@@ -50,9 +52,14 @@ function HomePage() {
 
     // Animation Variants
     const wordVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0 },
-        exit: { opacity: 0, y: -20 },
+        hidden: { opacity: 0, y: 20, scale: 0.95 },
+        visible: { opacity: 1, y: 0, scale: 1 },
+        exit: { opacity: 0, y: -20, scale: 1.05 },
+    };
+
+    const termVariants = {
+        hidden: { opacity: 0, y: 50 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
     };
 
     // Fetch Data
@@ -288,22 +295,42 @@ function HomePage() {
         return () => clearInterval(interval);
     }, [filteredTerms]);
 
+    // Show scroll-to-top button after a certain scroll distance
+    useEffect(() => {
+        const handleScroll = () => {
+            setShowScrollButton(window.scrollY > 300);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
     return (
-        <div>
+        <div className="w-full bg-background">
             {/* Hero Section */}
             <div
-                className="h-screen w-screen flex items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center"
-                style={{ backdropFilter: "blur(20px)" }}
+                className="h-screen flex items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center"
+                style={{
+                    backdropFilter: "blur(20px)",
+                    overflow: "visible",
+                }}
             >
                 <AnimatePresence mode="wait">
                     <motion.h1
                         key={currentWord}
-                        className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary leading-none"
+                        className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary leading-tight"
                         initial="hidden"
                         animate="visible"
                         exit="exit"
                         variants={wordVariants}
                         transition={{ duration: 1.5, ease: "easeInOut" }}
+                        style={{
+                            lineHeight: "1.2em",
+                            overflow: "visible",
+                        }}
                     >
                         {currentWord}
                     </motion.h1>
@@ -312,53 +339,61 @@ function HomePage() {
 
             {/* Main Content */}
             <div className="max-w-screen-lg mx-auto mt-10 p-6 bg-background rounded-lg">
-                <Input
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    placeholder="Rechercher un terme ou une définition..."
-                />
+                <div className="sm:sticky top-0 bg-background z-10">
+                    <Input
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        placeholder="Rechercher un terme ou une définition..."
+                    />
 
-                <div className="flex flex-col sm:flex-row justify-evenly space-y-4 sm:space-y-0 sm:space-x-4 mb-12 mt-8">
-                    <div className="relative w-full sm:w-1/3 mb-4 sm:mb-0">
-                        <Selector
-                            options={categories.map((cat) => cat.name)}
-                            selectedOption={selectedCategory}
-                            onSelectOption={handleCategoryChange}
-                            placeholder="Select Category"
-                        />
-                    </div>
-                    <div className="relative w-full sm:w-1/3 mb-4 sm:mb-0">
-                        <Selector
-                            options={themes.map((theme) => theme.name)}
-                            selectedOption={selectedTheme}
-                            onSelectOption={handleThemeChange}
-                            placeholder="Select Theme"
-                        />
-                    </div>
-                    <div className="relative w-full sm:w-1/3">
-                        <Selector
-                            options={languages.map((lang) => lang.name)}
-                            selectedOption={selectedLanguage}
-                            onSelectOption={handleLanguageChange}
-                            placeholder="Select Language"
-                        />
+                    <div className="flex flex-col sm:flex-row justify-evenly space-y-4 sm:space-y-0 sm:space-x-4 mb-12 mt-8">
+                        <div className="relative w-full sm:w-1/3 mb-4 sm:mb-0">
+                            <Selector
+                                options={categories.map((cat) => cat.name)}
+                                selectedOption={selectedCategory}
+                                onSelectOption={handleCategoryChange}
+                                placeholder="Select Category"
+                            />
+                        </div>
+                        <div className="relative w-full sm:w-1/3 mb-4 sm:mb-0">
+                            <Selector
+                                options={themes.map((theme) => theme.name)}
+                                selectedOption={selectedTheme}
+                                onSelectOption={handleThemeChange}
+                                placeholder="Select Theme"
+                            />
+                        </div>
+                        <div className="relative w-full sm:w-1/3">
+                            <Selector
+                                options={languages.map((lang) => lang.name)}
+                                selectedOption={selectedLanguage}
+                                onSelectOption={handleLanguageChange}
+                                placeholder="Select Language"
+                            />
+                        </div>
                     </div>
                 </div>
 
                 {termsLoading ? (
-                    <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <ul className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-6">
                         {Array.from({ length: termsPerPage }).map((_, index) => (
                             <li
                                 key={index}
-                                className="flex flex-col justify-between mb-4 p-4 bg-background rounded-lg shadow-neumorphic"
+                                className="flex flex-col justify-between mb-4 p-6 bg-background rounded-lg shadow-neumorphic h-[60vh]"
                             >
-                                <Skeleton height={30} width="80%" />
-                                <Skeleton height={20} width="60%" />
-                                <Skeleton height={20} width="100%" />
-                                <Skeleton height={20} width="90%" />
-                                <div className="mt-2">
-                                    <Skeleton height={20} width="30%" />
-                                    <Skeleton height={20} width="40%" />
+                                <div className="flex items-center mb-4">
+                                    <Skeleton circle={true} height={80} width={80} className="mr-4" />
+                                    <Skeleton height={30} width="50%" />
+                                </div>
+                                <div className="flex-1">
+                                    <Skeleton height={35} width="90%" className="mb-2" />
+                                    <Skeleton height={25} width="100%" className="mb-2" />
+                                    <Skeleton height={20} width="95%" className="mb-2" />
+                                    <Skeleton height={20} width="95%" />
+                                </div>
+                                <div className="flex justify-between items-center mt-4">
+                                    <Skeleton height={25} width="35%" />
+                                    <Skeleton height={50} width="50px" circle={true} />
                                 </div>
                             </li>
                         ))}
@@ -366,25 +401,31 @@ function HomePage() {
                 ) : filteredTerms.length === 0 ? (
                     <p className="text-center text-text">No terms found.</p>
                 ) : (
-                    <ul
+                    <motion.ul
                         className={`grid ${filteredTerms.length > 5
-                                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-1 gap-6"
-                                : "grid-cols-1"
+                            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-1 gap-6"
+                            : "grid-cols-1"
                             }`}
+                        initial="hidden"
+                        animate="visible"
+                        variants={{
+                            visible: { transition: { staggerChildren: 0.1 } },
+                        }}
                     >
                         {filteredTerms.map((term) => (
-                            <TermItem
-                                isFeed={true}
-                                key={term._id}
-                                term={term}
-                                user={user}
-                                handleUpvote={handleUpvote}
-                                handleDownvote={handleDownvote}
-                                handleBookmark={handleBookmark}
-                                handleUnbookmark={handleUnbookmark}
-                            />
+                            <motion.li key={term._id} variants={termVariants}>
+                                <TermItem
+                                    isFeed={true}
+                                    term={term}
+                                    user={user}
+                                    handleUpvote={handleUpvote}
+                                    handleDownvote={handleDownvote}
+                                    handleBookmark={handleBookmark}
+                                    handleUnbookmark={handleUnbookmark}
+                                />
+                            </motion.li>
                         ))}
-                    </ul>
+                    </motion.ul>
                 )}
                 <Pagination
                     termsPerPage={termsPerPage}
@@ -394,6 +435,20 @@ function HomePage() {
                     currentPage={currentPage}
                 />
             </div>
+
+            {/* Scroll to Top Button */}
+            {showScrollButton && (
+                <motion.button
+                    onClick={scrollToTop}
+                    className="fixed bottom-4 right-4 md:right-10 p-3 bg-primary text-white rounded-full shadow-lg hover:bg-primaryDark transition duration-300"
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                    whileHover={{ scale: 1.1 }}
+                >
+                    <ArrowUpwardIcon />
+                </motion.button>
+            )}
         </div>
     );
 }

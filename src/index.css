@@ -86,3 +86,9 @@ body {
   font-size: inherit; /* Ensure font size matches text */
   line-height: inherit; /* Ensure line height is consistent */
 }
+
+
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
