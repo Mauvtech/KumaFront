@@ -6,7 +6,7 @@ import { Term } from '../../models/termModel';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { FaCheck, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaArrowLeft, FaArrowRight } from 'react-icons/fa'; // Import arrow icons
 import Modal from 'react-modal';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -128,7 +128,7 @@ const QuizPage: React.FC = () => {
     };
 
     return (
-        <div className=" mt-10 p-6 bg-background flex justify-center items-center rounded-lg ">
+        <div className="mt-10 p-6 bg-background flex justify-center items-center rounded-lg ">
             {currentFlashcard ? (
                 <div className="relative flex flex-col items-center bg-background">
                     <div
@@ -167,14 +167,14 @@ const QuizPage: React.FC = () => {
                             </button>
                         </div>
                     </div>
-                    <div className="mt-4 flex justify-evenly gap-3 w-full px-6">
+                    <div className="mt-4 flex justify-center gap-12 w-full">
                         <button
                             onClick={handlePrevious}
                             className="px-4 py-2 bg-backgroundHover text-text font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
                             style={{ visibility: currentIndex === 0 ? 'hidden' : 'visible' }}
                             disabled={isAnimating}
                         >
-                            Previous
+                            <FaArrowLeft /> {/* Replacing text with icon */}
                         </button>
                         <button
                             onClick={handleMarkIncorrect}
@@ -196,7 +196,7 @@ const QuizPage: React.FC = () => {
                             style={{ visibility: currentIndex === flashcardIds.length - 1 ? 'hidden' : 'visible' }}
                             disabled={isAnimating}
                         >
-                            Next
+                            <FaArrowRight /> {/* Replacing text with icon */}
                         </button>
                     </div>
                 </div>

@@ -109,7 +109,7 @@ const TermItem: React.FC<TermItemProps> = ({
     };
 
     const containerClasses = isFeed
-        ? "flex flex-col justify-between mb-4 p-6 bg-background rounded-lg shadow-md transition-transform transform hover:scale-105 w-full md:w-[48%] lg:w-full xl:w-full h-[60vh] m-2 overflow-hidden"
+        ? "flex flex-col justify-between mb-4 p-6 bg-background rounded-lg shadow-md  transition-transform transform hover:scale-105 w-full md:w-[48%] lg:w-full xl:w-full h-[60vh] h-fit m-2 mx-auto overflow-hidden"
         : "flex flex-col justify-between mb-4 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 w-full sm:w-[70%] md:w-[50%] lg:w-full mx-auto overflow-hidden";
 
     const avatarClasses = isFeed ? "mr-4 w-16 h-16 md:w-20 md:h-20" : "mr-2 w-10 h-10";
