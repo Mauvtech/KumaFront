@@ -21,7 +21,6 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import TermItem from "./TermItem";
 import Input from "../Common/Input";
-import { Pagination } from "../Common/Pagination";
 import { motion, AnimatePresence } from "framer-motion";
 import Selector from "../Common/Selector";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
@@ -37,13 +36,11 @@ function HomePage() {
     const [languages, setLanguages] = useState<Language[]>([]);
     const [selectedLanguage, setSelectedLanguage] = useState<string>("");
     const [searchTerm, setSearchTerm] = useState<string>("");
-    const [currentPage, setCurrentPage] = useState<number>(
-        parseInt(sessionStorage.getItem("currentPage") || "1")
-    );
     const [termsLoading, setTermsLoading] = useState<boolean>(true);
     const [filtersLoading, setFiltersLoading] = useState<boolean>(true);
     const [totalTerms, setTotalTerms] = useState<number>(0);
-    const [totalPages, setTotalPages] = useState<number>(1);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [hasMore, setHasMore] = useState<boolean>(true);
     const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
     const termsPerPage: number = 9;
 
@@ -75,9 +72,9 @@ function HomePage() {
                 limit: termsPerPage,
             });
             if (data && data.terms) {
-                setTerms(data.terms);
+                setTerms(prevTerms => [...prevTerms, ...data.terms]);
                 setTotalTerms(data.totalTerms);
-                setTotalPages(data.totalPages);
+                setHasMore(currentPage < data.totalPages);
                 if (!currentWord) {
                     setCurrentWord(data.terms[0]?.term || "LES MOTS.");
                 }
@@ -172,30 +169,25 @@ function HomePage() {
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
         setCurrentPage(1); // Reset page number when search term changes
-        sessionStorage.setItem("currentPage", "1");
+        setTerms([]); // Clear current terms
     };
 
     const handleCategoryChange = (category: string) => {
         setSelectedCategory(category === selectedCategory ? "" : category);
         setCurrentPage(1); // Reset page number when category changes
-        sessionStorage.setItem("currentPage", "1");
+        setTerms([]); // Clear current terms
     };
 
     const handleThemeChange = (theme: string) => {
         setSelectedTheme(theme === selectedTheme ? "" : theme);
         setCurrentPage(1); // Reset page number when theme changes
-        sessionStorage.setItem("currentPage", "1");
+        setTerms([]); // Clear current terms
     };
 
     const handleLanguageChange = (language: string) => {
         setSelectedLanguage(language === selectedLanguage ? "" : language);
         setCurrentPage(1); // Reset page number when language changes
-        sessionStorage.setItem("currentPage", "1");
-    };
-
-    const paginate = (pageNumber: number) => {
-        setCurrentPage(pageNumber);
-        sessionStorage.setItem("currentPage", pageNumber.toString());
+        setTerms([]); // Clear current terms
     };
 
     const handleUpvote = async (id: string) => {
@@ -299,10 +291,15 @@ function HomePage() {
     useEffect(() => {
         const handleScroll = () => {
             setShowScrollButton(window.scrollY > 300);
+            if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 500) {
+                if (hasMore && !termsLoading) {
+                    setCurrentPage(prevPage => prevPage + 1);
+                }
+            }
         };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+    }, [hasMore, termsLoading]);
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -346,7 +343,7 @@ function HomePage() {
                         placeholder="Rechercher un terme ou une définition..."
                     />
 
-                    <div className="flex flex-col sm:flex-row justify-evenly space-y-4 sm:space-y-0 sm:space-x-4 mb-12 mt-8">
+                    <div className="flex flex-col sm:flex-row md:justify-evenly  sm:space-y-0 sm:space-x-4 mb-12 mt-8">
                         <div className="relative w-full sm:w-1/3 mb-4 sm:mb-0">
                             <Selector
                                 options={categories.map((cat) => cat.name)}
@@ -374,7 +371,7 @@ function HomePage() {
                     </div>
                 </div>
 
-                {termsLoading ? (
+                {termsLoading && currentPage === 1 ? (
                     <ul className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-6">
                         {Array.from({ length: termsPerPage }).map((_, index) => (
                             <li
@@ -398,7 +395,7 @@ function HomePage() {
                             </li>
                         ))}
                     </ul>
-                ) : filteredTerms.length === 0 ? (
+                ) : filteredTerms.length === 0 && currentPage === 1 ? (
                     <p className="text-center text-text">No terms found.</p>
                 ) : (
                     <motion.ul
@@ -425,15 +422,13 @@ function HomePage() {
                                 />
                             </motion.li>
                         ))}
+                        {termsLoading && currentPage > 1 && (
+                            <li className="flex justify-center">
+                                <Skeleton height={35} width="90%" />
+                            </li>
+                        )}
                     </motion.ul>
                 )}
-                <Pagination
-                    termsPerPage={termsPerPage}
-                    totalPages={totalPages}
-                    totalTerms={totalTerms}
-                    paginate={paginate}
-                    currentPage={currentPage}
-                />
             </div>
 
             {/* Scroll to Top Button */}

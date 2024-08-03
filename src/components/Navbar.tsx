@@ -90,8 +90,8 @@ function Navbar() {
     };
 
     return (
-        <nav className="bg-transparent text-lg absolute z-20 w-full max-w-screen">
-            <div className="container mx-auto flex justify-between items-center h-16 px-4">
+        <nav className="bg-transparent text-lg absolute z-20 w-full max-w-screen ">
+            <div className="mx-auto w-full flex justify-between items-center h-16 px-4">
                 <Link to="/" className="text-primary text-xl font-bold flex items-center">
                     <FaCommentDots className="mr-2" />
                     KUMA
