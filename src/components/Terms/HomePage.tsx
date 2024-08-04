@@ -1,3 +1,5 @@
+// HomePage.tsx
+
 import React, { useEffect, useState, useCallback } from "react";
 import {
     downvoteTerm,
@@ -25,6 +27,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Selector from "../Common/Selector";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import MouseIcon from "@mui/icons-material/Mouse"; // Import mouse icon
+import CobeGlobe from "../Common/CobeGlobe"; // Import CobeGlobe component
 
 function HomePage() {
     const { user } = useAuth();
@@ -315,16 +318,17 @@ function HomePage() {
         <div className="w-full bg-background">
             {/* Hero Section */}
             <div
-                className="h-screen flex items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative"
+                className="h-screen flex  flex-col items-center justify-center  bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative"
                 style={{
                     backdropFilter: "blur(20px)",
                     overflow: "visible",
                 }}
-            >
+            ><CobeGlobe />
+
                 <AnimatePresence mode="wait">
                     <motion.h1
                         key={currentWord}
-                        className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary leading-tight"
+                        className="text-6xl sm:text-7xl md:text-8xl sm:-mt-24 -mt-12  lg:text-9xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary leading-tight "
                         initial="hidden"
                         animate="visible"
                         exit="exit"
