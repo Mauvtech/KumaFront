@@ -86,10 +86,10 @@ const Selector: React.FC<SelectorProps> = ({
                     },
                 }}
                 style={{ pointerEvents: isOpen ? "auto" : "none" }}
-                className="absolute z-10 w-full mt-2 bg-background sm:bg-secondaryLight rounded-lg shadow-lg"
+                className="absolute z-10 w-full mt-2 bg-background  rounded-lg shadow-lg"
             >
                 <div
-                    className={`grid gap-2 p-4 grid-cols-1 md:grid-cols-3 md:flex md:flex-wrap`}
+                    className={`grid gap-2 p-4 grid-cols-3 md:grid-cols-3 md:flex md:flex-wrap`}
                 >
                     {options.map((option, index) => (
                         <motion.li
