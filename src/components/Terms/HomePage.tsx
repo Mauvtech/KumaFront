@@ -45,7 +45,7 @@ function HomePage() {
     const termsPerPage: number = 9;
 
     // State for managing word slideshow
-    const [currentWord, setCurrentWord] = useState<string>("LES MOTS");
+    const [currentWord, setCurrentWord] = useState<string>("LES MOTS.");
 
     // Animation Variants
     const wordVariants = {
@@ -325,7 +325,7 @@ function HomePage() {
                         variants={wordVariants}
                         transition={{ duration: 1.5, ease: "easeInOut" }}
                         style={{
-                            lineHeight: "1.2em",
+                            lineHeight: "2em",
                             overflow: "visible",
                         }}
                     >

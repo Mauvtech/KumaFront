@@ -48,7 +48,7 @@ const Selector: React.FC<SelectorProps> = ({
             <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-center gap-1 w-full p-4 bg-secondary text-white font-bold rounded-lg shadow-lg"
+                className="flex items-center justify-center gap-1 w-full p-4 bg-secondary text-white font-bold rounded-lg shadow-lg min-w-[250px]"
             >
                 {selectedOption || placeholder}
                 <motion.div
@@ -89,7 +89,7 @@ const Selector: React.FC<SelectorProps> = ({
                 className="absolute z-10 w-full mt-2 bg-background sm:bg-secondaryLight rounded-lg shadow-lg"
             >
                 <div
-                    className={`grid gap-2 p-4 grid-cols-3 md:grid-cols-1 md:flex md:flex-wrap`}
+                    className={`grid gap-2 p-4 grid-cols-1 md:grid-cols-3 md:flex md:flex-wrap`}
                 >
                     {options.map((option, index) => (
                         <motion.li

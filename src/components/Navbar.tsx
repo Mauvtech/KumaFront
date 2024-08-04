@@ -90,7 +90,7 @@ function Navbar() {
     };
 
     return (
-        <nav className="bg-transparent text-lg absolute z-20 w-full max-w-screen px-8">
+        <nav className=" sm:bg-transparent text-lg absolute z-20 w-full max-w-screen px-8">
             <div className="mx-auto w-full flex justify-between items-center h-16 px-4">
                 <Link to="/" className="text-primary text-xl font-bold flex items-center">
                     <FaCommentDots className="mr-2" />
@@ -192,7 +192,7 @@ function Navbar() {
                     {menuOpen && (
                         <motion.div
                             ref={menuRef}
-                            className="md:hidden absolute top-16 flex flex-col items-center justify-center left-0 w-full bg-transparent p-4 z-10"
+                            className="md:hidden absolute top-16 flex flex-col items-center justify-center left-0 w-full bg-background p-4 z-10"
                             initial="closed"
                             animate="open"
                             exit="closed"
