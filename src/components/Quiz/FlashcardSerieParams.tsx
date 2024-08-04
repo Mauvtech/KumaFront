@@ -65,7 +65,7 @@ const FlashcardSerieParams: React.FC = () => {
 
     return (
         <motion.div
-            className="h-fit mt-10 p-6 flex justify-center items-center flex-col bg-background overflow-hidden rounded-lg shadow-neumorphic"
+            className="h-fit mt-10 p-6 flex justify-center items-center flex-col bg-background rounded-lg shadow-neumorphic"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
