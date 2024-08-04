@@ -4,6 +4,8 @@ import { getCategories } from '../../services/categoryService';
 import { getThemes } from '../../services/themeService';
 import { getLanguages } from '../../services/languageService';
 import { useNavigate } from 'react-router-dom';
+import Selector from '../Common/Selector';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface TermFormProps {
     termId?: string;
@@ -32,17 +34,9 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
     const [languageOptions, setLanguageOptions] = useState<{ _id: string, name: string, code: string }[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [rawValues, setRawValues] = useState({});
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const navigate = useNavigate();
-
-    const updateRawValues = (updatedValues: Partial<typeof rawValues>) => {
-        setRawValues((prevValues) => ({
-            ...prevValues,
-            ...updatedValues,
-        }));
-    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -118,198 +112,169 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
         }
     };
 
-    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = e.target.value;
-        setGrammaticalCategory(value);
-        if (value !== 'Other') {
-            setNewCategory('');
-        }
-        updateRawValues({ grammaticalCategory: value });
-    };
-
-    const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = e.target.value;
-        setTheme(value);
-        if (value !== 'Other') {
-            setNewTheme('');
-        }
-        updateRawValues({ theme: value });
-    };
-
-    const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = e.target.value;
-        setLanguage(value);
-        if (value !== 'Other') {
-            setNewLanguage('');
-            const selectedLanguage = languageOptions.find(lang => lang.name === value);
-            updateRawValues({ language: value, languageCode: selectedLanguage ? selectedLanguage.code : '' });
-        } else {
-            updateRawValues({ language: value, languageCode: '' });
-        }
-    };
-
     const handleCloseModal = () => {
         setShowModal(false);
         navigate('/');
     };
 
-    const Modal: React.FC<{ message: string; onClose: () => void }> = ({ message, onClose }) => {
-        return (
-            <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
-                <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-                    <h2 className="text-xl font-bold mb-4">Success</h2>
-                    <p className="mb-4">{message}</p>
-                    <button
-                        onClick={onClose}
-                        className="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
-                    >
-                        OK
-                    </button>
-                </div>
-            </div>
-        );
-    };
+    const renderInput = (
+        id: string,
+        value: string,
+        label: string,
+        placeholder: string,
+        onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+        isTextArea: boolean = false
+    ) => (
+        <div className="mb-4 ">
+            <label className="block mb-2 text-primary" htmlFor={id}>{label}</label>
+            {isTextArea ? (
+                <textarea
+                    id={id}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={placeholder}
+                    className="w-full p-3 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
+                    required
+                />
+            ) : (
+                <input
+                    type="text"
+                    id={id}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={placeholder}
+                    className="w-full p-3 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
+                    required
+                />
+            )}
+        </div>
+    );
 
     return (
         <div>
-            <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
-                <h2 className="text-2xl font-bold mb-4">{termId ? 'Edit Term' : 'Add Term'}</h2>
+            <form onSubmit={handleSubmit} className="mx-auto w-full mt-10 p-6 bg-background flex flex-col gap-3 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
+                <h2 className="text-2xl font-bold mb-4 text-primary text-center">{termId ? 'Edit Term' : 'Add a new Term'}</h2>
                 {error && <div className="mb-4 text-red-500">{error}</div>}
-                <div className="mb-4">
-                    <label className="block mb-2 text-gray-800" htmlFor="term">Term</label>
-                    <input
+
+                {renderInput('term', term, 'Term', 'Enter term...', (e) => {
+                    const value = capitalizeWord(e.target.value);
+                    setTerm(value);
+                })}
+
+                {renderInput('translation', translation, 'Translation', 'Enter translation...', (e) => {
+                    const value = capitalizeWord(e.target.value);
+                    setTranslation(value);
+                })}
+
+                {renderInput('definition', definition, 'Definition', 'Enter definition...', (e) => {
+                    setDefinition(e.target.value);
+                }, true)}
+                <div className='flex justify-center w-full gap-2'>
+                <Selector
+                    options={categories.map(category => category.name)}
+                    selectedOption={grammaticalCategory}
+                    onSelectOption={(option) => {
+                        setGrammaticalCategory(option);
+                        setNewCategory('');
+                    }}
+                    placeholder="Select Grammatical Category"
+                />
+                {grammaticalCategory === 'Other' && (
+                    <motion.input
                         type="text"
-                        id="term"
-                        value={term}
-                        onChange={(e) => {
-                            const value = capitalizeWord(e.target.value);
-                            setTerm(value);
-                            updateRawValues({ term: value });
-                        }}
-                        className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        required
+                        placeholder="New Grammatical Category"
+                        value={newCategory}
+                        onChange={(e) => setNewCategory(capitalizeWord(e.target.value))}
+                        className="w-full p-3 mt-2 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
                     />
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2 text-gray-800" htmlFor="translation">Translation</label>
-                    <input
+                )}
+
+                <Selector
+                    options={themeOptions.map(theme => theme.name)}
+                    selectedOption={theme}
+                    onSelectOption={(option) => {
+                        setTheme(option);
+                        setNewTheme('');
+                    }}
+                    placeholder="Select Theme"
+                />
+                {theme === 'Other' && (
+                    <motion.input
                         type="text"
-                        id="translation"
-                        value={translation}
-                        onChange={(e) => {
-                            const value = capitalizeWord(e.target.value);
-                            setTranslation(value);
-                            updateRawValues({ translation: value });
-                        }}
-                        className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        required
+                        placeholder="New Theme"
+                        value={newTheme}
+                        onChange={(e) => setNewTheme(capitalizeWord(e.target.value))}
+                        className="w-full p-3 mt-2 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
                     />
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2 text-gray-800" htmlFor="definition">Definition</label>
-                    <textarea
-                        id="definition"
-                        value={definition}
-                        onChange={(e) => {
-                            setDefinition(e.target.value);
-                            updateRawValues({ definition: e.target.value });
-                        }}
-                        className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        required
+                )}
+
+                <Selector
+                    options={languageOptions.map(language => language.name)}
+                    selectedOption={language}
+                    onSelectOption={(option) => {
+                        setLanguage(option);
+                        setNewLanguage('');
+                    }}
+                    placeholder="Select Language"
+                />
+                {language === 'Other' && (
+                    <motion.input
+                        type="text"
+                        placeholder="New Language"
+                        value={newLanguage}
+                        onChange={(e) => setNewLanguage(capitalizeWord(e.target.value))}
+                        className="w-full p-3 mt-2 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
                     />
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2 text-gray-800" htmlFor="grammaticalCategory">Grammatical Category</label>
-                    <select
-                        id="grammaticalCategory"
-                        value={grammaticalCategory}
-                        onChange={handleCategoryChange}
-                        className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        required
-                    >
-                        {categories.map(category => (
-                            <option key={category._id} value={category.name}>{category.name}</option>
-                        ))}
-                    </select>
-                    {grammaticalCategory === 'Other' && (
-                        <input
-                            type="text"
-                            placeholder="New Grammatical Category"
-                            value={newCategory}
-                            onChange={(e) => {
-                                const value = capitalizeWord(e.target.value);
-                                setNewCategory(value);
-                                updateRawValues({ newCategory: value });
-                            }}
-                            className="w-full p-3 mt-2 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        />
-                    )}
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2 text-gray-800" htmlFor="theme">Theme</label>
-                    <select
-                        id="theme"
-                        value={theme}
-                        onChange={handleThemeChange}
-                        className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        required
-                    >
-                        {themeOptions.map(theme => (
-                            <option key={theme._id} value={theme.name}>{theme.name}</option>
-                        ))}
-                    </select>
-                    {theme === 'Other' && (
-                        <input
-                            type="text"
-                            placeholder="New Theme"
-                            value={newTheme}
-                            onChange={(e) => {
-                                const value = capitalizeWord(e.target.value);
-                                setNewTheme(value);
-                                updateRawValues({ newTheme: value });
-                            }}
-                            className="w-full p-3 mt-2 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        />
-                    )}
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2 text-gray-800" htmlFor="language">Language</label>
-                    <select
-                        id="language"
-                        value={language}
-                        onChange={handleLanguageChange}
-                        className="w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        required
-                    >
-                        {languageOptions.map(language => (
-                            <option key={language._id} value={language.name}>{language.name}</option>
-                        ))}
-                    </select>
-                    {language === 'Other' && (
-                        <>
-                            <input
-                                type="text"
-                                placeholder="New Language"
-                                value={newLanguage}
-                                onChange={(e) => {
-                                    const value = capitalizeWord(e.target.value);
-                                    setNewLanguage(value);
-                                    updateRawValues({ newLanguage: value });
-                                }}
-                                className="w-full p-3 mt-2 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                            />
-                        </>
-                    )}
-                </div>
-                <button
+                )}
+
+                </div><motion.button
                     type="submit"
-                    className="w-full p-3 text-white rounded-lg bg-gray-400 shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-gray-500 focus:outline-none"
+                    className="w-full p-3 text-2xl font-bold text-white rounded-lg bg-secondary shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-secondaryDark focus:outline-none"
                     disabled={loading}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 10 }}
                 >
-                    {loading ? 'Loading...' : termId ? 'Edit' : 'Add'}
-                </button>
+                    {loading ? 'Loading...' : termId ? 'Edit' : '+'}
+                </motion.button>
             </form>
-            {showModal && <Modal message={modalMessage} onClose={handleCloseModal} />}
+            <AnimatePresence>
+                {showModal && (
+                    <motion.div
+                        className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <motion.div
+                            className="bg-white p-6 rounded-lg shadow-lg text-center"
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <h2 className="text-xl font-bold mb-4">Success</h2>
+                            <p className="mb-4">{modalMessage}</p>
+                            <motion.button
+                                onClick={handleCloseModal}
+                                className="px-4 py-2 bg-primaryLight text-gray-600 rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                OK
+                            </motion.button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

@@ -1,25 +1,30 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/authContext';
-import { login as loginService } from '../../services/authService';
-import { AxiosError } from 'axios';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/authContext";
+import { login as loginService } from "../../services/authService";
+import { AxiosError } from "axios";
+import { motion } from "framer-motion";
 
 const LoginPage: React.FC = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [errors, setErrors] = useState<{ username?: string, password?: string, general?: string }>({});
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [errors, setErrors] = useState<{
+        username?: string;
+        password?: string;
+        general?: string;
+    }>({});
     const navigate = useNavigate();
     const { login } = useAuth();
 
     const validateForm = () => {
-        let formErrors: { username?: string, password?: string } = {};
+        let formErrors: { username?: string; password?: string } = {};
 
         if (!username) {
-            formErrors.username = 'Username is required';
+            formErrors.username = "Username is required";
         }
 
         if (!password) {
-            formErrors.password = 'Password is required';
+            formErrors.password = "Password is required";
         }
 
         setErrors(formErrors);
@@ -38,55 +43,80 @@ const LoginPage: React.FC = () => {
             const userData = await loginService({ username, password });
             if (userData) {
                 login(userData);
-                navigate('/');
+                navigate("/");
             } else {
-                setErrors({ general: 'Login failed' });
-                console.error('Login failed');
+                setErrors({ general: "Login failed" });
+                console.error("Login failed");
             }
         } catch (error) {
             if (error instanceof AxiosError) {
                 if (error.response?.status === 400) {
                     setErrors({ general: "Invalid credentials" });
-                } else { setErrors({ general: 'Registration failed' }); }
-            } else { console.error('Login error', error); }
-            console.error('Login eror', error);
+                } else {
+                    setErrors({ general: "Login failed" });
+                }
+            } else {
+                console.error("Login error", error);
+            }
         }
     };
 
     return (
-        <form onSubmit={handleLogin} className="max-w-md mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">Login</h2>
-            {errors.general && <div className="mb-4 text-red-500">{errors.general}</div>}
+        <motion.form
+            onSubmit={handleLogin}
+            className="max-w-md mx-auto mt-10 p-6 bg-background rounded-lg shadow-neumorphic"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
+            <h2 className="text-2xl font-bold mb-4 text-text">Login</h2>
+            {errors.general && (
+                <div className="mb-4 text-error">{errors.general}</div>
+            )}
             <div className="mb-4">
-                <label htmlFor="username" className="block mb-2 text-gray-800">Username</label>
+                <label htmlFor="username" className="block mb-2 text-text">
+                    Username
+                </label>
                 <input
                     id="username"
-                    placeholder="username"
+                    placeholder="Username"
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className={`w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 ${errors.username ? 'border-red-500' : ''}`}
+                    className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primaryLight ${errors.username ? "border-error" : ""
+                        }`}
                     required
                 />
-                {errors.username && <div className="text-red-500">{errors.username}</div>}
+                {errors.username && (
+                    <div className="text-error">{errors.username}</div>
+                )}
             </div>
             <div className="mb-4">
-                <label htmlFor="password" className="block mb-2 text-gray-800">Password</label>
+                <label htmlFor="password" className="block mb-2 text-text">
+                    Password
+                </label>
                 <input
-                    placeholder="password"
                     id="password"
+                    placeholder="Password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className={`w-full p-3 rounded-lg shadow-inner bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 ${errors.password ? 'border-red-500' : ''}`}
+                    className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primaryLight ${errors.password ? "border-error" : ""
+                        }`}
                     required
                 />
-                {errors.password && <div className="text-red-500">{errors.password}</div>}
+                {errors.password && (
+                    <div className="text-error">{errors.password}</div>
+                )}
             </div>
-            <button type="submit" className="w-full p-3 text-white rounded-lg bg-gray-400 shadow-[3px_3px_6px_#b3b3b3,-3px_-3px_6px_#ffffff] hover:bg-gray-500 focus:outline-none">
+            <motion.button
+                type="submit"
+                className="w-full p-3 text-white rounded-lg bg-primary shadow-neumorphic hover:bg-primaryDark focus:outline-none transition-transform transform hover:scale-105"
+                whileTap={{ scale: 0.95 }}
+            >
                 Login
-            </button>
-        </form>
+            </motion.button>
+        </motion.form>
     );
 };
 
