@@ -24,6 +24,7 @@ import Input from "../Common/Input";
 import { motion, AnimatePresence } from "framer-motion";
 import Selector from "../Common/Selector";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import MouseIcon from "@mui/icons-material/Mouse"; // Import mouse icon
 
 function HomePage() {
     const { user } = useAuth();
@@ -42,6 +43,7 @@ function HomePage() {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
+    const [showScrollDownIcon, setShowScrollDownIcon] = useState<boolean>(true);
     const termsPerPage: number = 9;
 
     // State for managing word slideshow
@@ -72,7 +74,7 @@ function HomePage() {
                 limit: termsPerPage,
             });
             if (data && data.terms) {
-                setTerms(prevTerms => [...prevTerms, ...data.terms]);
+                setTerms((prevTerms) => [...prevTerms, ...data.terms]);
                 setTotalTerms(data.totalTerms);
                 setHasMore(currentPage < data.totalPages);
                 if (!currentWord) {
@@ -290,13 +292,17 @@ function HomePage() {
     // Show scroll-to-top button after a certain scroll distance
     useEffect(() => {
         const handleScroll = () => {
-            setShowScrollButton(window.scrollY > 300);
+            const scrollPosition = window.scrollY;
+            setShowScrollButton(scrollPosition > 300);
+            setShowScrollDownIcon(scrollPosition < 100);
+
             if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 500) {
                 if (hasMore && !termsLoading) {
-                    setCurrentPage(prevPage => prevPage + 1);
+                    setCurrentPage((prevPage) => prevPage + 1);
                 }
             }
         };
+
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, [hasMore, termsLoading]);
@@ -309,7 +315,7 @@ function HomePage() {
         <div className="w-full bg-background">
             {/* Hero Section */}
             <div
-                className="h-screen flex items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center"
+                className="h-screen flex items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative"
                 style={{
                     backdropFilter: "blur(20px)",
                     overflow: "visible",
@@ -332,6 +338,29 @@ function HomePage() {
                         {currentWord}
                     </motion.h1>
                 </AnimatePresence>
+                <AnimatePresence>
+                    {showScrollDownIcon && (
+                        <motion.div
+                            className="absolute bottom-8 flex flex-col items-center"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <motion.div
+                                animate={{ y: [0, 10, 0] }}
+                                transition={{
+                                    duration: 1,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                }}
+                            >
+                                <MouseIcon fontSize="large" className="text-primary" />
+                            </motion.div>
+                            <p className="text-sm sm:text-base text-primary mt-2">Scroll Down</p>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
 
             {/* Main Content */}
@@ -343,7 +372,7 @@ function HomePage() {
                         placeholder="Rechercher un terme ou une définition..."
                     />
 
-                    <div className="flex flex-col sm:flex-row md:justify-evenly  sm:space-y-0 sm:space-x-4 mb-12 mt-8">
+                    <div className="flex flex-col sm:flex-row md:justify-evenly sm:space-y-0 sm:space-x-4 mb-12 mt-8">
                         <div className="relative w-full sm:w-1/3 mb-4 sm:mb-0">
                             <Selector
                                 options={categories.map((cat) => cat.name)}
@@ -432,18 +461,21 @@ function HomePage() {
             </div>
 
             {/* Scroll to Top Button */}
-            {showScrollButton && (
-                <motion.button
-                    onClick={scrollToTop}
-                    className="fixed bottom-4 right-4 md:right-10 p-3 bg-primary text-white rounded-full shadow-lg hover:bg-primaryDark transition duration-300"
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                    whileHover={{ scale: 1.1 }}
-                >
-                    <ArrowUpwardIcon />
-                </motion.button>
-            )}
+            <AnimatePresence>
+                {showScrollButton && (
+                    <motion.button
+                        onClick={scrollToTop}
+                        className="fixed bottom-4 right-4 md:right-10 p-3 bg-primary text-white rounded-full shadow-lg hover:bg-primaryDark transition duration-300"
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                        whileHover={{ scale: 1.1 }}
+                    >
+                        <ArrowUpwardIcon />
+                    </motion.button>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
