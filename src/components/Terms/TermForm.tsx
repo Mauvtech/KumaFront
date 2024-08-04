@@ -125,7 +125,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
         onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
         isTextArea: boolean = false
     ) => (
-        <div className="mb-4 ">
+        <div className="mb-4">
             <label className="block mb-2 text-primary" htmlFor={id}>{label}</label>
             {isTextArea ? (
                 <textarea
@@ -151,8 +151,8 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
     );
 
     return (
-        <div>
-            <form onSubmit={handleSubmit} className="mx-auto w-full mt-10 p-6 bg-background flex flex-col gap-3 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
+        <div className=' w-full h-screen flex flex-col justify-center'>
+            <form onSubmit={handleSubmit} className="mx-auto  mt-10 p-6 bg-background flex flex-col gap-3 rounded-lg sm:shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
                 <h2 className="text-2xl font-bold mb-4 text-primary text-center">{termId ? 'Edit Term' : 'Add a new Term'}</h2>
                 {error && <div className="mb-4 text-red-500">{error}</div>}
 
@@ -169,7 +169,7 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                 {renderInput('definition', definition, 'Definition', 'Enter definition...', (e) => {
                     setDefinition(e.target.value);
                 }, true)}
-                <div className='flex justify-center w-full gap-2'>
+                <div className='flex sm:flex-row flex-col justify-center w-full gap-2'>
                 <Selector
                     options={categories.map(category => category.name)}
                     selectedOption={grammaticalCategory}
