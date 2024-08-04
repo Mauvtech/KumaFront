@@ -172,7 +172,7 @@ const TermItem: React.FC<TermItemProps> = ({
                     <div className="flex items-center space-x-2">
                         <button
                             onClick={handleBookmarkClick}
-                            className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${userHasBookmarked ? "text-warning" : "text-text"
+                            className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${userHasBookmarked ? "text-warning" : "text-primary"
                                 } hover:bg-warningHover hover:text-warning shadow-neumorphic`}
                         >
                             {userHasBookmarked ? (
@@ -185,14 +185,14 @@ const TermItem: React.FC<TermItemProps> = ({
                             <span className={`${textClasses} text-success`}>{votes.upvotes}</span>
                             <button
                                 onClick={handleUpvoteClick}
-                                className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${userHasUpvoted ? "text-success" : "text-text"
+                                className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${userHasUpvoted ? "text-success" : "text-primary"
                                     } hover:bg-successHover hover:text-success shadow-neumorphic`}
                             >
                                 <UpvoteIcon isUpvoted={userHasUpvoted} isFeed={isFeed} />
                             </button>
                             <button
                                 onClick={handleDownvoteClick}
-                                className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${userHasDownvoted ? "text-error" : "text-text"
+                                className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${userHasDownvoted ? "text-error" : "text-primary"
                                     } hover:bg-errorHover hover:text-error shadow-neumorphic`}
                             >
                                 <DownvoteIcon isDownvoted={userHasDownvoted} isFeed={isFeed} />
