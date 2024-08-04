@@ -30,7 +30,7 @@ import CobeGlobe from "../Common/CobeGlobe"; // Import CobeGlobe component
 function HomePage() {
     const { user } = useAuth();
     const [terms, setTerms] = useState<Term[]>([]);
-    const [filteredTerms, setFilteredTerms] = useState<Term[]>([]);
+    const [allFetchedTerms, setAllFetchedTerms] = useState<Term[]>([]); // Persistent state for all fetched terms
     const [categories, setCategories] = useState<Category[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string>("");
     const [themes, setThemes] = useState<Theme[]>([]);
@@ -76,6 +76,7 @@ function HomePage() {
             });
             if (data && data.terms) {
                 setTerms((prevTerms) => [...prevTerms, ...data.terms]);
+                setAllFetchedTerms((prevTerms) => [...prevTerms, ...data.terms]); // Add fetched terms to persistent state
                 setTotalTerms(data.totalTerms);
                 setHasMore(currentPage < data.totalPages);
                 if (!currentWord) {
@@ -146,51 +147,32 @@ function HomePage() {
         fetchApprovedTerms();
     }, [fetchApprovedTerms]);
 
-    useEffect(() => {
-        if (!termsLoading) {
-            const filtered = terms.filter(
-                (term: Term) =>
-                    (selectedCategory
-                        ? term.grammaticalCategory.name === selectedCategory
-                        : true) &&
-                    (selectedTheme ? term.theme.name === selectedTheme : true) &&
-                    (selectedLanguage ? term.language.name === selectedLanguage : true) &&
-                    (term.term.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        term.definition.toLowerCase().includes(searchTerm.toLowerCase()))
-            );
-            setFilteredTerms(filtered);
-        }
-    }, [
-        terms,
-        selectedCategory,
-        selectedTheme,
-        selectedLanguage,
-        searchTerm,
-        termsLoading,
-    ]);
-
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
         setCurrentPage(1); // Reset page number when search term changes
         setTerms([]); // Clear current terms
+        setAllFetchedTerms([]); // Clear all fetched terms
     };
 
     const handleCategoryChange = (category: string) => {
         setSelectedCategory(category === selectedCategory ? "" : category);
         setCurrentPage(1); // Reset page number when category changes
         setTerms([]); // Clear current terms
+        setAllFetchedTerms([]); // Clear all fetched terms
     };
 
     const handleThemeChange = (theme: string) => {
         setSelectedTheme(theme === selectedTheme ? "" : theme);
         setCurrentPage(1); // Reset page number when theme changes
         setTerms([]); // Clear current terms
+        setAllFetchedTerms([]); // Clear all fetched terms
     };
 
     const handleLanguageChange = (language: string) => {
         setSelectedLanguage(language === selectedLanguage ? "" : language);
         setCurrentPage(1); // Reset page number when language changes
         setTerms([]); // Clear current terms
+        setAllFetchedTerms([]); // Clear all fetched terms
     };
 
     const handleUpvote = async (id: string) => {
@@ -279,16 +261,16 @@ function HomePage() {
     // Slide show for words with smooth transitions
     useEffect(() => {
         const interval = setInterval(() => {
-            if (filteredTerms.length > 0) {
-                // Shuffle the filteredTerms array
-                const shuffledTerms = [...filteredTerms].sort(() => 0.5 - Math.random());
+            if (allFetchedTerms.length > 0) {
+                // Shuffle the terms array
+                const shuffledTerms = [...allFetchedTerms].sort(() => 0.5 - Math.random());
                 const randomIndex = Math.floor(Math.random() * shuffledTerms.length);
                 setCurrentWord(shuffledTerms[randomIndex].term);
             }
         }, 3000); // Change word every 3 seconds
 
         return () => clearInterval(interval);
-    }, [filteredTerms]);
+    }, [allFetchedTerms]);
 
     // Show scroll-to-top button after a certain scroll distance
     useEffect(() => {
@@ -318,7 +300,7 @@ function HomePage() {
     // Adjusted variants with continuous looping effect
     const verticalUpScrollVariants: Variants = {
         animate: {
-            y: ["0%", "-100%"],
+            y: ["0%", "-50%"],
             transition: {
                 duration: 20, // Adjust this for the desired speed
                 repeat: Infinity,
@@ -327,11 +309,10 @@ function HomePage() {
             },
         },
     };
-
 
     const verticalDownScrollVariants: Variants = {
         animate: {
-            y: ["-100%", "0%"],
+            y: ["-50%", "0%"],
             transition: {
                 duration: 20, // Adjust this for the desired speed
                 repeat: Infinity,
@@ -340,8 +321,6 @@ function HomePage() {
             },
         },
     };
-
-
 
     return (
         <div className="w-full bg-background">
@@ -404,7 +383,7 @@ function HomePage() {
                         variants={verticalUpScrollVariants}
                         animate="animate"
                     >
-                        {filteredTerms.map((term, index) => (
+                        {allFetchedTerms.map((term, index) => (
                             <div
                                 key={`left-${index}`}
                                 className="text-2xl text-primary transform rotate-90"
@@ -412,7 +391,7 @@ function HomePage() {
                                 {term.term}
                             </div>
                         ))}
-                        {filteredTerms.map((term, index) => (
+                        {allFetchedTerms.map((term, index) => (
                             <div
                                 key={`left-repeat-${index}`}
                                 className="text-2xl text-primary transform rotate-90"
@@ -428,7 +407,7 @@ function HomePage() {
                         variants={verticalDownScrollVariants}
                         animate="animate"
                     >
-                        {filteredTerms.map((term, index) => (
+                        {allFetchedTerms.map((term, index) => (
                             <div
                                 key={`right-${index}`}
                                 className="text-2xl text-secondary transform rotate-90"
@@ -436,7 +415,7 @@ function HomePage() {
                                 {term.term}
                             </div>
                         ))}
-                        {filteredTerms.map((term, index) => (
+                        {allFetchedTerms.map((term, index) => (
                             <div
                                 key={`right-repeat-${index}`}
                                 className="text-2xl text-secondary transform rotate-90"
@@ -514,11 +493,11 @@ function HomePage() {
                             </li>
                         ))}
                     </ul>
-                ) : filteredTerms.length === 0 && currentPage === 1 ? (
+                ) : terms.length === 0 && currentPage === 1 ? (
                     <p className="text-center text-text">No terms found.</p>
                 ) : (
                     <motion.ul
-                        className={`grid ${filteredTerms.length > 5
+                        className={`grid ${terms.length > 5
                                 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-1 gap-6"
                                 : "grid-cols-1"
                             }`}
@@ -528,7 +507,7 @@ function HomePage() {
                             visible: { transition: { staggerChildren: 0.1 } },
                         }}
                     >
-                        {filteredTerms.map((term) => (
+                        {terms.map((term) => (
                             <motion.li key={term._id} variants={termVariants}>
                                 <TermItem
                                     isFeed={true}
