@@ -1,5 +1,3 @@
-// HomePage.tsx
-
 import React, { useEffect, useState, useCallback } from "react";
 import {
     downvoteTerm,
@@ -23,7 +21,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import TermItem from "./TermItem";
 import Input from "../Common/Input";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import Selector from "../Common/Selector";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import MouseIcon from "@mui/icons-material/Mouse"; // Import mouse icon
@@ -299,7 +297,10 @@ function HomePage() {
             setShowScrollButton(scrollPosition > 300);
             setShowScrollDownIcon(scrollPosition < 100);
 
-            if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 500) {
+            if (
+                window.innerHeight + document.documentElement.scrollTop >=
+                document.documentElement.offsetHeight - 500
+            ) {
                 if (hasMore && !termsLoading) {
                     setCurrentPage((prevPage) => prevPage + 1);
                 }
@@ -314,21 +315,49 @@ function HomePage() {
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
+    // Adjusted variants with continuous looping effect
+    const verticalUpScrollVariants: Variants = {
+        animate: {
+            y: ["0%", "-100%"],
+            transition: {
+                duration: 20, // Adjust this for the desired speed
+                repeat: Infinity,
+                repeatType: "loop",
+                ease: "linear",
+            },
+        },
+    };
+
+
+    const verticalDownScrollVariants: Variants = {
+        animate: {
+            y: ["-100%", "0%"],
+            transition: {
+                duration: 20, // Adjust this for the desired speed
+                repeat: Infinity,
+                repeatType: "loop",
+                ease: "linear",
+            },
+        },
+    };
+
+
+
     return (
         <div className="w-full bg-background">
-            {/* Hero Section */}
             <div
-                className="h-screen flex  flex-col items-center justify-center  bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative"
+                className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative"
                 style={{
                     backdropFilter: "blur(20px)",
                     overflow: "visible",
                 }}
-            ><CobeGlobe />
+            >
+                <CobeGlobe />
 
                 <AnimatePresence mode="wait">
                     <motion.h1
                         key={currentWord}
-                        className="text-6xl sm:text-7xl md:text-8xl sm:-mt-24 -mt-12  lg:text-9xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary leading-tight "
+                        className="text-6xl sm:text-7xl md:text-8xl sm:-mt-24 -mt-12 lg:text-9xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary leading-tight "
                         initial="hidden"
                         animate="visible"
                         exit="exit"
@@ -361,15 +390,67 @@ function HomePage() {
                             >
                                 <MouseIcon fontSize="large" className="text-primary" />
                             </motion.div>
-                            <p className="text-sm sm:text-base text-primary mt-2">Scroll Down</p>
+                            <p className="text-sm sm:text-base text-primary mt-2">
+                                Scroll Down
+                            </p>
                         </motion.div>
                     )}
                 </AnimatePresence>
+
+                {/* Left and Right Word Strips */}
+                <div className="fixed hidden left-0 top-0 h-screen sm:flex flex-col justify-center">
+                    <motion.div
+                        className="flex flex-col gap-32 items-center h-[200vh]"
+                        variants={verticalUpScrollVariants}
+                        animate="animate"
+                    >
+                        {filteredTerms.map((term, index) => (
+                            <div
+                                key={`left-${index}`}
+                                className="text-2xl text-primary transform rotate-90"
+                            >
+                                {term.term}
+                            </div>
+                        ))}
+                        {filteredTerms.map((term, index) => (
+                            <div
+                                key={`left-repeat-${index}`}
+                                className="text-2xl text-primary transform rotate-90"
+                            >
+                                {term.term}
+                            </div>
+                        ))}
+                    </motion.div>
+                </div>
+                <div className="fixed hidden right-0 top-0 h-screen sm:flex flex-col justify-center">
+                    <motion.div
+                        className="flex flex-col gap-32 items-center h-[200vh]"
+                        variants={verticalDownScrollVariants}
+                        animate="animate"
+                    >
+                        {filteredTerms.map((term, index) => (
+                            <div
+                                key={`right-${index}`}
+                                className="text-2xl text-secondary transform rotate-90"
+                            >
+                                {term.term}
+                            </div>
+                        ))}
+                        {filteredTerms.map((term, index) => (
+                            <div
+                                key={`right-repeat-${index}`}
+                                className="text-2xl text-secondary transform rotate-90"
+                            >
+                                {term.term}
+                            </div>
+                        ))}
+                    </motion.div>
+                </div>
             </div>
 
             {/* Main Content */}
             <div className="max-w-screen-lg mx-auto mt-10 p-6 bg-background rounded-lg">
-                <div className="sm:sticky top-0 bg-background z-10">
+                <div className="sm:sticky sm:top-16 bg-background z-10">
                     <Input
                         value={searchTerm}
                         onChange={handleSearchChange}
@@ -412,7 +493,12 @@ function HomePage() {
                                 className="flex flex-col justify-between mb-4 p-6 bg-background rounded-lg shadow-neumorphic h-[60vh]"
                             >
                                 <div className="flex items-center mb-4">
-                                    <Skeleton circle={true} height={80} width={80} className="mr-4" />
+                                    <Skeleton
+                                        circle={true}
+                                        height={80}
+                                        width={80}
+                                        className="mr-4"
+                                    />
                                     <Skeleton height={30} width="50%" />
                                 </div>
                                 <div className="flex-1">
@@ -433,8 +519,8 @@ function HomePage() {
                 ) : (
                     <motion.ul
                         className={`grid ${filteredTerms.length > 5
-                            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-1 gap-6"
-                            : "grid-cols-1"
+                                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-1 gap-6"
+                                : "grid-cols-1"
                             }`}
                         initial="hidden"
                         animate="visible"

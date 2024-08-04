@@ -9,7 +9,7 @@ import {
     FaPlus,
     FaTachometerAlt,
     FaListAlt,
-    FaCommentDots,
+    FaLink, // Import the FaLink icon
     FaChevronDown,
     FaBars,
     FaTimes,
@@ -48,7 +48,10 @@ function Navbar() {
             if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
                 setMenuOpen(false);
             }
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node)
+            ) {
                 setDropdownOpen(false);
             }
         };
@@ -89,205 +92,260 @@ function Navbar() {
         },
     };
 
+    // Navbar styling with gradient and shadows
     return (
-        <nav className=" sm:bg-transparent text-lg absolute z-20 w-full max-w-screen px-8">
-            <div className="mx-auto w-full flex justify-between items-center h-16 px-4">
-                <Link to="/" className="text-primary text-xl font-bold flex items-center">
-                    <FaCommentDots className="mr-2" />
-                    KUMA
-                </Link>
-                <button className="md:hidden text-primary focus:outline-none" onClick={toggleMenu}>
-                    {menuOpen ? <FaTimes /> : <FaBars />}
-                </button>
-                <div className="hidden md:flex items-center space-x-4">
-                    {loading ? (
-                        <div className="text-text flex items-center">
-                            <Skeleton circle={true} height={40} width={40} />
-                            <Skeleton height={40} width={100} className="ml-2" />
-                        </div>
-                    ) : (
-                        <>
-                            <Link to="/new-term" className="text-text flex items-center">
-                                <FaPlus className="mr-2" />
-                                New Term
-                            </Link>
-                            <Link to="/terms/flashcard-serie" className="text-text flex items-center">
-                                <FaQuestion className="mr-2" />
-                                Quiz
-                            </Link>
-                            {user && (
-                                <>
-                                    {user.role === "admin" && (
-                                        <Link to="/dashboard" className="text-text flex items-center">
-                                            <FaTachometerAlt className="mr-2" />
-                                            Dashboard
-                                        </Link>
-                                    )}
-                                    {(user.role === "admin" || user.role === "moderator") && (
-                                        <Link to="/terms" className="text-text flex items-center">
-                                            <FaListAlt className="mr-2" />
-                                            Term Management
-                                        </Link>
-                                    )}
-                                    <Link to="/bookmarks" className="text-text flex items-center">
-                                        <FaBookmark className="mr-2" />
-                                        Bookmarks
-                                    </Link>
-                                    <div className="relative" ref={dropdownRef}>
-                                        <button
-                                            onClick={toggleDropdown}
-                                            className="text-text flex items-center focus:outline-none"
-                                        >
-                                            <FaUser className="mr-2" />
-                                            <span>{user.username}</span>
-                                            <FaChevronDown className="ml-2" />
-                                        </button>
-                                        <AnimatePresence>
-                                            {dropdownOpen && (
-                                                <motion.div
-                                                    className="absolute right-0 mt-2 w-48 bg-background rounded-md shadow-neumorphic py-2 z-20"
-                                                    initial="closed"
-                                                    animate="open"
-                                                    exit="closed"
-                                                    variants={dropdownVariants}
-                                                >
-                                                    <Link
-                                                        onClick={toggleDropdown}
-                                                        to="/profile"
-                                                        className="block px-4 py-2 text-text hover:bg-secondary hover:text-background flex items-center"
-                                                    >
-                                                        <FaUser className="mr-2" />
-                                                        Profile
-                                                    </Link>
-                                                    <button
-                                                        onClick={handleLogout}
-                                                        className="block w-full text-left px-4 py-2 text-text hover:bg-secondary hover:text-background flex items-center"
-                                                    >
-                                                        <FaSignOutAlt className="mr-2" />
-                                                        Logout
-                                                    </button>
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </div>
-                                </>
-                            )}
-                            {!user && (
-                                <>
-                                    <Link to="/login" className="text-text flex items-center">
-                                        <FaSignInAlt className="mr-2" />
-                                        Login
-                                    </Link>
-                                    <Link to="/register" className="text-text flex items-center">
-                                        <FaUserPlus className="mr-2" />
-                                        Signin
-                                    </Link>
-                                </>
-                            )}
-                        </>
-                    )}
-                </div>
-                {/* Mobile Menu */}
-                <AnimatePresence>
-                    {menuOpen && (
-                        <motion.div
-                            ref={menuRef}
-                            className="md:hidden absolute top-16 flex flex-col items-center justify-center left-0 w-full bg-background p-4 z-10"
-                            initial="closed"
-                            animate="open"
-                            exit="closed"
-                            variants={menuVariants}
+        <nav className="fixed top-0 left-0 w-full z-20 bg-gradient-to-r from-primary via-secondary to-accent shadow-lg">
+            <div className=" mx-auto px-4 sm:px-6 lg:px-20">
+                <div className="flex justify-between items-center h-16">
+                    <div className="flex-shrink-0">
+                        <Link
+                            to="/"
+                            className="text-background text-xl font-bold flex items-center"
                         >
-                            {loading ? (
-                                <div className="text-text flex items-center">
-                                    <Skeleton circle={true} height={40} width={40} />
-                                    <Skeleton height={40} width={100} className="ml-2" />
-                                </div>
-                            ) : (
-                                <>
-                                    <Link to="/new-term" className="text-text flex items-center mt-4">
-                                        <FaPlus className="mr-2" />
-                                        New Term
-                                    </Link>
-                                    <Link to="/terms/flashcard-serie" className="text-text flex items-center mt-4">
-                                        <FaQuestion className="mr-2" />
-                                        Quiz
-                                    </Link>
-                                    {user && (
-                                        <>
-                                            {user.role === "admin" && (
-                                                <Link to="/dashboard" className="text-text flex items-center mt-4">
-                                                    <FaTachometerAlt className="mr-2" />
-                                                    Dashboard
-                                                </Link>
-                                            )}
-                                            {(user.role === "admin" || user.role === "moderator") && (
-                                                <Link to="/terms" className="text-text flex items-center mt-4">
-                                                    <FaListAlt className="mr-2" />
-                                                    Term Management
-                                                </Link>
-                                            )}
-                                            <Link to="/bookmarks" className="text-text flex items-center mt-4">
-                                                <FaBookmark className="mr-2" />
-                                                Bookmarks
+                            <FaLink className="mr-2" />
+                            KUMA
+                        </Link>
+                    </div>
+                    <div className="hidden md:flex items-center space-x-6">
+                        {loading ? (
+                            <div className="text-background flex items-center">
+                                <Skeleton circle={true} height={40} width={40} />
+                                <Skeleton height={40} width={100} className="ml-2" />
+                            </div>
+                        ) : (
+                            <>
+                                <Link
+                                    to="/new-term"
+                                    className="text-background flex items-center hover:text-primary transition duration-300"
+                                >
+                                    <FaPlus className="mr-2" />
+                                    New Term
+                                </Link>
+                                <Link
+                                    to="/terms/flashcard-serie"
+                                    className="text-background flex items-center hover:text-primary transition duration-300"
+                                >
+                                    <FaQuestion className="mr-2" />
+                                    Quiz
+                                </Link>
+                                {user && (
+                                    <>
+                                        {user.role === "admin" && (
+                                            <Link
+                                                to="/dashboard"
+                                                className="text-background flex items-center hover:text-primary transition duration-300"
+                                            >
+                                                <FaTachometerAlt className="mr-2" />
+                                                Dashboard
                                             </Link>
-                                            <div className="relative mt-4" ref={dropdownRef}>
-                                                <button
-                                                    onClick={toggleDropdown}
-                                                    className="text-text flex items-center focus:outline-none"
-                                                >
-                                                    <FaUser className="mr-2" />
-                                                    <span>{user.username}</span>
-                                                    <FaChevronDown className="ml-2" />
-                                                </button>
-                                                <AnimatePresence>
-                                                    {dropdownOpen && (
-                                                        <motion.div
-                                                            className="mt-2 bg-background rounded-md shadow-neumorphic py-2 z-20"
-                                                            initial="closed"
-                                                            animate="open"
-                                                            exit="closed"
-                                                            variants={dropdownVariants}
+                                        )}
+                                        {(user.role === "admin" || user.role === "moderator") && (
+                                            <Link
+                                                to="/terms"
+                                                className="text-background flex items-center hover:text-primary transition duration-300"
+                                            >
+                                                <FaListAlt className="mr-2" />
+                                                Term Management
+                                            </Link>
+                                        )}
+                                        <Link
+                                            to="/bookmarks"
+                                            className="text-background flex items-center hover:text-primary transition duration-300"
+                                        >
+                                            <FaBookmark className="mr-2" />
+                                            Bookmarks
+                                        </Link>
+                                        <div className="relative" ref={dropdownRef}>
+                                            <button
+                                                onClick={toggleDropdown}
+                                                className="text-background flex items-center focus:outline-none hover:text-primary transition duration-300"
+                                            >
+                                                <FaUser className="mr-2" />
+                                                <span>{user.username}</span>
+                                                <FaChevronDown className="ml-2" />
+                                            </button>
+                                            <AnimatePresence>
+                                                {dropdownOpen && (
+                                                    <motion.div
+                                                        className="absolute right-0 mt-2 w-48 bg-background rounded-md shadow-neumorphic py-2 z-20"
+                                                        initial="closed"
+                                                        animate="open"
+                                                        exit="closed"
+                                                        variants={dropdownVariants}
+                                                    >
+                                                        <Link
+                                                            onClick={toggleDropdown}
+                                                            to="/profile"
+                                                            className="px-4 py-2 text-text hover:bg-secondary hover:text-background flex items-center"
                                                         >
-                                                            <Link
-                                                                onClick={toggleDropdown}
-                                                                to="/profile"
-                                                                className="block px-4 py-2 text-text hover:bg-secondary hover:text-background flex items-center"
-                                                            >
-                                                                <FaUser className="mr-2" />
-                                                                Profile
-                                                            </Link>
-                                                            <button
-                                                                onClick={handleLogout}
-                                                                className="block w-full text-left px-4 py-2 text-text hover:bg-secondary hover:text-background flex items-center"
-                                                            >
-                                                                <FaSignOutAlt className="mr-2" />
-                                                                Logout
-                                                            </button>
-                                                        </motion.div>
-                                                    )}
-                                                </AnimatePresence>
-                                            </div>
-                                        </>
-                                    )}
-                                    {!user && (
-                                        <>
-                                            <Link to="/login" className="text-text flex items-center mt-4">
-                                                <FaSignInAlt className="mr-2" />
-                                                Login
-                                            </Link>
-                                            <Link to="/register" className="text-text flex items-center mt-4">
-                                                <FaUserPlus className="mr-2" />
-                                                Signin
-                                            </Link>
-                                        </>
-                                    )}
-                                </>
-                            )}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                                                            <FaUser className="mr-2" />
+                                                            Profile
+                                                        </Link>
+                                                        <button
+                                                            onClick={handleLogout}
+                                                            className="w-full text-left px-4 py-2 text-text hover:bg-secondary hover:text-background flex items-center"
+                                                        >
+                                                            <FaSignOutAlt className="mr-2" />
+                                                            Logout
+                                                        </button>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    </>
+                                )}
+                                {!user && (
+                                    <>
+                                        <Link
+                                            to="/login"
+                                            className="text-background flex items-center hover:text-primary transition duration-300"
+                                        >
+                                            <FaSignInAlt className="mr-2" />
+                                            Login
+                                        </Link>
+                                        <Link
+                                            to="/register"
+                                            className="text-background flex items-center hover:text-primary transition duration-300"
+                                        >
+                                            <FaUserPlus className="mr-2" />
+                                            Signin
+                                        </Link>
+                                    </>
+                                )}
+                            </>
+                        )}
+                    </div>
+                    <div className="md:hidden flex items-center">
+                        <button
+                            className="text-background focus:outline-none"
+                            onClick={toggleMenu}
+                        >
+                            {menuOpen ? <FaTimes /> : <FaBars />}
+                        </button>
+                    </div>
+                </div>
             </div>
+            {/* Mobile Menu */}
+            <AnimatePresence>
+                {menuOpen && (
+                    <motion.div
+                        ref={menuRef}
+                        className="md:hidden absolute top-16 left-0 w-full bg-background p-4 z-10"
+                        initial="closed"
+                        animate="open"
+                        exit="closed"
+                        variants={menuVariants}
+                    >
+                        {loading ? (
+                            <div className="text-text flex items-center">
+                                <Skeleton circle={true} height={40} width={40} />
+                                <Skeleton height={40} width={100} className="ml-2" />
+                            </div>
+                        ) : (
+                            <>
+                                <Link
+                                    to="/new-term"
+                                    className="text-text flex items-center mt-4 hover:bg-primary hover:text-background transition duration-300"
+                                >
+                                    <FaPlus className="mr-2" />
+                                    New Term
+                                </Link>
+                                <Link
+                                    to="/terms/flashcard-serie"
+                                    className="text-text flex items-center mt-4 hover:bg-primary hover:text-background transition duration-300"
+                                >
+                                    <FaQuestion className="mr-2" />
+                                    Quiz
+                                </Link>
+                                {user && (
+                                    <>
+                                        {user.role === "admin" && (
+                                            <Link
+                                                to="/dashboard"
+                                                className="text-text flex items-center mt-4 hover:bg-primary hover:text-background transition duration-300"
+                                            >
+                                                <FaTachometerAlt className="mr-2" />
+                                                Dashboard
+                                            </Link>
+                                        )}
+                                        {(user.role === "admin" || user.role === "moderator") && (
+                                            <Link
+                                                to="/terms"
+                                                className="text-text flex items-center mt-4 hover:bg-primary hover:text-background transition duration-300"
+                                            >
+                                                <FaListAlt className="mr-2" />
+                                                Term Management
+                                            </Link>
+                                        )}
+                                        <Link
+                                            to="/bookmarks"
+                                            className="text-text flex items-center mt-4 hover:bg-primary hover:text-background transition duration-300"
+                                        >
+                                            <FaBookmark className="mr-2" />
+                                            Bookmarks
+                                        </Link>
+                                        <div className="relative mt-4" ref={dropdownRef}>
+                                            <button
+                                                onClick={toggleDropdown}
+                                                className="text-text flex items-center focus:outline-none hover:bg-primary hover:text-background transition duration-300"
+                                            >
+                                                <FaUser className="mr-2" />
+                                                <span>{user.username}</span>
+                                                <FaChevronDown className="ml-2" />
+                                            </button>
+                                            <AnimatePresence>
+                                                {dropdownOpen && (
+                                                    <motion.div
+                                                        className="mt-2 bg-background rounded-md shadow-neumorphic py-2 z-20"
+                                                        initial="closed"
+                                                        animate="open"
+                                                        exit="closed"
+                                                        variants={dropdownVariants}
+                                                    >
+                                                        <Link
+                                                            onClick={toggleDropdown}
+                                                            to="/profile"
+                                                            className=" px-4 py-2 text-text hover:bg-secondary hover:text-background flex items-center"
+                                                        >
+                                                            <FaUser className="mr-2" />
+                                                            Profile
+                                                        </Link>
+                                                        <button
+                                                            onClick={handleLogout}
+                                                            className="w-full text-left px-4 py-2 text-text hover:bg-secondary hover:text-background flex items-center"
+                                                        >
+                                                            <FaSignOutAlt className="mr-2" />
+                                                            Logout
+                                                        </button>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    </>
+                                )}
+                                {!user && (
+                                    <>
+                                        <Link
+                                            to="/login"
+                                            className="text-text flex items-center mt-4 hover:bg-primary hover:text-background transition duration-300"
+                                        >
+                                            <FaSignInAlt className="mr-2" />
+                                            Login
+                                        </Link>
+                                        <Link
+                                            to="/register"
+                                            className="text-text flex items-center mt-4 hover:bg-primary hover:text-background transition duration-300"
+                                        >
+                                            <FaUserPlus className="mr-2" />
+                                            Signin
+                                        </Link>
+                                    </>
+                                )}
+                            </>
+                        )}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </nav>
     );
 }
