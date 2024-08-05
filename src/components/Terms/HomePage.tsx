@@ -300,7 +300,7 @@ function HomePage() {
     // Adjusted variants with continuous looping effect
     const verticalUpScrollVariants: Variants = {
         animate: {
-            y: ["0%", "-50%"],
+            y: ["0%", "-100%"],
             transition: {
                 duration: 20, // Adjust this for the desired speed
                 repeat: Infinity,
@@ -312,7 +312,7 @@ function HomePage() {
 
     const verticalDownScrollVariants: Variants = {
         animate: {
-            y: ["-50%", "0%"],
+            y: ["-100%", "0%"],
             transition: {
                 duration: 20, // Adjust this for the desired speed
                 repeat: Infinity,
