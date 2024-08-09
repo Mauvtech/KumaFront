@@ -179,8 +179,6 @@ const ProfilePage: React.FC = () => {
                     currentPage={currentPage}
                     totalPages={totalPages}
                     paginate={paginate}
-                    termsPerPage={termsPerPage}
-                    totalTerms={totalTerms}
                 />
             </div>
         </div>

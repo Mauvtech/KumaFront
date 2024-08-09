@@ -82,7 +82,7 @@ const UserProfilePage: React.FC = () => {
                         ))}
                     </ul>
                 )}
-                <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} termsPerPage={termsPerPage} totalTerms={totalTerms} />
+                <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate}/>
             </div>
         </div>
     );

@@ -331,8 +331,6 @@ const TermsPage: React.FC<TermsPageProps> = ({ setSelectedTerm }) => {
             <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                termsPerPage={15}
-                totalTerms={totalTerms}
                 paginate={paginate}
             />
         </div>

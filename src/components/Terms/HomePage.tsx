@@ -324,6 +324,7 @@ function HomePage() {
     return (
         <div className="w-full bg-background">
             <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative">
+                <CobeGlobe />
                 <AnimatePresence mode="wait">
                     <motion.h1
                         key={currentWord}
