@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { updateUserProfile } from '../../services/userService';
 import { useAuth } from '../../contexts/authContext';
 
-const UpdateProfile: React.FC = () => {
+function UpdateProfile() {
     const { user, setUser, logout } = useAuth();
     const [username, setUsername] = useState<string>(user?.username || '');
     const [password, setPassword] = useState<string>('');
