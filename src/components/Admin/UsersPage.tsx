@@ -6,10 +6,14 @@ import { FaArrowUp, FaTimes } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { Pagination } from "../Common/Pagination";
+
 
 const UsersPage: React.FC = () => {
     const [users, setUsers] = useState<any[]>([]);
     const { user } = useAuth();
+    const [page, setPage] = useState<number>(1);
+    const [totalPages, setTotalPages] = useState<number>(1);
     const navigate = useNavigate();
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -21,8 +25,10 @@ const UsersPage: React.FC = () => {
             }
 
             try {
-                const data = await getUsers();
-                setUsers(data);
+                const data = await getUsers(page, 10);
+                setUsers(data.users);
+                setTotalPages(data.totalPages);
+                setPage(data.currentPage);
             } catch (error) {
                 console.error("Error loading users", error);
             } finally {
@@ -31,7 +37,7 @@ const UsersPage: React.FC = () => {
         };
 
         fetchUsers();
-    }, [user, navigate]);
+    }, [user,page, navigate]);
 
     const handlePromote = async (userId: string) => {
         try {
@@ -119,6 +125,11 @@ const UsersPage: React.FC = () => {
                     )}
                 </tbody>
             </table>
+            <Pagination
+                totalPages={totalPages}
+                currentPage={page}
+                paginate={setPage}
+                        />
         </div>
     );
 };

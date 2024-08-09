@@ -13,9 +13,14 @@ export const getUserProfile = async () => {
   }
 };
 
-export const getUsers = async () => {
+export const getUsers = async (page: number = 1, limit: number = 10) => {
   try {
-    const response = await api.get("/users");
+    const response = await api.get("/users", {
+      params: {
+        page,
+        limit,
+      },
+    });
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>);

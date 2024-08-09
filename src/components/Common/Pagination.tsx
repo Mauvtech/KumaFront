@@ -1,14 +1,12 @@
 import React from 'react';
 
 interface PaginationProps {
-    termsPerPage: number;
-    totalTerms: number;
     paginate: (pageNumber: number) => void;
     currentPage: number;
     totalPages: number;
 }
 
-export const Pagination: React.FC<PaginationProps> = ({ termsPerPage, totalTerms, paginate, currentPage, totalPages }) => {
+export const Pagination: React.FC<PaginationProps> = ({ paginate, currentPage, totalPages }) => {
 
     const maxPagesToShow = 5;
 
