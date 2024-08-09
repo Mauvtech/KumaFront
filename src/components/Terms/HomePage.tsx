@@ -297,12 +297,11 @@ function HomePage() {
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-    // Adjusted variants with continuous looping effect
     const verticalUpScrollVariants: Variants = {
         animate: {
             y: ["0%", "-100%"],
             transition: {
-                duration: 20, // Adjust this for the desired speed
+                duration: 20,
                 repeat: Infinity,
                 repeatType: "loop",
                 ease: "linear",
@@ -314,7 +313,7 @@ function HomePage() {
         animate: {
             y: ["-100%", "0%"],
             transition: {
-                duration: 20, // Adjust this for the desired speed
+                duration: 20,
                 repeat: Infinity,
                 repeatType: "loop",
                 ease: "linear",
@@ -324,19 +323,11 @@ function HomePage() {
 
     return (
         <div className="w-full bg-background">
-            <div
-                className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative"
-                style={{
-                    backdropFilter: "blur(20px)",
-                    overflow: "visible",
-                }}
-            >
-                <CobeGlobe />
-
+            <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative">
                 <AnimatePresence mode="wait">
                     <motion.h1
                         key={currentWord}
-                        className="text-6xl sm:text-7xl md:text-8xl sm:-mt-24 -mt-12 lg:text-9xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary leading-tight "
+                        className="text-6xl sm:text-7xl md:text-8xl sm:-mt-24 -mt-12 lg:text-9xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary leading-tight"
                         initial="hidden"
                         animate="visible"
                         exit="exit"
@@ -377,16 +368,17 @@ function HomePage() {
                 </AnimatePresence>
 
                 {/* Left and Right Word Strips */}
-                <div className="fixed hidden left-0 top-0 h-screen sm:flex flex-col justify-center">
+                <div className="fixed left-12 hidden top-0 h-full w-20 sm:flex flex-col justify-center overflow-hidden">
                     <motion.div
-                        className="flex flex-col gap-32 items-center h-[200vh]"
+                        className="flex flex-col gap-32 items-center"
+                        style={{ height: "200vh" }}
                         variants={verticalUpScrollVariants}
                         animate="animate"
                     >
                         {allFetchedTerms.map((term, index) => (
                             <div
                                 key={`left-${index}`}
-                                className="text-2xl text-primary transform rotate-90"
+                                className="text-2xl text-primary transform rotate-90 whitespace-nowrap"
                             >
                                 {term.term}
                             </div>
@@ -394,23 +386,24 @@ function HomePage() {
                         {allFetchedTerms.map((term, index) => (
                             <div
                                 key={`left-repeat-${index}`}
-                                className="text-2xl text-primary transform rotate-90"
+                                className="text-2xl text-primary transform rotate-90 whitespace-nowrap"
                             >
                                 {term.term}
                             </div>
                         ))}
                     </motion.div>
                 </div>
-                <div className="fixed hidden right-0 top-0 h-screen sm:flex flex-col justify-center">
+                <div className="fixed hidden right-10 top-0 h-full  w-20 sm:flex flex-col justify-center overflow-hidden">
                     <motion.div
-                        className="flex flex-col gap-32 items-center h-[200vh]"
+                        className="flex flex-col gap-32  items-center"
+                        style={{ height: "200vh" }}
                         variants={verticalDownScrollVariants}
                         animate="animate"
                     >
                         {allFetchedTerms.map((term, index) => (
                             <div
                                 key={`right-${index}`}
-                                className="text-2xl text-secondary transform rotate-90"
+                                className="text-2xl text-secondary transform rotate-90 whitespace-nowrap"
                             >
                                 {term.term}
                             </div>
@@ -418,7 +411,7 @@ function HomePage() {
                         {allFetchedTerms.map((term, index) => (
                             <div
                                 key={`right-repeat-${index}`}
-                                className="text-2xl text-secondary transform rotate-90"
+                                className="text-2xl text-secondary transform rotate-90 whitespace-nowrap"
                             >
                                 {term.term}
                             </div>
@@ -498,8 +491,8 @@ function HomePage() {
                 ) : (
                     <motion.ul
                         className={`grid ${terms.length > 5
-                                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-1 gap-6"
-                                : "grid-cols-1"
+                            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-1 gap-6"
+                            : "grid-cols-1"
                             }`}
                         initial="hidden"
                         animate="visible"

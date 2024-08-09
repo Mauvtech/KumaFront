@@ -45,7 +45,7 @@ const Selector: React.FC<SelectorProps> = ({
             animate={isOpen ? "open" : "closed"}
             className="relative"
         >
-            <motion.button
+            <motion.div
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center justify-center gap-1 w-full p-4 bg-secondary text-white font-bold rounded-lg shadow-lg min-w-[250px]"
@@ -63,7 +63,7 @@ const Selector: React.FC<SelectorProps> = ({
                         <path d="M0 7 L 20 7 L 10 16" fill="white" />
                     </svg>
                 </motion.div>
-            </motion.button>
+            </motion.div>
             <motion.ul
                 variants={{
                     open: {
