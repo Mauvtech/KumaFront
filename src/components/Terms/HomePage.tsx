@@ -27,6 +27,9 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import MouseIcon from "@mui/icons-material/Mouse"; // Import mouse icon
 import CobeGlobe from "../Common/CobeGlobe"; // Import CobeGlobe component
 
+
+const termsPerPage: number = 9;
+
 function HomePage() {
     const { user } = useAuth();
     const [terms, setTerms] = useState<Term[]>([]);
@@ -45,7 +48,6 @@ function HomePage() {
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
     const [showScrollDownIcon, setShowScrollDownIcon] = useState<boolean>(true);
-    const termsPerPage: number = 9;
 
     // State for managing word slideshow
     const [currentWord, setCurrentWord] = useState<string>("LES MOTS.");
