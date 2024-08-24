@@ -1,4 +1,4 @@
-import { api, publicApi } from "./api";
+import { api } from "./api";
 import { AxiosError } from "axios";
 import { handleAuthError } from "../utils/handleAuthError";
 import { ErrorResponse } from "../utils/types";
@@ -86,7 +86,7 @@ export const getFlashcardById = async (id: string) => {
 export const getTermById = async (
   id: string,) => {
   try {
-    const response = await publicApi.get(`/terms/${id}`);
+    const response = await api.get(`/terms/${id}`);
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>);

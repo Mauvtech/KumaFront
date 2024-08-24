@@ -18,10 +18,6 @@ export const api = axios.create({
   baseURL: apiBaseURL,
 });
 
-export const publicApi = axios.create({
-  baseURL: apiBaseURL,
-});
-
 const handleError = (error: AxiosError<ErrorResponse>, navigate: Function) => {
   if (error.response && error.response.status === 401) {
     logout();

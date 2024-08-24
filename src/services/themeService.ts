@@ -1,10 +1,10 @@
-import {api,publicApi} from "./api";
+import {api} from "./api";
 import { AxiosError } from "axios";
 import { handleAuthError } from "../utils/handleAuthError";
 import { ErrorResponse } from "../utils/types";
 
 export const getThemes = async () => {
- try{const response = await publicApi.get("/themes/approved");
+ try{const response = await api.get("/themes/approved");
   return response.data;} catch(error){
     handleAuthError(error as AxiosError<ErrorResponse>)
   }

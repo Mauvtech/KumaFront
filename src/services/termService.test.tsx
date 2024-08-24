@@ -1,26 +1,8 @@
-import { api, publicApi } from "./api";
+import { api } from "./api";
 import {
     addTerm,
     getAllTerms,
     getApprovedTerms,
-    getPendingTerms,
-    getQuiz,
-    getFlashcardById,
-    getTermById,
-    updateTerm,
-    deleteTerm,
-    approveTerm,
-    rejectTerm,
-    upvoteTerm,
-    downvoteTerm,
-    addComment,
-    getVotes,
-    addTag,
-    bookmarkTerm,
-    unbookmarkTerm,
-    getBookmarks,
-    getAuthoredTerms,
-    getUserApprovedTerms,
 } from "./termService";
 import { AxiosError } from "axios";
 import { handleAuthError } from "../utils/handleAuthError";
