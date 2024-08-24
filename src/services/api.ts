@@ -1,26 +1,44 @@
-import axios from "axios";
+import axios, {
+  AxiosError,
+  InternalAxiosRequestConfig,
+  AxiosHeaders,
+} from "axios";
 import { isTokenExpired, logout } from "./authService";
+import { ErrorResponse } from "../utils/types";
+
+
+const apiBaseURL = process.env.REACT_APP_PROD_API_URL;
+
+if (!apiBaseURL) {
+  throw new Error("API base URL not defined in environment variables");
+}
 
 
 export const api = axios.create({
-  baseURL: process.env.REACT_APP_PROD_API_URL,
+  baseURL: apiBaseURL,
 });
 
-export const publicApi = axios.create({
-  baseURL: process.env.REACT_APP_PROD_API_URL,
-});
+const handleError = (error: AxiosError<ErrorResponse>, navigate: Function) => {
+  if (error.response && error.response.status === 401) {
+    logout();
+    navigate("/login");
+  }
+  return Promise.reject(error);
+};
 
-// Intercepteur pour ajouter le token aux requêtes
 api.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig) => {
     const userStr = localStorage.getItem("user");
     if (userStr) {
       const user = JSON.parse(userStr);
       if (isTokenExpired(user.token)) {
         logout();
-        window.location.href = "/login"; // Redirection vers la page de login
+        window.location.href = "/login";
       } else {
-        config.headers.Authorization = `Bearer ${user.token}`;
+        if (!config.headers) {
+          config.headers = new AxiosHeaders();
+        }
+        config.headers.set("Authorization", `Bearer ${user.token}`);
       }
     }
     return config;
@@ -30,15 +48,12 @@ api.interceptors.request.use(
   }
 );
 
-// Intercepteur pour gérer les erreurs de réponse
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      logout();
-      window.location.href = "/login"; // Redirection vers la page de login
-    }
-    return Promise.reject(error);
+  (error: AxiosError<ErrorResponse>) => {
+    return handleError(error, (path: string) => {
+      window.location.href = path;
+    });
   }
 );
 
