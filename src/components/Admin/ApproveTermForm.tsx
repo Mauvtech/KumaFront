@@ -4,6 +4,7 @@ import { getAllCategories, approveCategory } from '../../services/categoryServic
 import { getAllThemes, approveTheme } from '../../services/themeService';
 import { getAllLanguages, approveLanguage, addLanguage } from '../../services/languageService';
 import { useNavigate } from 'react-router-dom';
+import {capitalizeWord} from "../../utils/StringUtils";
 
 interface Category {
     _id: string;
@@ -85,9 +86,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
         setApproveData(updatedApproveData);
     }, [updatedTerm, newLanguage]);
 
-    const capitalizeWord = (word: string): string => {
-        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    };
+
 
     const validateField = (fieldName: string, value: string): string | null => {
         if (!value && fieldName !== 'Language Code') return `${fieldName} ne doit pas être vide.`;

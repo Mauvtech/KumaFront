@@ -12,7 +12,7 @@ export const addTerm = async (
     definition: string;
     grammaticalCategory: string;
     theme: string;
-  },) => {
+  }) => {
   try {
     const response = await api.post("/terms", termData);
     return response.data;
