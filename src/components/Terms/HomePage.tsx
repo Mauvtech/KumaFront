@@ -1,243 +1,548 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { getApprovedTerms, upvoteTerm } from '../../services/termService';
-import { getCategories } from '../../services/categoryService';
-import { getThemes } from '../../services/themeService';
-import { getLanguages } from '../../services/languageService';
-import { Link, useNavigate } from 'react-router-dom';
-import { AxiosError } from 'axios';
-import { handleAuthError } from '../../utils/handleAuthError';
-import FilterButtons from '../FilterButtons';
-import { ErrorResponse } from '../../utils/types';
-import { useAuth } from '../../contexts/authContext';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
+import React, { useEffect, useState, useCallback } from "react";
+import {
+    downvoteTerm,
+    getApprovedTerms,
+    upvoteTerm,
+    bookmarkTerm,
+    unbookmarkTerm,
+} from "../../services/termService";
+import { getCategories } from "../../services/categoryService";
+import { getThemes } from "../../services/themeService";
+import { getLanguages } from "../../services/languageService";
+import { AxiosError } from "axios";
+import { handleAuthError } from "../../utils/handleAuthError";
+import { ErrorResponse } from "../../utils/types";
+import { useAuth } from "../../contexts/authContext";
+import { Theme } from "../../models/themeModel";
+import { Category } from "../../models/categoryModel";
+import { Language } from "../../models/languageModel";
+import { Term } from "../../models/termModel";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import TermItem from "./TermItem";
+import Input from "../Common/Input";
+import { motion, AnimatePresence, Variants } from "framer-motion";
+import Selector from "../Common/Selector";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import MouseIcon from "@mui/icons-material/Mouse"; // Import mouse icon
+import CobeGlobe from "../Common/CobeGlobe"; // Import CobeGlobe component
 
-interface Category {
-    _id: string;
-    name: string;
-    isApproved: boolean;
-}
 
-interface Theme {
-    _id: string;
-    name: string;
-    isApproved: boolean;
-}
+const termsPerPage: number = 9;
 
-interface Language {
-    _id: string;
-    name: string;
-    code: string;
-    isApproved: boolean;
-}
-
-export interface Term {
-    _id: string;
-    term: string;
-    translation: string;
-    definition: string;
-    grammaticalCategory: Category;
-    theme: Theme;
-    language: Language;
-    status: string;
-    comments?: Array<{ author: string; text: string; createdAt: Date }>;
-    upvotedBy: string[];
-    downvotedBy: string[];
-    userVote?: 'upvote' | 'downvote' | null;
-}
-
-const HomePage: React.FC = () => {
+function HomePage() {
     const { user } = useAuth();
     const [terms, setTerms] = useState<Term[]>([]);
-    const [filteredTerms, setFilteredTerms] = useState<Term[]>([]);
+    const [allFetchedTerms, setAllFetchedTerms] = useState<Term[]>([]); // Persistent state for all fetched terms
     const [categories, setCategories] = useState<Category[]>([]);
-    const [selectedCategory, setSelectedCategory] = useState<string>('');
+    const [selectedCategory, setSelectedCategory] = useState<string>("");
     const [themes, setThemes] = useState<Theme[]>([]);
-    const [selectedTheme, setSelectedTheme] = useState<string>('');
+    const [selectedTheme, setSelectedTheme] = useState<string>("");
     const [languages, setLanguages] = useState<Language[]>([]);
-    const [selectedLanguage, setSelectedLanguage] = useState<string>('');
-    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [selectedLanguage, setSelectedLanguage] = useState<string>("");
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [termsLoading, setTermsLoading] = useState<boolean>(true);
+    const [filtersLoading, setFiltersLoading] = useState<boolean>(true);
+    const [totalTerms, setTotalTerms] = useState<number>(0);
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const termsPerPage: number = 10;
-    const navigate = useNavigate();
+    const [hasMore, setHasMore] = useState<boolean>(true);
+    const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
+    const [showScrollDownIcon, setShowScrollDownIcon] = useState<boolean>(true);
 
+    // State for managing word slideshow
+    const [currentWord, setCurrentWord] = useState<string>("LES MOTS.");
+
+    // Animation Variants
+    const wordVariants = {
+        hidden: { opacity: 0, y: 20, scale: 0.95 },
+        visible: { opacity: 1, y: 0, scale: 1 },
+        exit: { opacity: 0, y: -20, scale: 1.05 },
+    };
+
+    const termVariants = {
+        hidden: { opacity: 0, y: 50 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+    };
+
+    // Fetch Data
     const fetchApprovedTerms = useCallback(async () => {
+        setTermsLoading(true);
         try {
-            const data = await getApprovedTerms(navigate);
-            if (data) {
-                setTerms(data);
-                setFilteredTerms(data);
+            const data = await getApprovedTerms({
+                category: selectedCategory,
+                theme: selectedTheme,
+                language: selectedLanguage,
+                searchTerm,
+                page: currentPage,
+                limit: termsPerPage,
+            });
+            if (data && data.terms) {
+                setTerms((prevTerms) => [...prevTerms, ...data.terms]);
+                setAllFetchedTerms((prevTerms) => [...prevTerms, ...data.terms]); // Add fetched terms to persistent state
+                setTotalTerms(data.totalTerms);
+                setHasMore(currentPage < data.totalPages);
+                if (!currentWord) {
+                    setCurrentWord(data.terms[0]?.term || "LES MOTS.");
+                }
             }
         } catch (error) {
-            handleAuthError(error as AxiosError<ErrorResponse>, navigate);
+            handleAuthError(error as AxiosError<ErrorResponse>);
+        } finally {
+            setTermsLoading(false);
         }
-    }, [navigate]);
+    }, [
+        selectedCategory,
+        selectedTheme,
+        selectedLanguage,
+        searchTerm,
+        currentPage,
+        termsPerPage,
+    ]);
 
     const fetchCategories = useCallback(async () => {
+        setFiltersLoading(true);
         try {
-            const categoriesData = await getCategories(navigate);
-            setCategories(categoriesData.filter((category: Category) => category.isApproved));
+            const categoriesData = await getCategories();
+            setCategories(
+                categoriesData.filter((category: Category) => category.isApproved)
+            );
         } catch (error) {
-            console.error('Erreur de chargement des catégories', error);
+            console.error("Erreur de chargement des catégories", error);
+        } finally {
+            setFiltersLoading(false);
         }
-    }, [navigate]);
+    }, []);
 
     const fetchThemes = useCallback(async () => {
+        setFiltersLoading(true);
         try {
-            const themesData = await getThemes(navigate);
+            const themesData = await getThemes();
             setThemes(themesData.filter((theme: Theme) => theme.isApproved));
         } catch (error) {
-            console.error('Erreur de chargement des thèmes', error);
+            console.error("Erreur de chargement des thèmes", error);
+        } finally {
+            setFiltersLoading(false);
         }
-    }, [navigate]);
+    }, []);
 
     const fetchLanguages = useCallback(async () => {
+        setFiltersLoading(true);
         try {
-            const languagesData = await getLanguages(navigate);
-            setLanguages(languagesData.filter((language: Language) => language.isApproved));
+            const languagesData = await getLanguages();
+            setLanguages(
+                languagesData.filter((language: Language) => language.isApproved)
+            );
         } catch (error) {
-            console.error('Erreur de chargement des langues', error);
+            console.error("Erreur de chargement des langues", error);
+        } finally {
+            setFiltersLoading(false);
         }
-    }, [navigate]);
+    }, []);
 
     useEffect(() => {
-        fetchApprovedTerms();
         fetchCategories();
         fetchThemes();
         fetchLanguages();
-    }, [fetchApprovedTerms, fetchCategories, fetchThemes, fetchLanguages]);
+    }, [fetchCategories, fetchThemes, fetchLanguages]);
 
     useEffect(() => {
-        const filtered = terms.filter((term: Term) =>
-            (selectedCategory ? term.grammaticalCategory.name === selectedCategory : true) &&
-            (selectedTheme ? term.theme.name === selectedTheme : true) &&
-            (selectedLanguage ? term.language.name === selectedLanguage : true) &&
-            (term.term.toLowerCase().includes(searchTerm.toLowerCase()) || term.definition.toLowerCase().includes(searchTerm.toLowerCase()))
-        );
-        setFilteredTerms(filtered);
-    }, [selectedCategory, selectedTheme, selectedLanguage, searchTerm, terms]);
+        fetchApprovedTerms();
+    }, [fetchApprovedTerms]);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
+        setCurrentPage(1); // Reset page number when search term changes
+        setTerms([]); // Clear current terms
+        setAllFetchedTerms([]); // Clear all fetched terms
     };
 
-    const indexOfLastTerm = currentPage * termsPerPage;
-    const indexOfFirstTerm = indexOfLastTerm - termsPerPage;
-    const currentTerms = filteredTerms.slice(indexOfFirstTerm, indexOfLastTerm);
+    const handleCategoryChange = (category: string) => {
+        setSelectedCategory(category === selectedCategory ? "" : category);
+        setCurrentPage(1); // Reset page number when category changes
+        setTerms([]); // Clear current terms
+        setAllFetchedTerms([]); // Clear all fetched terms
+    };
 
-    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+    const handleThemeChange = (theme: string) => {
+        setSelectedTheme(theme === selectedTheme ? "" : theme);
+        setCurrentPage(1); // Reset page number when theme changes
+        setTerms([]); // Clear current terms
+        setAllFetchedTerms([]); // Clear all fetched terms
+    };
+
+    const handleLanguageChange = (language: string) => {
+        setSelectedLanguage(language === selectedLanguage ? "" : language);
+        setCurrentPage(1); // Reset page number when language changes
+        setTerms([]); // Clear current terms
+        setAllFetchedTerms([]); // Clear all fetched terms
+    };
 
     const handleUpvote = async (id: string) => {
         try {
-            await upvoteTerm(id, navigate);
-            fetchApprovedTerms();
+            await upvoteTerm(id);
+            setTerms((prevTerms) =>
+                prevTerms.map((term) => {
+                    if (term._id === id) {
+                        const isUpvoted = term.upvotedBy.includes(user!._id);
+                        const upvotedBy = isUpvoted
+                            ? term.upvotedBy.filter((userId) => userId !== user!._id)
+                            : [...term.upvotedBy, user!._id];
+                        const downvotedBy = term.downvotedBy.filter(
+                            (userId) => userId !== user!._id
+                        );
+                        return { ...term, upvotedBy, downvotedBy };
+                    }
+                    return term;
+                })
+            );
         } catch (error) {
-            console.error('Erreur lors de l\'upvote', error);
+            console.error("Erreur lors de l'upvote", error);
         }
     };
 
-    return (
-        <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
-            <h2 className="text-3xl font-bold mb-6 text-gray-700">The Words World</h2>
-            <input
-                type="text"
-                placeholder="Rechercher un terme ou une définition..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                className="w-full p-3 mb-6 bg-gray-200 border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-400"
-            />
-            <FilterButtons
-                title="Categories"
-                options={categories.map(cat => cat.name)}
-                selectedOption={selectedCategory}
-                onSelectOption={(option) => setSelectedCategory(option === selectedCategory ? '' : option)}
-            />
-            <FilterButtons
-                title="Themes"
-                options={themes.map(theme => theme.name)}
-                selectedOption={selectedTheme}
-                onSelectOption={(option) => setSelectedTheme(option === selectedTheme ? '' : option)}
-            />
-            <FilterButtons
-                title="Languages"
-                options={languages.map(lang => lang.name)}
-                selectedOption={selectedLanguage}
-                onSelectOption={(option) => setSelectedLanguage(option === selectedLanguage ? '' : option)}
-            />
-            {terms.length === 0 ? (
-                <p className="text-center text-gray-500">No terms found.</p>
-            ) : (
-                <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {currentTerms.map((term) => {
-                        const userVote = user ? (term.upvotedBy.includes(user._id) ? 'upvote' : term.downvotedBy.includes(user._id) ? 'downvote' : null) : null;
-                        return (
-                            <li key={term._id} className="mb-4 p-4 bg-gray-100 rounded-lg shadow-[3px_3px_6px_#c5c5c5,-3px_-3px_6px_#ffffff] transition-transform transform hover:scale-105">
-                                <Link to={`/terms/${term._id}`}>
-                                    <h3 className="text-xl font-bold text-gray-800">{term.term}</h3>
-                                    <p className="text-gray-600">{term.translation}</p>
-                                    <p className="text-gray-800">{term.definition}</p>
-                                    {term.language && (
-                                        <p className="text-gray-800">Language {term.language.name} (Code {term.language.code})</p>
-                                    )}
-                                    <div className="mt-2">
-                                        <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 rounded-full mr-2">
-                                            {term.grammaticalCategory.name}
-                                        </span>
-                                        <span className="inline-block bg-green-200 text-green-800 text-xs px-2 rounded-full">
-                                            {term.theme.name}
-                                        </span>
-                                    </div>
-                                </Link>
-                                {user && (
-                                    <div className="mt-4 flex justify-between items-center">
-                                        <button
-                                            onClick={() => handleUpvote(term._id)}
-                                            className="text-3xl"
-                                            style={{ color: userVote === 'upvote' ? 'green' : 'black' }}
-                                        >
-                                            {userVote === 'upvote' ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-                                        </button>
-                                    </div>
-                                )}
-                            </li>
+    const handleDownvote = async (id: string) => {
+        try {
+            await downvoteTerm(id);
+            setTerms((prevTerms) =>
+                prevTerms.map((term) => {
+                    if (term._id === id) {
+                        const isDownvoted = term.downvotedBy.includes(user!._id);
+                        const downvotedBy = isDownvoted
+                            ? term.downvotedBy.filter((userId) => userId !== user!._id)
+                            : [...term.downvotedBy, user!._id];
+                        const upvotedBy = term.upvotedBy.filter(
+                            (userId) => userId !== user!._id
                         );
-                    })}
-                </ul>
-            )}
-            <Pagination termsPerPage={termsPerPage} totalTerms={filteredTerms.length} paginate={paginate} />
+                        return { ...term, upvotedBy, downvotedBy };
+                    }
+                    return term;
+                })
+            );
+        } catch (error) {
+            console.error("Erreur lors de l'downvote", error);
+        }
+    };
+
+    const handleBookmark = async (id: string) => {
+        try {
+            await bookmarkTerm(id);
+            setTerms((prevTerms) =>
+                prevTerms.map((term) => {
+                    if (term._id === id) {
+                        return { ...term, bookmarkedBy: [...term.bookmarkedBy, user!._id] };
+                    }
+                    return term;
+                })
+            );
+        } catch (error) {
+            console.error("Erreur lors de l'bookmark", error);
+        }
+    };
+
+    const handleUnbookmark = async (id: string) => {
+        try {
+            await unbookmarkTerm(id);
+            setTerms((prevTerms) =>
+                prevTerms.map((term) => {
+                    if (term._id === id) {
+                        return {
+                            ...term,
+                            bookmarkedBy: term.bookmarkedBy.filter(
+                                (userId) => userId !== user!._id
+                            ),
+                        };
+                    }
+                    return term;
+                })
+            );
+        } catch (error) {
+            console.error("Erreur lors de l'unbookmark", error);
+        }
+    };
+
+    // Slide show for words with smooth transitions
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (allFetchedTerms.length > 0) {
+                // Shuffle the terms array
+                const shuffledTerms = [...allFetchedTerms].sort(() => 0.5 - Math.random());
+                const randomIndex = Math.floor(Math.random() * shuffledTerms.length);
+                setCurrentWord(shuffledTerms[randomIndex].term);
+            }
+        }, 3000); // Change word every 3 seconds
+
+        return () => clearInterval(interval);
+    }, [allFetchedTerms]);
+
+    // Show scroll-to-top button after a certain scroll distance
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollPosition = window.scrollY;
+            setShowScrollButton(scrollPosition > 300);
+            setShowScrollDownIcon(scrollPosition < 100);
+
+            if (
+                window.innerHeight + document.documentElement.scrollTop >=
+                document.documentElement.offsetHeight - 500
+            ) {
+                if (hasMore && !termsLoading) {
+                    setCurrentPage((prevPage) => prevPage + 1);
+                }
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [hasMore, termsLoading]);
+
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    const verticalUpScrollVariants: Variants = {
+        animate: {
+            y: ["0%", "-100%"],
+            transition: {
+                duration: 20,
+                repeat: Infinity,
+                repeatType: "loop",
+                ease: "linear",
+            },
+        },
+    };
+
+    const verticalDownScrollVariants: Variants = {
+        animate: {
+            y: ["-100%", "0%"],
+            transition: {
+                duration: 20,
+                repeat: Infinity,
+                repeatType: "loop",
+                ease: "linear",
+            },
+        },
+    };
+
+    return (
+        <div className="w-full bg-background">
+            <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative">
+                <CobeGlobe />
+                <AnimatePresence mode="wait">
+                    <motion.h1
+                        key={currentWord}
+                        className="text-6xl sm:text-7xl md:text-8xl sm:-mt-24 -mt-12 lg:text-9xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary leading-tight"
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        variants={wordVariants}
+                        transition={{ duration: 1.5, ease: "easeInOut" }}
+                        style={{
+                            lineHeight: "2em",
+                            overflow: "visible",
+                        }}
+                    >
+                        {currentWord}
+                    </motion.h1>
+                </AnimatePresence>
+                <AnimatePresence>
+                    {showScrollDownIcon && (
+                        <motion.div
+                            className="absolute bottom-8 flex flex-col items-center"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <motion.div
+                                animate={{ y: [0, 10, 0] }}
+                                transition={{
+                                    duration: 1,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                }}
+                            >
+                                <MouseIcon fontSize="large" className="text-primary" />
+                            </motion.div>
+                            <p className="text-sm sm:text-base text-primary mt-2">
+                                Scroll Down
+                            </p>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Left and Right Word Strips */}
+                <div className="fixed left-12 hidden top-0 h-full w-20 sm:flex flex-col justify-center overflow-hidden">
+                    <motion.div
+                        className="flex flex-col gap-32 items-center"
+                        style={{ height: "200vh" }}
+                        variants={verticalUpScrollVariants}
+                        animate="animate"
+                    >
+                        {allFetchedTerms.map((term, index) => (
+                            <div
+                                key={`left-${index}`}
+                                className="text-2xl text-primary transform rotate-90 whitespace-nowrap"
+                            >
+                                {term.term}
+                            </div>
+                        ))}
+                        {allFetchedTerms.map((term, index) => (
+                            <div
+                                key={`left-repeat-${index}`}
+                                className="text-2xl text-primary transform rotate-90 whitespace-nowrap"
+                            >
+                                {term.term}
+                            </div>
+                        ))}
+                    </motion.div>
+                </div>
+                <div className="fixed hidden right-10 top-0 h-full  w-20 sm:flex flex-col justify-center overflow-hidden">
+                    <motion.div
+                        className="flex flex-col gap-32  items-center"
+                        style={{ height: "200vh" }}
+                        variants={verticalDownScrollVariants}
+                        animate="animate"
+                    >
+                        {allFetchedTerms.map((term, index) => (
+                            <div
+                                key={`right-${index}`}
+                                className="text-2xl text-secondary transform rotate-90 whitespace-nowrap"
+                            >
+                                {term.term}
+                            </div>
+                        ))}
+                        {allFetchedTerms.map((term, index) => (
+                            <div
+                                key={`right-repeat-${index}`}
+                                className="text-2xl text-secondary transform rotate-90 whitespace-nowrap"
+                            >
+                                {term.term}
+                            </div>
+                        ))}
+                    </motion.div>
+                </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="max-w-screen-lg mx-auto mt-10 p-6 bg-background rounded-lg">
+                <div className="sm:sticky sm:top-16 bg-background z-10">
+                    <Input
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        placeholder="Rechercher un terme ou une définition..."
+                    />
+
+                    <div className="flex flex-col sm:flex-row md:justify-evenly sm:space-y-0 sm:space-x-4 mb-12 mt-8">
+                        <div className="relative w-full sm:w-1/3 mb-4 sm:mb-0">
+                            <Selector
+                                options={categories.map((cat) => cat.name)}
+                                selectedOption={selectedCategory}
+                                onSelectOption={handleCategoryChange}
+                                placeholder="Select Category"
+                            />
+                        </div>
+                        <div className="relative w-full sm:w-1/3 mb-4 sm:mb-0">
+                            <Selector
+                                options={themes.map((theme) => theme.name)}
+                                selectedOption={selectedTheme}
+                                onSelectOption={handleThemeChange}
+                                placeholder="Select Theme"
+                            />
+                        </div>
+                        <div className="relative w-full sm:w-1/3">
+                            <Selector
+                                options={languages.map((lang) => lang.name)}
+                                selectedOption={selectedLanguage}
+                                onSelectOption={handleLanguageChange}
+                                placeholder="Select Language"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {termsLoading && currentPage === 1 ? (
+                    <ul className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-6">
+                        {Array.from({ length: termsPerPage }).map((_, index) => (
+                            <li
+                                key={index}
+                                className="flex flex-col justify-between mb-4 p-6 bg-background rounded-lg shadow-neumorphic h-[60vh]"
+                            >
+                                <div className="flex items-center mb-4">
+                                    <Skeleton
+                                        circle={true}
+                                        height={80}
+                                        width={80}
+                                        className="mr-4"
+                                    />
+                                    <Skeleton height={30} width="50%" />
+                                </div>
+                                <div className="flex-1">
+                                    <Skeleton height={35} width="90%" className="mb-2" />
+                                    <Skeleton height={25} width="100%" className="mb-2" />
+                                    <Skeleton height={20} width="95%" className="mb-2" />
+                                    <Skeleton height={20} width="95%" />
+                                </div>
+                                <div className="flex justify-between items-center mt-4">
+                                    <Skeleton height={25} width="35%" />
+                                    <Skeleton height={50} width="50px" circle={true} />
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                ) : terms.length === 0 && currentPage === 1 ? (
+                    <p className="text-center text-text">No terms found.</p>
+                ) : (
+                    <motion.ul
+                        className={`grid ${terms.length > 5
+                            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-1 gap-6"
+                            : "grid-cols-1"
+                            }`}
+                        initial="hidden"
+                        animate="visible"
+                        variants={{
+                            visible: { transition: { staggerChildren: 0.1 } },
+                        }}
+                    >
+                        {terms.map((term) => (
+                            <motion.li key={term._id} variants={termVariants}>
+                                <TermItem
+                                    isFeed={true}
+                                    term={term}
+                                    user={user}
+                                    handleUpvote={handleUpvote}
+                                    handleDownvote={handleDownvote}
+                                    handleBookmark={handleBookmark}
+                                    handleUnbookmark={handleUnbookmark}
+                                />
+                            </motion.li>
+                        ))}
+                        {termsLoading && currentPage > 1 && (
+                            <li className="flex justify-center">
+                                <Skeleton height={35} width="90%" />
+                            </li>
+                        )}
+                    </motion.ul>
+                )}
+            </div>
+
+            {/* Scroll to Top Button */}
+            <AnimatePresence>
+                {showScrollButton && (
+                    <motion.button
+                        onClick={scrollToTop}
+                        className="fixed bottom-4 right-4 md:right-10 p-3 bg-primary text-white rounded-full shadow-lg hover:bg-primaryDark transition duration-300"
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                        whileHover={{ scale: 1.1 }}
+                    >
+                        <ArrowUpwardIcon />
+                    </motion.button>
+                )}
+            </AnimatePresence>
         </div>
     );
-};
-
-interface PaginationProps {
-    termsPerPage: number;
-    totalTerms: number;
-    paginate: (pageNumber: number) => void;
 }
-
-const Pagination: React.FC<PaginationProps> = ({ termsPerPage, totalTerms, paginate }) => {
-    const pageNumbers = [];
-
-    for (let i = 1; i <= Math.ceil(totalTerms / termsPerPage); i++) {
-        pageNumbers.push(i);
-    }
-
-    return (
-        <nav className="mt-4">
-            <ul className="inline-flex -space-x-px">
-                {pageNumbers.map((number) => (
-                    <li key={number}>
-                        <button
-                            onClick={() => paginate(number)}
-                            className="px-3 py-2 leading-tight text-gray-500 bg-gray-100 border border-gray-300 hover:bg-gray-200 hover:text-gray-700 rounded-lg shadow-lg"
-                        >
-                            {number}
-                        </button>
-                    </li>
-                ))}
-            </ul>
-        </nav>
-    );
-};
 
 export default HomePage;
