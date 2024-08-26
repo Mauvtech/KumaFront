@@ -15,12 +15,13 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import TermItem from "../../components/Terms/TermItem";
 import Input from "../../components/Common/Input";
-import {AnimatePresence, motion, Variants} from "framer-motion";
+import {AnimatePresence, motion} from "framer-motion";
 import Selector from "../../components/Common/Selector";
 import MouseIcon from "@mui/icons-material/Mouse"; // Import mouse icon
 import CobeGlobe from "../../components/Common/CobeGlobe";
 import HomeDisplayWord from "./HomeDisplayWord";
-import ScrollToTopButton from "./ScrollToTopButton"; // Import CobeGlobe component
+import ScrollToTopButton from "./ScrollToTopButton";
+import WordStrip from "./WordStrip";
 
 
 const termsPerPage: number = 9;
@@ -284,30 +285,6 @@ function HomePage() {
     }, [hasMore, termsLoading]);
 
 
-    const verticalUpScrollVariants: Variants = {
-        animate: {
-            y: ["0%", "-100%"],
-            transition: {
-                duration: 20,
-                repeat: Infinity,
-                repeatType: "loop",
-                ease: "linear",
-            },
-        },
-    };
-
-    const verticalDownScrollVariants: Variants = {
-        animate: {
-            y: ["-100%", "0%"],
-            transition: {
-                duration: 20,
-                repeat: Infinity,
-                repeatType: "loop",
-                ease: "linear",
-            },
-        },
-    };
-
     return (
         <div className="w-full bg-background">
             <div
@@ -339,60 +316,10 @@ function HomePage() {
                         </motion.div>
                     )}
                 </AnimatePresence>
-
-                {/* Left and Right Word Strips */}
-                <div className="fixed left-12 hidden top-0 h-full w-20 sm:flex flex-col justify-center overflow-hidden">
-                    <motion.div
-                        className="flex flex-col gap-32 items-center"
-                        style={{height: "200vh"}}
-                        variants={verticalUpScrollVariants}
-                        animate="animate"
-                    >
-                        {allFetchedTerms.map((term, index) => (
-                            <div
-                                key={`left-${index}`}
-                                className="text-2xl text-primary transform rotate-90 whitespace-nowrap"
-                            >
-                                {term.term}
-                            </div>
-                        ))}
-                        {allFetchedTerms.map((term, index) => (
-                            <div
-                                key={`left-repeat-${index}`}
-                                className="text-2xl text-primary transform rotate-90 whitespace-nowrap"
-                            >
-                                {term.term}
-                            </div>
-                        ))}
-                    </motion.div>
-                </div>
-                <div
-                    className="fixed hidden right-10 top-0 h-full  w-20 sm:flex flex-col justify-center overflow-hidden">
-                    <motion.div
-                        className="flex flex-col gap-32  items-center"
-                        style={{height: "200vh"}}
-                        variants={verticalDownScrollVariants}
-                        animate="animate"
-                    >
-                        {allFetchedTerms.map((term, index) => (
-                            <div
-                                key={`right-${index}`}
-                                className="text-2xl text-secondary transform rotate-90 whitespace-nowrap"
-                            >
-                                {term.term}
-                            </div>
-                        ))}
-                        {allFetchedTerms.map((term, index) => (
-                            <div
-                                key={`right-repeat-${index}`}
-                                className="text-2xl text-secondary transform rotate-90 whitespace-nowrap"
-                            >
-                                {term.term}
-                            </div>
-                        ))}
-                    </motion.div>
-                </div>
             </div>
+
+            <WordStrip terms={allFetchedTerms}/>
+
 
             {/* Main Content */}
             <div className="max-w-screen-lg mx-auto mt-10 p-6 bg-background rounded-lg">
