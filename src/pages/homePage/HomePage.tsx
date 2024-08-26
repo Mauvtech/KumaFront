@@ -17,16 +17,16 @@ import TermItem from "../../components/Terms/TermItem";
 import Input from "../../components/Common/Input";
 import {AnimatePresence, motion} from "framer-motion";
 import Selector from "../../components/Common/Selector";
-import MouseIcon from "@mui/icons-material/Mouse"; // Import mouse icon
 import CobeGlobe from "../../components/Common/CobeGlobe";
 import HomeDisplayWord from "./HomeDisplayWord";
 import ScrollToTopButton from "./ScrollToTopButton";
 import WordStrip from "./WordStrip";
+import ScrollDownMouseIcon from "./ScrollDownMouseIcon";
 
 
 const termsPerPage: number = 9;
 
-function HomePage() {
+export default function HomePage() {
     const {user} = useAuth();
     const [terms, setTerms] = useState<Term[]>([]);
     const [allFetchedTerms, setAllFetchedTerms] = useState<Term[]>([]); // Persistent state for all fetched terms
@@ -293,27 +293,7 @@ function HomePage() {
                 <HomeDisplayWord currentWord={currentWord}/>
                 <AnimatePresence>
                     {showScrollDownIcon && (
-                        <motion.div
-                            className="absolute bottom-8 flex flex-col items-center"
-                            initial={{opacity: 0}}
-                            animate={{opacity: 1}}
-                            exit={{opacity: 0}}
-                            transition={{duration: 0.5}}
-                        >
-                            <motion.div
-                                animate={{y: [0, 10, 0]}}
-                                transition={{
-                                    duration: 1,
-                                    repeat: Infinity,
-                                    ease: "easeInOut",
-                                }}
-                            >
-                                <MouseIcon fontSize="large" className="text-primary"/>
-                            </motion.div>
-                            <p className="text-sm sm:text-base text-primary mt-2">
-                                Scroll Down
-                            </p>
-                        </motion.div>
+                        <ScrollDownMouseIcon/>
                     )}
                 </AnimatePresence>
             </div>
@@ -422,9 +402,9 @@ function HomePage() {
                     </motion.ul>
                 )}
             </div>
-            {showScrollButton && <ScrollToTopButton/>}
+            <AnimatePresence>
+                {showScrollButton && <ScrollToTopButton/>}
+            </AnimatePresence>
         </div>
     );
 }
-
-export default HomePage;
