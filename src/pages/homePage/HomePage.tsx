@@ -17,10 +17,10 @@ import TermItem from "../../components/Terms/TermItem";
 import Input from "../../components/Common/Input";
 import {AnimatePresence, motion, Variants} from "framer-motion";
 import Selector from "../../components/Common/Selector";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import MouseIcon from "@mui/icons-material/Mouse"; // Import mouse icon
 import CobeGlobe from "../../components/Common/CobeGlobe";
-import HomeDisplayWord from "./HomeDisplayWord"; // Import CobeGlobe component
+import HomeDisplayWord from "./HomeDisplayWord";
+import ScrollToTopButton from "./ScrollToTopButton"; // Import CobeGlobe component
 
 
 const termsPerPage: number = 9;
@@ -283,9 +283,6 @@ function HomePage() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, [hasMore, termsLoading]);
 
-    const scrollToTop = () => {
-        window.scrollTo({top: 0, behavior: "smooth"});
-    };
 
     const verticalUpScrollVariants: Variants = {
         animate: {
@@ -316,7 +313,7 @@ function HomePage() {
             <div
                 className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative">
                 <CobeGlobe/>
-                <HomeDisplayWord/>
+                <HomeDisplayWord currentWord={currentWord}/>
                 <AnimatePresence>
                     {showScrollDownIcon && (
                         <motion.div
@@ -498,23 +495,7 @@ function HomePage() {
                     </motion.ul>
                 )}
             </div>
-
-            {/* Scroll to Top Button */}
-            <AnimatePresence>
-                {showScrollButton && (
-                    <motion.button
-                        onClick={scrollToTop}
-                        className="fixed bottom-4 right-4 md:right-10 p-3 bg-primary text-white rounded-full shadow-lg hover:bg-primaryDark transition duration-300"
-                        initial={{opacity: 0, scale: 0}}
-                        animate={{opacity: 1, scale: 1}}
-                        exit={{opacity: 0}}
-                        transition={{type: "spring", stiffness: 260, damping: 20}}
-                        whileHover={{scale: 1.1}}
-                    >
-                        <ArrowUpwardIcon/>
-                    </motion.button>
-                )}
-            </AnimatePresence>
+            {showScrollButton && <ScrollToTopButton/>}
         </div>
     );
 }
