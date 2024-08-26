@@ -1,11 +1,7 @@
-import { api } from "./api";
-import {
-    addTerm,
-    getAllTerms,
-    getApprovedTerms,
-} from "./termService";
-import { AxiosError } from "axios";
-import { handleAuthError } from "../utils/handleAuthError";
+import {api} from "../api";
+import {addTerm, getAllTerms, getApprovedTerms,} from "./termService";
+import {AxiosError} from "axios";
+import {handleAuthError} from "../../utils/handleAuthError";
 
 // Mock the api module
 jest.mock("./api");
@@ -23,7 +19,7 @@ describe("Term Service", () => {
             grammaticalCategory: "noun",
             theme: "test theme",
         };
-        const mockResponse = { data: { id: 1, ...mockTermData } };
+        const mockResponse = {data: {id: 1, ...mockTermData}};
         (api.post as jest.Mock).mockResolvedValue(mockResponse);
 
         const result = await addTerm(mockTermData);
@@ -48,22 +44,22 @@ describe("Term Service", () => {
     });
 
     it("should get all terms", async () => {
-        const mockResponse = { data: { terms: [], totalTerms: 0 } };
+        const mockResponse = {data: {terms: [], totalTerms: 0}};
         (api.get as jest.Mock).mockResolvedValue(mockResponse);
 
         const result = await getAllTerms(1, 10);
 
-        expect(api.get).toHaveBeenCalledWith("/terms", { params: { page: 1, limit: 10 } });
+        expect(api.get).toHaveBeenCalledWith("/terms", {params: {page: 1, limit: 10}});
         expect(result).toEqual(mockResponse.data);
     });
 
     it("should get approved terms", async () => {
-        const mockResponse = { data: { terms: [], totalTerms: 0 } };
+        const mockResponse = {data: {terms: [], totalTerms: 0}};
         (api.get as jest.Mock).mockResolvedValue(mockResponse);
 
         const result = await getApprovedTerms();
 
-        expect(api.get).toHaveBeenCalledWith("/terms/approved", { params: undefined });
+        expect(api.get).toHaveBeenCalledWith("/terms/approved", {params: undefined});
         expect(result).toEqual(mockResponse.data);
     });
 

@@ -1,22 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { getTermById, addComment } from '../../services/termService';
-import { AxiosError } from 'axios';
-import { handleAuthError } from '../../utils/handleAuthError';
-import { ErrorResponse } from '../../utils/types';
-import { useAuth } from '../../contexts/authContext';
-import { Term } from '../../models/termModel';
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
+import {addComment, getTermById} from '../../services/termService/termService';
+import {AxiosError} from 'axios';
+import {handleAuthError} from '../../utils/handleAuthError';
+import {ErrorResponse} from '../../utils/types';
+import {useAuth} from '../../contexts/authContext';
+import {Term} from '../../models/termModel';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 const TermDetails: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+    const {id} = useParams<{
+        id: string
+    }>();
     const [term, setTerm] = useState<Term | null>(null);
     const [commentText, setCommentText] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [termLoading, setTermLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const { user } = useAuth();
+    const {user} = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -43,7 +45,7 @@ const TermDetails: React.FC = () => {
         setError(null);
 
         try {
-            await addComment(id!, { text: commentText, createdAt: new Date() });
+            await addComment(id!, {text: commentText, createdAt: new Date()});
             setCommentText('');
             const updatedTerm = await getTermById(id!);
             setTerm(updatedTerm);
@@ -67,21 +69,21 @@ const TermDetails: React.FC = () => {
         <div className="max-w-4xl mx-auto mt-10 p-6 bg-background rounded-lg shadow-neumorphic">
             {termLoading ? (
                 <div>
-                    <Skeleton height={32} width="60%" className="mb-4" />
+                    <Skeleton height={32} width="60%" className="mb-4"/>
                     <div className="flex flex-wrap gap-2 mb-4">
-                        <Skeleton width={100} height={20} className="rounded-full" />
-                        <Skeleton width={100} height={20} className="rounded-full" />
-                        <Skeleton width={100} height={20} className="rounded-full" />
+                        <Skeleton width={100} height={20} className="rounded-full"/>
+                        <Skeleton width={100} height={20} className="rounded-full"/>
+                        <Skeleton width={100} height={20} className="rounded-full"/>
                     </div>
                     <div className="mb-4 p-4 bg-backgroundHover rounded-lg shadow-neumorphic">
-                        <Skeleton height={20} />
-                        <Skeleton height={20} width="80%" />
+                        <Skeleton height={20}/>
+                        <Skeleton height={20} width="80%"/>
                     </div>
                     <div className="mb-4 p-4 bg-backgroundHover rounded-lg shadow-neumorphic">
-                        <Skeleton height={20} />
-                        <Skeleton height={20} width="80%" />
+                        <Skeleton height={20}/>
+                        <Skeleton height={20} width="80%"/>
                     </div>
-                    <Skeleton height={40} width="30%" />
+                    <Skeleton height={40} width="30%"/>
                 </div>
             ) : (
                 <>
@@ -105,7 +107,8 @@ const TermDetails: React.FC = () => {
                         <p className="font-semibold text-text">Translation</p>
                         <p>{term?.translation}</p>
                     </div>
-                    <button onClick={() => navigate(-1)} className="mt-4 p-3 bg-primary text-white rounded-lg shadow-neumorphic hover:bg-primaryLight focus:outline-none">
+                    <button onClick={() => navigate(-1)}
+                            className="mt-4 p-3 bg-primary text-white rounded-lg shadow-neumorphic hover:bg-primaryLight focus:outline-none">
                         Retour
                     </button>
                     <div className="mt-8">
