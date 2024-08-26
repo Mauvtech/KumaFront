@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { getVotes } from "../../services/termService";
+import React, {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
+import {getVotes} from "../../services/termService/termService";
 import DownvoteIcon from "./DownvoteIcon";
 import UpvoteIcon from "./UpvoteIcon";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
-import { Term } from "../../models/termModel";
-import { User } from "../../models/userModel";
+import {Term} from "../../models/termModel";
+import {User} from "../../models/userModel";
 import Avatar from "@mui/material/Avatar";
 
 interface TermItemProps {
@@ -20,15 +20,18 @@ interface TermItemProps {
 }
 
 const TermItem: React.FC<TermItemProps> = ({
-    term,
-    user,
-    handleUpvote,
-    handleDownvote,
-    handleBookmark,
-    handleUnbookmark,
-    isFeed,
-}) => {
-    const [votes, setVotes] = useState<{ upvotes: number; downvotes: number }>({
+                                               term,
+                                               user,
+                                               handleUpvote,
+                                               handleDownvote,
+                                               handleBookmark,
+                                               handleUnbookmark,
+                                               isFeed,
+                                           }) => {
+    const [votes, setVotes] = useState<{
+        upvotes: number;
+        downvotes: number
+    }>({
         upvotes: 0,
         downvotes: 0,
     });
@@ -55,7 +58,7 @@ const TermItem: React.FC<TermItemProps> = ({
     const handleUpvoteClick = () => {
         handleUpvote(term._id);
         if (userHasUpvoted) {
-            setVotes((prevVotes) => ({ ...prevVotes, upvotes: prevVotes.upvotes - 1 }));
+            setVotes((prevVotes) => ({...prevVotes, upvotes: prevVotes.upvotes - 1}));
         } else {
             setVotes((prevVotes) => ({
                 ...prevVotes,
@@ -70,7 +73,7 @@ const TermItem: React.FC<TermItemProps> = ({
     const handleDownvoteClick = () => {
         handleDownvote(term._id);
         if (userHasDownvoted) {
-            setVotes((prevVotes) => ({ ...prevVotes, downvotes: prevVotes.downvotes - 1 }));
+            setVotes((prevVotes) => ({...prevVotes, downvotes: prevVotes.downvotes - 1}));
         } else {
             setVotes((prevVotes) => ({
                 ...prevVotes,
@@ -132,7 +135,7 @@ const TermItem: React.FC<TermItemProps> = ({
     return (
         <li className={containerClasses}>
             <div className="flex items-center mb-4">
-                <Avatar alt={term.author.username} className={avatarClasses} />
+                <Avatar alt={term.author.username} className={avatarClasses}/>
                 <Link to={`/profile/${term.author.username}`} className="text-primary hover:underline truncate">
                     <h4 className={`font-semibold ${textClasses} text-text`}>{term.author.username}</h4>
                 </Link>
@@ -173,12 +176,12 @@ const TermItem: React.FC<TermItemProps> = ({
                         <button
                             onClick={handleBookmarkClick}
                             className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${userHasBookmarked ? "text-warning" : "text-primary"
-                                } hover:bg-warningHover hover:text-warning shadow-neumorphic`}
+                            } hover:bg-warningHover hover:text-warning shadow-neumorphic`}
                         >
                             {userHasBookmarked ? (
-                                <BookmarkIcon style={iconStyle} />
+                                <BookmarkIcon style={iconStyle}/>
                             ) : (
-                                <BookmarkBorderIcon style={iconStyle} />
+                                <BookmarkBorderIcon style={iconStyle}/>
                             )}
                         </button>
                         <div className="flex items-center space-x-1">
@@ -186,16 +189,16 @@ const TermItem: React.FC<TermItemProps> = ({
                             <button
                                 onClick={handleUpvoteClick}
                                 className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${userHasUpvoted ? "text-success" : "text-primary"
-                                    } hover:bg-successHover hover:text-success shadow-neumorphic`}
+                                } hover:bg-successHover hover:text-success shadow-neumorphic`}
                             >
-                                <UpvoteIcon isUpvoted={userHasUpvoted} isFeed={isFeed} />
+                                <UpvoteIcon isUpvoted={userHasUpvoted} isFeed={isFeed}/>
                             </button>
                             <button
                                 onClick={handleDownvoteClick}
                                 className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${userHasDownvoted ? "text-error" : "text-primary"
-                                    } hover:bg-errorHover hover:text-error shadow-neumorphic`}
+                                } hover:bg-errorHover hover:text-error shadow-neumorphic`}
                             >
-                                <DownvoteIcon isDownvoted={userHasDownvoted} isFeed={isFeed} />
+                                <DownvoteIcon isDownvoted={userHasDownvoted} isFeed={isFeed}/>
                             </button>
                             <span className={`${textClasses} text-error`}>{votes.downvotes}</span>
                         </div>

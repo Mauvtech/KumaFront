@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {bookmarkTerm, downvoteTerm, getApprovedTerms, unbookmarkTerm, upvoteTerm,} from "../../services/termService";
+import {downvoteTerm, upvoteTerm, usePaginatedApprovedTerms,} from "../../services/termService/termService";
 import {getCategories} from "../../services/categoryService";
 import {getThemes} from "../../services/themeService";
 import {getLanguages} from "../../services/languageService";
@@ -18,9 +18,7 @@ import ScrollToTopButton from "./ScrollToTopButton";
 import WordStrip from "./WordStrip";
 import ScrollDownMouseIcon from "./ScrollDownMouseIcon";
 import WordSearch from "./WordSearch";
-import {handleAuthError} from "../../utils/handleAuthError";
-import {AxiosError} from "axios";
-import {ErrorResponse} from "../../utils/types";
+import {bookmarkTerm, unbookmarkTerm} from "../../services/termService/bookmarkService";
 
 
 const termsPerPage: number = 9;
@@ -43,7 +41,6 @@ export default function HomePage() {
     const [themes, setThemes] = useState<Theme[]>([]);
     const [languages, setLanguages] = useState<Language[]>([]);
 
-    const [termsLoading, setTermsLoading] = useState<boolean>(true);
     const [filtersLoading, setFiltersLoading] = useState<boolean>(true);
     const [totalTerms, setTotalTerms] = useState<number>(0);
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -61,37 +58,46 @@ export default function HomePage() {
         visible: {opacity: 1, y: 0, transition: {duration: 0.6}},
     };
 
-    // Fetch Data
-    const fetchApprovedTerms = useCallback(async () => {
-        setTermsLoading(true);
-        try {
-            const data = await getApprovedTerms({
-                category: filters.category,
-                theme: filters.theme,
-                language: filters.language,
-                searchTerm: filters.searchTerm,
-                page: currentPage,
-                limit: termsPerPage,
-            });
-            if (data && data.terms) {
-                setTerms((prevTerms) => [...prevTerms, ...data.terms]);
-                setAllFetchedTerms((prevTerms) => [...prevTerms, ...data.terms]); // Add fetched terms to persistent state
-                setTotalTerms(data.totalTerms);
-                setHasMore(currentPage < data.totalPages);
-                if (!currentWord) {
-                    setCurrentWord(data.terms[0]?.term || "LES MOTS.");
-                }
-            }
-        } catch (error) {
-            handleAuthError(error as AxiosError<ErrorResponse>);
-        } finally {
-            setTermsLoading(false);
-        }
-    }, [
-        filters,
-        currentPage,
-        termsPerPage,
-    ]);
+    const {data: approvedTerms, isLoading: termsLoading} = usePaginatedApprovedTerms({
+        category: filters.category,
+        theme: filters.theme,
+        language: filters.language,
+        searchTerm: filters.searchTerm,
+        page: currentPage,
+        limit: termsPerPage,
+    })
+
+    /*   // Fetch Data
+       const fetchApprovedTerms = useCallback(async () => {
+           setTermsLoading(true);
+           try {
+               const data = await getApprovedTerms({
+                   category: filters.category,
+                   theme: filters.theme,
+                   language: filters.language,
+                   searchTerm: filters.searchTerm,
+                   page: currentPage,
+                   limit: termsPerPage,
+               });
+               if (data && data.terms) {
+                   setTerms((prevTerms) => [...prevTerms, ...data.terms]);
+                   setAllFetchedTerms((prevTerms) => [...prevTerms, ...data.terms]); // Add fetched terms to persistent state
+                   setTotalTerms(data.totalTerms);
+                   setHasMore(currentPage < data.totalPages);
+                   if (!currentWord) {
+                       setCurrentWord(data.terms[0]?.term || "LES MOTS.");
+                   }
+               }
+           } catch (error) {
+               handleAuthError(error as AxiosError<ErrorResponse>);
+           } finally {
+               setTermsLoading(false);
+           }
+       }, [
+           filters,
+           currentPage,
+           termsPerPage,
+       ]);*/
 
     const fetchCategories = useCallback(async () => {
         setFiltersLoading(true);
@@ -138,10 +144,6 @@ export default function HomePage() {
         fetchThemes();
         fetchLanguages();
     }, [fetchCategories, fetchThemes, fetchLanguages]);
-
-    useEffect(() => {
-        fetchApprovedTerms();
-    }, [fetchApprovedTerms]);
 
 
     const handleUpvote = async (id: string) => {

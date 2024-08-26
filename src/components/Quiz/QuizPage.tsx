@@ -1,16 +1,16 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { getQuiz, getFlashcardById } from "../../services/termService";
-import { handleAuthError } from "../../utils/handleAuthError";
-import { AxiosError } from "axios";
-import { Term } from "../../models/termModel";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, {useCallback, useEffect, useState} from "react";
+import {handleAuthError} from "../../utils/handleAuthError";
+import {AxiosError} from "axios";
+import {Term} from "../../models/termModel";
+import {useLocation, useNavigate} from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { FaCheck, FaTimes, FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import {FaArrowLeft, FaArrowRight, FaCheck, FaTimes} from "react-icons/fa";
 import Modal from "react-modal";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import {buildStyles, CircularProgressbar} from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { motion, AnimatePresence } from "framer-motion";
+import {AnimatePresence, motion} from "framer-motion";
+import {getFlashcardById, getQuiz} from "../../services/quizService";
 
 // Set up modal accessibility root
 Modal.setAppElement("#root");
@@ -142,49 +142,51 @@ const QuizPage: React.FC = () => {
                 <div className="relative flex flex-col items-center">
                     <div
                         className={`flip-card ${isAnimating ? "animate-slide" : ""}`}
-                        style={{ width: "300px", height: "400px" }}
+                        style={{width: "300px", height: "400px"}}
                     >
                         <div className="flip-card-inner">
-                            <div className="flip-card-front flex justify-center items-center w-full h-full bg-backgroundHover shadow-md rounded-lg p-4">
-                                <Skeleton height={30} width="80%" />
+                            <div
+                                className="flip-card-front flex justify-center items-center w-full h-full bg-backgroundHover shadow-md rounded-lg p-4">
+                                <Skeleton height={30} width="80%"/>
                             </div>
-                            <div className="flip-card-back flex justify-center items-center w-full h-full bg-backgroundHover shadow-md rounded-lg p-4">
-                                <Skeleton height={30} width="80%" />
+                            <div
+                                className="flip-card-back flex justify-center items-center w-full h-full bg-backgroundHover shadow-md rounded-lg p-4">
+                                <Skeleton height={30} width="80%"/>
                             </div>
                         </div>
                     </div>
                     <div className="mt-4 flex justify-between w-full px-6">
-                        <Skeleton height={40} width={100} />
-                        <Skeleton height={40} width={100} />
+                        <Skeleton height={40} width={100}/>
+                        <Skeleton height={40} width={100}/>
                     </div>
                 </div>
             ) : currentFlashcard ? (
                 <motion.div
                     className="relative flex flex-col items-center bg-background"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    transition={{ duration: 0.3 }}
+                    initial={{opacity: 0, scale: 0.8}}
+                    animate={{opacity: 1, scale: 1}}
+                    exit={{opacity: 0, scale: 0.8}}
+                    transition={{duration: 0.3}}
                 >
                     <div
                         className={`flip-card cursor-pointer w-full h-[50vh] ${isAnimating ? "animate-slide" : ""
-                            }`}
+                        }`}
                         onClick={handleFlip}
 
                     >
                         <div
                             className={`flip-card-inner h-full ${isFlipped ? "rotate-y-180" : ""
-                                } ${isAnimating ? "animate-slide" : ""}`}
+                            } ${isAnimating ? "animate-slide" : ""}`}
                         >
                             <motion.div
                                 className="flip-card-front flex flex-col justify-center items-center w-full h-full bg-backgroundHover shadow-md rounded-lg p-4"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ duration: 0.5 }}
+                                initial={{opacity: 0}}
+                                animate={{opacity: 1}}
+                                transition={{duration: 0.5}}
                             >
                                 <h3
                                     className={`text-xl font-bold mb-4 text-text ${isAnimating ? "opacity-0" : "opacity-100"
-                                        } transition-opacity duration-500`}
+                                    } transition-opacity duration-500`}
                                 >
                                     {currentFlashcard.term}
                                 </h3>
@@ -198,13 +200,13 @@ const QuizPage: React.FC = () => {
                             </motion.div>
                             <motion.div
                                 className="flip-card-back flex flex-col justify-center items-center w-full h-full bg-backgroundHover shadow-md rounded-lg p-4"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ duration: 0.5 }}
+                                initial={{opacity: 0}}
+                                animate={{opacity: 1}}
+                                transition={{duration: 0.5}}
                             >
                                 <h3
                                     className={`text-xl font-bold mb-2 text-text ${isAnimating ? "opacity-0" : "opacity-100"
-                                        } transition-opacity duration-500`}
+                                    } transition-opacity duration-500`}
                                 >
                                     {currentFlashcard.translation}
                                 </h3>
@@ -232,27 +234,27 @@ const QuizPage: React.FC = () => {
                         <motion.button
                             onClick={handlePrevious}
                             className="px-4 py-2 bg-backgroundHover text-text font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
-                            style={{ visibility: currentIndex === 0 ? "hidden" : "visible" }}
+                            style={{visibility: currentIndex === 0 ? "hidden" : "visible"}}
                             disabled={isAnimating}
-                            whileTap={{ scale: 0.95 }}
+                            whileTap={{scale: 0.95}}
                         >
-                            <FaArrowLeft />
+                            <FaArrowLeft/>
                         </motion.button>
                         <motion.button
                             onClick={handleMarkIncorrect}
                             className="px-4 py-2 bg-errorHover text-error font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
                             disabled={isAnimating}
-                            whileTap={{ scale: 0.95 }}
+                            whileTap={{scale: 0.95}}
                         >
-                            <FaTimes />
+                            <FaTimes/>
                         </motion.button>
                         <motion.button
                             onClick={handleMarkCorrect}
                             className="px-4 py-2 bg-successHover text-success font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
                             disabled={isAnimating}
-                            whileTap={{ scale: 0.95 }}
+                            whileTap={{scale: 0.95}}
                         >
-                            <FaCheck />
+                            <FaCheck/>
                         </motion.button>
                         <motion.button
                             onClick={handleNext}
@@ -264,9 +266,9 @@ const QuizPage: React.FC = () => {
                                         : "visible",
                             }}
                             disabled={isAnimating}
-                            whileTap={{ scale: 0.95 }}
+                            whileTap={{scale: 0.95}}
                         >
-                            <FaArrowRight />
+                            <FaArrowRight/>
                         </motion.button>
                     </div>
                 </motion.div>
@@ -279,13 +281,13 @@ const QuizPage: React.FC = () => {
                         contentLabel="Quiz Summary"
                         className="modal bg-background p-6 rounded-lg shadow-neumorphic"
                         overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
-                        style={{ overlay: {}, content: {} }}
+                        style={{overlay: {}, content: {}}}
                     >
                         <motion.div
-                            initial={{ opacity: 0, y: -50 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 50 }}
-                            transition={{ duration: 0.5 }}
+                            initial={{opacity: 0, y: -50}}
+                            animate={{opacity: 1, y: 0}}
+                            exit={{opacity: 0, y: 50}}
+                            transition={{duration: 0.5}}
                         >
                             <h2 className="text-2xl font-bold mb-4 text-text">
                                 Quiz Summary
@@ -303,7 +305,7 @@ const QuizPage: React.FC = () => {
                                     />
                                     <div
                                         className="absolute inset-0 flex justify-center items-center text-xl"
-                                        style={{ color: getGaugeColor() }}
+                                        style={{color: getGaugeColor()}}
                                     >
                                         {`${Math.round(
                                             (correctAnswers / numberOfQuestions) * 100
@@ -326,7 +328,7 @@ const QuizPage: React.FC = () => {
                             <motion.button
                                 onClick={closeModal}
                                 className="mt-4 px-4 py-2 bg-accentLight text-accent font-bold rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
-                                whileTap={{ scale: 0.95 }}
+                                whileTap={{scale: 0.95}}
                             >
                                 Close
                             </motion.button>

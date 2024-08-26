@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { approveTerm } from '../../services/termService';
-import { getAllCategories, approveCategory } from '../../services/categoryService';
-import { getAllThemes, approveTheme } from '../../services/themeService';
-import { getAllLanguages, approveLanguage } from '../../services/languageService';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {approveTerm} from '../../services/termService/termService';
+import {approveCategory, getAllCategories} from '../../services/categoryService';
+import {approveTheme, getAllThemes} from '../../services/themeService';
+import {addLanguage, approveLanguage, getAllLanguages} from '../../services/languageService';
+import {useNavigate} from 'react-router-dom';
 import {capitalizeWord} from "../../utils/StringUtils";
 
 interface Category {
@@ -42,15 +42,26 @@ interface ApproveTermFormProps {
     onCancel: () => void;
 }
 
-const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => {
-    const [updatedTerm, setUpdatedTerm] = useState<Term>({ ...term });
+const ApproveTermForm: React.FC<ApproveTermFormProps> = ({term, onCancel}) => {
+    const [updatedTerm, setUpdatedTerm] = useState<Term>({...term});
     const [newCategory, setNewCategory] = useState<string>('');
     const [newTheme, setNewTheme] = useState<string>('');
-    const [newLanguage, setNewLanguage] = useState<{ name: string, code: string }>({ name: '', code: '' });
+    const [newLanguage, setNewLanguage] = useState<{
+        name: string,
+        code: string
+    }>({name: '', code: ''});
     const [categories, setCategories] = useState<Category[]>([]);
     const [themeOptions, setThemeOptions] = useState<Theme[]>([]);
     const [languageOptions, setLanguageOptions] = useState<Language[]>([]);
-    const [approveData, setApproveData] = useState<{ term: string; translation: string; definition: string; grammaticalCategory: string; theme: string; language: string; languageCode: string; }>({ term: '', translation: '', definition: '', grammaticalCategory: '', theme: '', language: '', languageCode: '' });
+    const [approveData, setApproveData] = useState<{
+        term: string;
+        translation: string;
+        definition: string;
+        grammaticalCategory: string;
+        theme: string;
+        language: string;
+        languageCode: string;
+    }>({term: '', translation: '', definition: '', grammaticalCategory: '', theme: '', language: '', languageCode: ''});
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [validationErrors, setValidationErrors] = useState<string[]>([]);
@@ -59,12 +70,12 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
     useEffect(() => {
         const fetchCategoriesThemesLanguages = async () => {
             try {
-                const categoriesData = await getAllCategories(navigate);
-                const themesData = await getAllThemes(navigate);
-                const languagesData = await getAllLanguages(navigate);
-                setCategories([...categoriesData, { _id: 'other', name: 'Other', isApproved: true }]);
-                setThemeOptions([...themesData, { _id: 'other', name: 'Other', isApproved: true }]);
-                setLanguageOptions([...languagesData, { _id: 'other', name: 'Other', code: '', isApproved: true }]);
+                const categoriesData = await getAllCategories();
+                const themesData = await getAllThemes();
+                const languagesData = await getAllLanguages();
+                setCategories([...categoriesData, {_id: 'other', name: 'Other', isApproved: true}]);
+                setThemeOptions([...themesData, {_id: 'other', name: 'Other', isApproved: true}]);
+                setLanguageOptions([...languagesData, {_id: 'other', name: 'Other', code: '', isApproved: true}]);
             } catch (error) {
                 console.error('Error loading categories, themes, and languages', error);
             }
@@ -80,32 +91,29 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
             definition: updatedTerm.definition,
             grammaticalCategory: typeof updatedTerm.grammaticalCategory === 'string' ? updatedTerm.grammaticalCategory : (updatedTerm.grammaticalCategory as Category).name,
             theme: typeof updatedTerm.theme === 'string' ? updatedTerm.theme : (updatedTerm.theme as Theme).name,
-            language: typeof updatedTerm.language === 'string' && updatedTerm.language === 'Other' ? newLanguage.name : (updatedTerm.language as Language).name,
-            languageCode: typeof updatedTerm.language === 'string' && updatedTerm.language === 'Other' ? newLanguage.code : (updatedTerm.language as Language).code,
+            language: updatedTerm.language === 'Other' ? newLanguage.name : (updatedTerm.language as Language).name,
+            languageCode: updatedTerm.language === 'Other' ? newLanguage.code : updatedTerm.languageCode,
         };
         setApproveData(updatedApproveData);
     }, [updatedTerm, newLanguage]);
 
 
-
     const validateField = (fieldName: string, value: string): string | null => {
         if (!value && fieldName !== 'Language Code') return `${fieldName} ne doit pas être vide.`;
-        if (fieldName !== 'Definition' && !/^[A-Z][a-z]*$/.test(value) && fieldName !== 'Language Code') return `${fieldName} doit commencer par une majuscule suivie de lettres minuscules.`;
+        if (fieldName !== 'Definition' && fieldName !== 'Term' && fieldName !== 'Theme' && fieldName !== 'Grammatical Category' && !/^[A-Z][a-z]*(\s[A-Z][a-z]*)*$/.test(value) && fieldName !== 'Language Code') return `${fieldName} doit commencer par une majuscule suivie de lettres minuscules.`;
         if (fieldName === 'Language Code' && value && !/^[A-Z]+$/.test(value)) return `${fieldName} doit être en majuscules.`;
-        if (fieldName !== 'Definition' && /[^a-zA-Z]/.test(value) && fieldName !== 'Language Code') return `${fieldName} ne doit pas contenir de caractères spéciaux.`;
+        if (fieldName !== 'Definition' && fieldName !== 'Term' && /[^a-zA-Z\s]/.test(value) && fieldName !== 'Language Code') return `${fieldName} ne doit pas contenir de caractères spéciaux.`;
         return null;
     };
 
-    const validateForm = (): boolean => {
+    const validateApproveData = (data: any): boolean => {
         const errors: string[] = [];
         const fieldsToValidate = [
-            { name: 'Term', value: updatedTerm.term },
-            { name: 'Translation', value: updatedTerm.translation },
-            { name: 'Definition', value: updatedTerm.definition },
-            { name: 'Grammatical Category', value: typeof updatedTerm.grammaticalCategory === 'string' ? updatedTerm.grammaticalCategory : (updatedTerm.grammaticalCategory as Category).name },
-            { name: 'Theme', value: typeof updatedTerm.theme === 'string' ? updatedTerm.theme : (updatedTerm.theme as Theme).name },
-            { name: 'Language', value: typeof updatedTerm.language === 'string' ? updatedTerm.language : (updatedTerm.language as Language).name },
-            { name: 'Language Code', value: updatedTerm.languageCode },
+            {name: 'Term', value: data.term},
+            {name: 'Grammatical Category', value: data.grammaticalCategory},
+            {name: 'Theme', value: data.theme},
+            {name: 'Language', value: data.language},
+            {name: 'Language Code', value: data.languageCode},
         ];
 
         fieldsToValidate.forEach(field => {
@@ -122,17 +130,19 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
         setLoading(true);
         setError(null);
 
-        if (!validateForm()) {
+        const finalApproveData = {
+            ...approveData,
+            term: updatedTerm.term,
+            theme: updatedTerm.theme === 'Other' ? newTheme : approveData.theme,
+            grammaticalCategory: updatedTerm.grammaticalCategory === 'Other' ? newCategory : approveData.grammaticalCategory,
+            language: updatedTerm.language === 'Other' ? newLanguage.name : (updatedTerm.language as Language).name,
+            languageCode: updatedTerm.language === 'Other' ? newLanguage.code : approveData.languageCode,
+        };
+
+        if (!validateApproveData(finalApproveData)) {
             setLoading(false);
             return;
         }
-
-        const approveData = {
-            grammaticalCategory: typeof updatedTerm.grammaticalCategory === 'string' ? updatedTerm.grammaticalCategory : (updatedTerm.grammaticalCategory as Category).name,
-            theme: typeof updatedTerm.theme === 'string' ? updatedTerm.theme : (updatedTerm.theme as Theme).name,
-            language: typeof updatedTerm.language === 'string' ? updatedTerm.language : (updatedTerm.language as Language).name,
-            languageCode: typeof updatedTerm.language === 'string' ? updatedTerm.languageCode : (updatedTerm.language as Language).code,
-        };
 
         try {
             // Approve new category if necessary
@@ -153,25 +163,20 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                 }
             }
 
+
             // Approve new language if necessary
-            if ((typeof updatedTerm.language === 'string' && updatedTerm.language === 'Other' && newLanguage.name && newLanguage.code) ||
-                (typeof updatedTerm.language !== 'string' && !(updatedTerm.language as Language).isApproved)) {
-                const languageId = languageOptions.find(lang => lang.name === newLanguage.name && lang.code === newLanguage.code ||
-                    (typeof updatedTerm.language !== 'string' && updatedTerm.language.name === lang.name && updatedTerm.language.code === lang.code))?._id;
-                if (languageId) {
-                    await approveLanguage(languageId);
-                }
+            if ((typeof updatedTerm.language === 'string' && updatedTerm.language === 'Other' && newLanguage.name)) {
+                const data = await addLanguage(newLanguage.name, newLanguage.code);
+                await approveLanguage(data._id, newLanguage.code);
             }
 
-            const finalApproveData = {
-                ...approveData,
-                language: updatedTerm.language === 'Other' ? newLanguage.name : approveData.language,
-                languageCode: updatedTerm.language === 'Other' ? newLanguage.code : approveData.languageCode,
-            };
+            if (typeof updatedTerm.language !== 'string') {
+                const languageId = (updatedTerm.language as Language)._id;
+                await approveLanguage(languageId, finalApproveData.languageCode);
+            }
 
-            console.log('Approve data:', finalApproveData);
 
-            await approveTerm(term._id, finalApproveData, navigate);
+            await approveTerm(term._id, finalApproveData);
             navigate('/dashboard');
         } catch (error) {
             console.error('Error submitting term', error);
@@ -182,9 +187,9 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         const capitalizedValue = (name === 'definition') ? value : capitalizeWord(value);
-        setUpdatedTerm((prev: Term) => ({ ...prev, [name]: capitalizedValue }));
+        setUpdatedTerm((prev: Term) => ({...prev, [name]: capitalizedValue}));
     };
 
     const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -195,12 +200,13 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
             languageCode: value === 'Other' ? '' : languageOptions.find(lang => lang.name === value)?.code || ''
         }));
         if (value !== 'Other') {
-            setNewLanguage({ name: '', code: '' });
+            setNewLanguage({name: '', code: ''});
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-4 bg-white rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
+        <form onSubmit={handleSubmit}
+              className="bg-gray-200 max-w-md mx-auto mt-10 p-4 rounded-lg shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
             <h2 className="text-2xl font-bold mb-4">Approve and Modify Term</h2>
             {error && <div className="mb-4 text-red-500">{error}</div>}
             {validationErrors.length > 0 && (
@@ -220,7 +226,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                     name="term"
                     value={updatedTerm.term}
                     onChange={handleChange}
-                    className="w-full p-3 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 />
             </div>
@@ -232,7 +238,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                     name="translation"
                     value={updatedTerm.translation}
                     onChange={handleChange}
-                    className="w-full p-3 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 />
             </div>
@@ -243,7 +249,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                     name="definition"
                     value={updatedTerm.definition}
                     onChange={handleChange}
-                    className="w-full p-3 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 />
             </div>
@@ -254,7 +260,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                     name="grammaticalCategory"
                     value={typeof updatedTerm.grammaticalCategory === 'string' ? updatedTerm.grammaticalCategory : (updatedTerm.grammaticalCategory as Category).name}
                     onChange={handleChange}
-                    className="w-full p-3 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 >
                     {categories.map(category => (
@@ -270,7 +276,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                             const value = capitalizeWord(e.target.value);
                             setNewCategory(value);
                         }}
-                        className="w-full p-3 mt-2 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        className="w-full p-3 mt-2 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     />
                 )}
             </div>
@@ -281,7 +287,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                     name="theme"
                     value={typeof updatedTerm.theme === 'string' ? updatedTerm.theme : (updatedTerm.theme as Theme).name}
                     onChange={handleChange}
-                    className="w-full p-3 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 >
                     {themeOptions.map(theme => (
@@ -297,7 +303,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                             const value = capitalizeWord(e.target.value);
                             setNewTheme(value);
                         }}
-                        className="w-full p-3 mt-2 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        className="w-full p-3 mt-2 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     />
                 )}
             </div>
@@ -308,7 +314,7 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                     name="language"
                     value={typeof updatedTerm.language === 'string' ? updatedTerm.language : (updatedTerm.language as Language).name}
                     onChange={handleLanguageChange}
-                    className="w-full p-3 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full p-3 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                     required
                 >
                     {languageOptions.map(language => (
@@ -323,9 +329,9 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                             value={newLanguage.name}
                             onChange={(e) => {
                                 const value = capitalizeWord(e.target.value);
-                                setNewLanguage(prev => ({ ...prev, name: value }));
+                                setNewLanguage(prev => ({...prev, name: value}));
                             }}
-                            className="w-full p-3 mt-2 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                            className="w-full p-3 mt-2 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                         />
                         <input
                             type="text"
@@ -333,20 +339,38 @@ const ApproveTermForm: React.FC<ApproveTermFormProps> = ({ term, onCancel }) => 
                             value={newLanguage.code}
                             onChange={(e) => {
                                 const value = e.target.value.toUpperCase(); // language code should be uppercase
-                                setNewLanguage(prev => ({ ...prev, code: value }));
+                                setNewLanguage(prev => ({...prev, code: value}));
                             }}
-                            className="w-full p-3 mt-2 bg-gray-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                            className="w-full p-3 mt-2 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
                         />
                     </>
                 )}
             </div>
-            <button type="submit" className="w-full p-3 text-white rounded-lg bg-gray-400 shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-gray-500 focus:outline-none" disabled={loading}>
+            <div className="mb-4">
+                <label className="block mb-2" htmlFor="languageCode">Language Code</label>
+                <input
+                    type="text"
+                    id="languageCode"
+                    name="languageCode"
+                    value={updatedTerm.languageCode}
+                    onChange={(e) => {
+                        const value = e.target.value.toUpperCase(); // language code should be uppercase
+                        setUpdatedTerm((prev: Term) => ({...prev, languageCode: value}));
+                    }}
+                    className="w-full p-3 bg-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    required
+                />
+            </div>
+            <button type="submit"
+                    className="w-full p-3 text-white rounded-lg bg-gray-400 shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-gray-500 focus:outline-none"
+                    disabled={loading}>
                 {loading ? 'Loading...' : 'Approve'}
             </button>
-            <button type="button" className="w-full p-3 mt-2 text-white rounded-lg bg-gray-400 shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-gray-500 focus:outline-none" onClick={onCancel}>
+            <button type="button"
+                    className="w-full p-3 mt-2 text-white rounded-lg bg-gray-400 shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-gray-500 focus:outline-none"
+                    onClick={onCancel}>
                 Cancel
             </button>
-
         </form>
     );
 };
