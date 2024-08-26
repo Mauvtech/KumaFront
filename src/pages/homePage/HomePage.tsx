@@ -3,9 +3,6 @@ import {bookmarkTerm, downvoteTerm, getApprovedTerms, unbookmarkTerm, upvoteTerm
 import {getCategories} from "../../services/categoryService";
 import {getThemes} from "../../services/themeService";
 import {getLanguages} from "../../services/languageService";
-import {AxiosError} from "axios";
-import {handleAuthError} from "../../utils/handleAuthError";
-import {ErrorResponse} from "../../utils/types";
 import {useAuth} from "../../contexts/authContext";
 import {Theme} from "../../models/themeModel";
 import {Category} from "../../models/categoryModel";
@@ -14,14 +11,16 @@ import {Term} from "../../models/termModel";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import TermItem from "../../components/Terms/TermItem";
-import Input from "../../components/Common/Input";
 import {AnimatePresence, motion} from "framer-motion";
-import Selector from "../../components/Common/Selector";
 import CobeGlobe from "../../components/Common/CobeGlobe";
 import HomeDisplayWord from "./HomeDisplayWord";
 import ScrollToTopButton from "./ScrollToTopButton";
 import WordStrip from "./WordStrip";
 import ScrollDownMouseIcon from "./ScrollDownMouseIcon";
+import WordSearch from "./WordSearch";
+import {handleAuthError} from "../../utils/handleAuthError";
+import {AxiosError} from "axios";
+import {ErrorResponse} from "../../utils/types";
 
 
 const termsPerPage: number = 9;
@@ -29,6 +28,8 @@ const termsPerPage: number = 9;
 export default function HomePage() {
     const {user} = useAuth();
     const [terms, setTerms] = useState<Term[]>([]);
+
+    const [searchTerm, setSearchTerm] = useState<string>("");
     const [allFetchedTerms, setAllFetchedTerms] = useState<Term[]>([]); // Persistent state for all fetched terms
     const [categories, setCategories] = useState<Category[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -36,7 +37,6 @@ export default function HomePage() {
     const [selectedTheme, setSelectedTheme] = useState<string>("");
     const [languages, setLanguages] = useState<Language[]>([]);
     const [selectedLanguage, setSelectedLanguage] = useState<string>("");
-    const [searchTerm, setSearchTerm] = useState<string>("");
     const [termsLoading, setTermsLoading] = useState<boolean>(true);
     const [filtersLoading, setFiltersLoading] = useState<boolean>(true);
     const [totalTerms, setTotalTerms] = useState<number>(0);
@@ -138,33 +138,6 @@ export default function HomePage() {
         fetchApprovedTerms();
     }, [fetchApprovedTerms]);
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
-        setCurrentPage(1); // Reset page number when search term changes
-        setTerms([]); // Clear current terms
-        setAllFetchedTerms([]); // Clear all fetched terms
-    };
-
-    const handleCategoryChange = (category: string) => {
-        setSelectedCategory(category === selectedCategory ? "" : category);
-        setCurrentPage(1); // Reset page number when category changes
-        setTerms([]); // Clear current terms
-        setAllFetchedTerms([]); // Clear all fetched terms
-    };
-
-    const handleThemeChange = (theme: string) => {
-        setSelectedTheme(theme === selectedTheme ? "" : theme);
-        setCurrentPage(1); // Reset page number when theme changes
-        setTerms([]); // Clear current terms
-        setAllFetchedTerms([]); // Clear all fetched terms
-    };
-
-    const handleLanguageChange = (language: string) => {
-        setSelectedLanguage(language === selectedLanguage ? "" : language);
-        setCurrentPage(1); // Reset page number when language changes
-        setTerms([]); // Clear current terms
-        setAllFetchedTerms([]); // Clear all fetched terms
-    };
 
     const handleUpvote = async (id: string) => {
         try {
@@ -303,40 +276,23 @@ export default function HomePage() {
 
             {/* Main Content */}
             <div className="max-w-screen-lg mx-auto mt-10 p-6 bg-background rounded-lg">
-                <div className="sm:sticky sm:top-16 bg-background z-10">
-                    <Input
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        placeholder="Rechercher un terme ou une définition..."
-                    />
+                <WordSearch
+                    searchTerm={searchTerm}
+                    setSearchTerm={setSearchTerm}
+                    setCurrentPage={setCurrentPage}
+                    setTerms={setTerms}
+                    setAllFetchedTerms={setAllFetchedTerms}
+                    categories={categories}
+                    themes={themes}
+                    languages={languages}
+                    selectedCategory={selectedCategory}
+                    selectedTheme={selectedTheme}
+                    selectedLanguage={selectedLanguage}
+                    setSelectedCategory={setSelectedCategory}
+                    setSelectedTheme={setSelectedTheme}
+                    setSelectedLanguage={setSelectedLanguage}
 
-                    <div className="flex flex-col sm:flex-row md:justify-evenly sm:space-y-0 sm:space-x-4 mb-12 mt-8">
-                        <div className="relative w-full sm:w-1/3 mb-4 sm:mb-0">
-                            <Selector
-                                options={categories.map((cat) => cat.name)}
-                                selectedOption={selectedCategory}
-                                onSelectOption={handleCategoryChange}
-                                placeholder="Select Category"
-                            />
-                        </div>
-                        <div className="relative w-full sm:w-1/3 mb-4 sm:mb-0">
-                            <Selector
-                                options={themes.map((theme) => theme.name)}
-                                selectedOption={selectedTheme}
-                                onSelectOption={handleThemeChange}
-                                placeholder="Select Theme"
-                            />
-                        </div>
-                        <div className="relative w-full sm:w-1/3">
-                            <Selector
-                                options={languages.map((lang) => lang.name)}
-                                selectedOption={selectedLanguage}
-                                onSelectOption={handleLanguageChange}
-                                placeholder="Select Language"
-                            />
-                        </div>
-                    </div>
-                </div>
+                />
 
                 {termsLoading && currentPage === 1 ? (
                     <ul className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-6">
