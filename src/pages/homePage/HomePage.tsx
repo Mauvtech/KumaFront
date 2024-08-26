@@ -1,37 +1,32 @@
-import React, { useEffect, useState, useCallback } from "react";
-import {
-    downvoteTerm,
-    getApprovedTerms,
-    upvoteTerm,
-    bookmarkTerm,
-    unbookmarkTerm,
-} from "../../services/termService";
-import { getCategories } from "../../services/categoryService";
-import { getThemes } from "../../services/themeService";
-import { getLanguages } from "../../services/languageService";
-import { AxiosError } from "axios";
-import { handleAuthError } from "../../utils/handleAuthError";
-import { ErrorResponse } from "../../utils/types";
-import { useAuth } from "../../contexts/authContext";
-import { Theme } from "../../models/themeModel";
-import { Category } from "../../models/categoryModel";
-import { Language } from "../../models/languageModel";
-import { Term } from "../../models/termModel";
+import React, {useCallback, useEffect, useState} from "react";
+import {bookmarkTerm, downvoteTerm, getApprovedTerms, unbookmarkTerm, upvoteTerm,} from "../../services/termService";
+import {getCategories} from "../../services/categoryService";
+import {getThemes} from "../../services/themeService";
+import {getLanguages} from "../../services/languageService";
+import {AxiosError} from "axios";
+import {handleAuthError} from "../../utils/handleAuthError";
+import {ErrorResponse} from "../../utils/types";
+import {useAuth} from "../../contexts/authContext";
+import {Theme} from "../../models/themeModel";
+import {Category} from "../../models/categoryModel";
+import {Language} from "../../models/languageModel";
+import {Term} from "../../models/termModel";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import TermItem from "./TermItem";
-import Input from "../Common/Input";
-import { motion, AnimatePresence, Variants } from "framer-motion";
-import Selector from "../Common/Selector";
+import TermItem from "../../components/Terms/TermItem";
+import Input from "../../components/Common/Input";
+import {AnimatePresence, motion, Variants} from "framer-motion";
+import Selector from "../../components/Common/Selector";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import MouseIcon from "@mui/icons-material/Mouse"; // Import mouse icon
-import CobeGlobe from "../Common/CobeGlobe"; // Import CobeGlobe component
+import CobeGlobe from "../../components/Common/CobeGlobe";
+import HomeDisplayWord from "./HomeDisplayWord"; // Import CobeGlobe component
 
 
 const termsPerPage: number = 9;
 
 function HomePage() {
-    const { user } = useAuth();
+    const {user} = useAuth();
     const [terms, setTerms] = useState<Term[]>([]);
     const [allFetchedTerms, setAllFetchedTerms] = useState<Term[]>([]); // Persistent state for all fetched terms
     const [categories, setCategories] = useState<Category[]>([]);
@@ -52,16 +47,9 @@ function HomePage() {
     // State for managing word slideshow
     const [currentWord, setCurrentWord] = useState<string>("LES MOTS.");
 
-    // Animation Variants
-    const wordVariants = {
-        hidden: { opacity: 0, y: 20, scale: 0.95 },
-        visible: { opacity: 1, y: 0, scale: 1 },
-        exit: { opacity: 0, y: -20, scale: 1.05 },
-    };
-
     const termVariants = {
-        hidden: { opacity: 0, y: 50 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+        hidden: {opacity: 0, y: 50},
+        visible: {opacity: 1, y: 0, transition: {duration: 0.6}},
     };
 
     // Fetch Data
@@ -190,7 +178,7 @@ function HomePage() {
                         const downvotedBy = term.downvotedBy.filter(
                             (userId) => userId !== user!._id
                         );
-                        return { ...term, upvotedBy, downvotedBy };
+                        return {...term, upvotedBy, downvotedBy};
                     }
                     return term;
                 })
@@ -213,7 +201,7 @@ function HomePage() {
                         const upvotedBy = term.upvotedBy.filter(
                             (userId) => userId !== user!._id
                         );
-                        return { ...term, upvotedBy, downvotedBy };
+                        return {...term, upvotedBy, downvotedBy};
                     }
                     return term;
                 })
@@ -229,7 +217,7 @@ function HomePage() {
             setTerms((prevTerms) =>
                 prevTerms.map((term) => {
                     if (term._id === id) {
-                        return { ...term, bookmarkedBy: [...term.bookmarkedBy, user!._id] };
+                        return {...term, bookmarkedBy: [...term.bookmarkedBy, user!._id]};
                     }
                     return term;
                 })
@@ -296,7 +284,7 @@ function HomePage() {
     }, [hasMore, termsLoading]);
 
     const scrollToTop = () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({top: 0, behavior: "smooth"});
     };
 
     const verticalUpScrollVariants: Variants = {
@@ -325,43 +313,28 @@ function HomePage() {
 
     return (
         <div className="w-full bg-background">
-            <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative">
-                <CobeGlobe />
-                <AnimatePresence mode="wait">
-                    <motion.h1
-                        key={currentWord}
-                        className="text-6xl sm:text-7xl md:text-8xl sm:-mt-24 -mt-12 lg:text-9xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary leading-tight"
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        variants={wordVariants}
-                        transition={{ duration: 1.5, ease: "easeInOut" }}
-                        style={{
-                            lineHeight: "2em",
-                            overflow: "visible",
-                        }}
-                    >
-                        {currentWord}
-                    </motion.h1>
-                </AnimatePresence>
+            <div
+                className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative">
+                <CobeGlobe/>
+                <HomeDisplayWord/>
                 <AnimatePresence>
                     {showScrollDownIcon && (
                         <motion.div
                             className="absolute bottom-8 flex flex-col items-center"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.5 }}
+                            initial={{opacity: 0}}
+                            animate={{opacity: 1}}
+                            exit={{opacity: 0}}
+                            transition={{duration: 0.5}}
                         >
                             <motion.div
-                                animate={{ y: [0, 10, 0] }}
+                                animate={{y: [0, 10, 0]}}
                                 transition={{
                                     duration: 1,
                                     repeat: Infinity,
                                     ease: "easeInOut",
                                 }}
                             >
-                                <MouseIcon fontSize="large" className="text-primary" />
+                                <MouseIcon fontSize="large" className="text-primary"/>
                             </motion.div>
                             <p className="text-sm sm:text-base text-primary mt-2">
                                 Scroll Down
@@ -374,7 +347,7 @@ function HomePage() {
                 <div className="fixed left-12 hidden top-0 h-full w-20 sm:flex flex-col justify-center overflow-hidden">
                     <motion.div
                         className="flex flex-col gap-32 items-center"
-                        style={{ height: "200vh" }}
+                        style={{height: "200vh"}}
                         variants={verticalUpScrollVariants}
                         animate="animate"
                     >
@@ -396,10 +369,11 @@ function HomePage() {
                         ))}
                     </motion.div>
                 </div>
-                <div className="fixed hidden right-10 top-0 h-full  w-20 sm:flex flex-col justify-center overflow-hidden">
+                <div
+                    className="fixed hidden right-10 top-0 h-full  w-20 sm:flex flex-col justify-center overflow-hidden">
                     <motion.div
                         className="flex flex-col gap-32  items-center"
-                        style={{ height: "200vh" }}
+                        style={{height: "200vh"}}
                         variants={verticalDownScrollVariants}
                         animate="animate"
                     >
@@ -462,7 +436,7 @@ function HomePage() {
 
                 {termsLoading && currentPage === 1 ? (
                     <ul className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-6">
-                        {Array.from({ length: termsPerPage }).map((_, index) => (
+                        {Array.from({length: termsPerPage}).map((_, index) => (
                             <li
                                 key={index}
                                 className="flex flex-col justify-between mb-4 p-6 bg-background rounded-lg shadow-neumorphic h-[60vh]"
@@ -474,17 +448,17 @@ function HomePage() {
                                         width={80}
                                         className="mr-4"
                                     />
-                                    <Skeleton height={30} width="50%" />
+                                    <Skeleton height={30} width="50%"/>
                                 </div>
                                 <div className="flex-1">
-                                    <Skeleton height={35} width="90%" className="mb-2" />
-                                    <Skeleton height={25} width="100%" className="mb-2" />
-                                    <Skeleton height={20} width="95%" className="mb-2" />
-                                    <Skeleton height={20} width="95%" />
+                                    <Skeleton height={35} width="90%" className="mb-2"/>
+                                    <Skeleton height={25} width="100%" className="mb-2"/>
+                                    <Skeleton height={20} width="95%" className="mb-2"/>
+                                    <Skeleton height={20} width="95%"/>
                                 </div>
                                 <div className="flex justify-between items-center mt-4">
-                                    <Skeleton height={25} width="35%" />
-                                    <Skeleton height={50} width="50px" circle={true} />
+                                    <Skeleton height={25} width="35%"/>
+                                    <Skeleton height={50} width="50px" circle={true}/>
                                 </div>
                             </li>
                         ))}
@@ -496,11 +470,11 @@ function HomePage() {
                         className={`grid ${terms.length > 5
                             ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-1 gap-6"
                             : "grid-cols-1"
-                            }`}
+                        }`}
                         initial="hidden"
                         animate="visible"
                         variants={{
-                            visible: { transition: { staggerChildren: 0.1 } },
+                            visible: {transition: {staggerChildren: 0.1}},
                         }}
                     >
                         {terms.map((term) => (
@@ -518,7 +492,7 @@ function HomePage() {
                         ))}
                         {termsLoading && currentPage > 1 && (
                             <li className="flex justify-center">
-                                <Skeleton height={35} width="90%" />
+                                <Skeleton height={35} width="90%"/>
                             </li>
                         )}
                     </motion.ul>
@@ -531,13 +505,13 @@ function HomePage() {
                     <motion.button
                         onClick={scrollToTop}
                         className="fixed bottom-4 right-4 md:right-10 p-3 bg-primary text-white rounded-full shadow-lg hover:bg-primaryDark transition duration-300"
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                        whileHover={{ scale: 1.1 }}
+                        initial={{opacity: 0, scale: 0}}
+                        animate={{opacity: 1, scale: 1}}
+                        exit={{opacity: 0}}
+                        transition={{type: "spring", stiffness: 260, damping: 20}}
+                        whileHover={{scale: 1.1}}
                     >
-                        <ArrowUpwardIcon />
+                        <ArrowUpwardIcon/>
                     </motion.button>
                 )}
             </AnimatePresence>
