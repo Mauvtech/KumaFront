@@ -1,5 +1,5 @@
 // src/services/languageService.ts
-import { publicApi, api } from "./api";
+import {  api } from "./api";
 import { AxiosError } from "axios";
 import { handleAuthError } from "../utils/handleAuthError";
 import { ErrorResponse } from "../utils/types";
@@ -15,7 +15,7 @@ export const getAllLanguages = async () => {
 
 export const getLanguages = async () => {
   try {
-    const response = await publicApi.get("/languages/approved");
+    const response = await api.get("/languages/approved");
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>);

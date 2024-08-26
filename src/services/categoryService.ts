@@ -1,7 +1,7 @@
 // src/services/categoryService.ts
 import { AxiosError } from "axios";
 import { handleAuthError } from "../utils/handleAuthError";
-import {api, publicApi} from "./api";
+import {api} from "./api";
 import { ErrorResponse } from "../utils/types";
 
 export const getAllCategories = async () => {
@@ -15,7 +15,7 @@ export const getAllCategories = async () => {
 
 export const getCategories = async () => {
   try {
-    const response = await publicApi.get("/categories/approved");
+    const response = await api.get("/categories/approved");
     return response.data;
   } catch (error) {
     handleAuthError(error as AxiosError<ErrorResponse>);

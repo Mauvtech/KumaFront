@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { addTerm, updateTerm } from '../../services/termService';
-import { getCategories } from '../../services/categoryService';
-import { getThemes } from '../../services/themeService';
-import { getLanguages } from '../../services/languageService';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {addTerm, updateTerm} from '../../services/termService/termService';
+import {getCategories} from '../../services/categoryService';
+import {getThemes} from '../../services/themeService';
+import {getLanguages} from '../../services/languageService';
+import {useNavigate} from 'react-router-dom';
 import Selector from '../Common/Selector';
-import { motion, AnimatePresence } from 'framer-motion';
+import {AnimatePresence, motion} from 'framer-motion';
 
 interface TermFormProps {
     termId?: string;
@@ -19,7 +19,7 @@ interface TermFormProps {
     };
 }
 
-const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
+const TermForm: React.FC<TermFormProps> = ({termId, initialData}) => {
     const [term, setTerm] = useState(initialData?.term || '');
     const [definition, setDefinition] = useState(initialData?.definition || '');
     const [translation, setTranslation] = useState(initialData?.translation || '');
@@ -29,9 +29,19 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
     const [newCategory, setNewCategory] = useState('');
     const [newTheme, setNewTheme] = useState('');
     const [newLanguage, setNewLanguage] = useState('');
-    const [categories, setCategories] = useState<{ _id: string, name: string }[]>([]);
-    const [themeOptions, setThemeOptions] = useState<{ _id: string, name: string }[]>([]);
-    const [languageOptions, setLanguageOptions] = useState<{ _id: string, name: string, code: string }[]>([]);
+    const [categories, setCategories] = useState<{
+        _id: string,
+        name: string
+    }[]>([]);
+    const [themeOptions, setThemeOptions] = useState<{
+        _id: string,
+        name: string
+    }[]>([]);
+    const [languageOptions, setLanguageOptions] = useState<{
+        _id: string,
+        name: string,
+        code: string
+    }[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
@@ -44,9 +54,9 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                 const categoriesData = await getCategories();
                 const themesData = await getThemes();
                 const languagesData = await getLanguages();
-                setCategories([...categoriesData, { _id: 'other', name: 'Other' }]);
-                setThemeOptions([...themesData, { _id: 'other', name: 'Other' }]);
-                setLanguageOptions(Array.isArray(languagesData) ? [...languagesData, { _id: 'other', name: 'Other', code: '' }] : []);
+                setCategories([...categoriesData, {_id: 'other', name: 'Other'}]);
+                setThemeOptions([...themesData, {_id: 'other', name: 'Other'}]);
+                setLanguageOptions(Array.isArray(languagesData) ? [...languagesData, {_id: 'other', name: 'Other', code: ''}] : []);
 
                 if (categoriesData.length > 0 && !initialData?.grammaticalCategory) {
                     setGrammaticalCategory(categoriesData[0].name);
@@ -152,7 +162,8 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
 
     return (
         <div className=' w-full h-screen flex flex-col justify-center'>
-            <form onSubmit={handleSubmit} className="mx-auto  mt-10 p-6 bg-background flex flex-col gap-3 rounded-lg sm:shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
+            <form onSubmit={handleSubmit}
+                  className="mx-auto  mt-10 p-6 bg-background flex flex-col gap-3 rounded-lg sm:shadow-[5px_5px_10px_#d1d9e6,-5px_-5px_10px_#ffffff]">
                 <h2 className="text-2xl font-bold mb-4 text-primary text-center">{termId ? 'Edit Term' : 'Add a new Term'}</h2>
                 {error && <div className="mb-4 text-red-500">{error}</div>}
 
@@ -170,78 +181,79 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                     setDefinition(e.target.value);
                 }, true)}
                 <div className='flex sm:flex-row flex-col justify-center w-full gap-2'>
-                <Selector
-                    options={categories.map(category => category.name)}
-                    selectedOption={grammaticalCategory}
-                    onSelectOption={(option) => {
-                        setGrammaticalCategory(option);
-                        setNewCategory('');
-                    }}
-                    placeholder="Select Grammatical Category"
-                />
-                {grammaticalCategory === 'Other' && (
-                    <motion.input
-                        type="text"
-                        placeholder="New Grammatical Category"
-                        value={newCategory}
-                        onChange={(e) => setNewCategory(capitalizeWord(e.target.value))}
-                        className="w-full p-3 mt-2 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
+                    <Selector
+                        options={categories.map(category => category.name)}
+                        selectedOption={grammaticalCategory}
+                        onSelectOption={(option) => {
+                            setGrammaticalCategory(option);
+                            setNewCategory('');
+                        }}
+                        placeholder="Select Grammatical Category"
                     />
-                )}
+                    {grammaticalCategory === 'Other' && (
+                        <motion.input
+                            type="text"
+                            placeholder="New Grammatical Category"
+                            value={newCategory}
+                            onChange={(e) => setNewCategory(capitalizeWord(e.target.value))}
+                            className="w-full p-3 mt-2 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
+                            initial={{opacity: 0}}
+                            animate={{opacity: 1}}
+                            transition={{duration: 0.3}}
+                        />
+                    )}
 
-                <Selector
-                    options={themeOptions.map(theme => theme.name)}
-                    selectedOption={theme}
-                    onSelectOption={(option) => {
-                        setTheme(option);
-                        setNewTheme('');
-                    }}
-                    placeholder="Select Theme"
-                />
-                {theme === 'Other' && (
-                    <motion.input
-                        type="text"
-                        placeholder="New Theme"
-                        value={newTheme}
-                        onChange={(e) => setNewTheme(capitalizeWord(e.target.value))}
-                        className="w-full p-3 mt-2 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
+                    <Selector
+                        options={themeOptions.map(theme => theme.name)}
+                        selectedOption={theme}
+                        onSelectOption={(option) => {
+                            setTheme(option);
+                            setNewTheme('');
+                        }}
+                        placeholder="Select Theme"
                     />
-                )}
+                    {theme === 'Other' && (
+                        <motion.input
+                            type="text"
+                            placeholder="New Theme"
+                            value={newTheme}
+                            onChange={(e) => setNewTheme(capitalizeWord(e.target.value))}
+                            className="w-full p-3 mt-2 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
+                            initial={{opacity: 0}}
+                            animate={{opacity: 1}}
+                            transition={{duration: 0.3}}
+                        />
+                    )}
 
-                <Selector
-                    options={languageOptions.map(language => language.name)}
-                    selectedOption={language}
-                    onSelectOption={(option) => {
-                        setLanguage(option);
-                        setNewLanguage('');
-                    }}
-                    placeholder="Select Language"
-                />
-                {language === 'Other' && (
-                    <motion.input
-                        type="text"
-                        placeholder="New Language"
-                        value={newLanguage}
-                        onChange={(e) => setNewLanguage(capitalizeWord(e.target.value))}
-                        className="w-full p-3 mt-2 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
+                    <Selector
+                        options={languageOptions.map(language => language.name)}
+                        selectedOption={language}
+                        onSelectOption={(option) => {
+                            setLanguage(option);
+                            setNewLanguage('');
+                        }}
+                        placeholder="Select Language"
                     />
-                )}
+                    {language === 'Other' && (
+                        <motion.input
+                            type="text"
+                            placeholder="New Language"
+                            value={newLanguage}
+                            onChange={(e) => setNewLanguage(capitalizeWord(e.target.value))}
+                            className="w-full p-3 mt-2 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
+                            initial={{opacity: 0}}
+                            animate={{opacity: 1}}
+                            transition={{duration: 0.3}}
+                        />
+                    )}
 
-                </div><motion.button
+                </div>
+                <motion.button
                     type="submit"
                     className="w-full p-3 text-2xl font-bold text-white rounded-lg bg-secondary shadow-[5px_5px_10px_#b3b3b3,-5px_-5px_10px_#ffffff] hover:bg-secondaryDark focus:outline-none"
                     disabled={loading}
-                    whileTap={{ scale: 0.97 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                    whileTap={{scale: 0.97}}
+                    transition={{type: 'spring', stiffness: 400, damping: 10}}
                 >
                     {loading ? 'Loading...' : termId ? 'Edit' : '+'}
                 </motion.button>
@@ -250,24 +262,24 @@ const TermForm: React.FC<TermFormProps> = ({ termId, initialData }) => {
                 {showModal && (
                     <motion.div
                         className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
+                        initial={{opacity: 0}}
+                        animate={{opacity: 1}}
+                        exit={{opacity: 0}}
+                        transition={{duration: 0.3}}
                     >
                         <motion.div
                             className="bg-white p-6 rounded-lg shadow-lg text-center"
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.8, opacity: 0 }}
-                            transition={{ duration: 0.3 }}
+                            initial={{scale: 0.8, opacity: 0}}
+                            animate={{scale: 1, opacity: 1}}
+                            exit={{scale: 0.8, opacity: 0}}
+                            transition={{duration: 0.3}}
                         >
                             <h2 className="text-xl font-bold mb-4">Success</h2>
                             <p className="mb-4">{modalMessage}</p>
                             <motion.button
                                 onClick={handleCloseModal}
                                 className="px-4 py-2 bg-primaryLight text-gray-600 rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
-                                whileTap={{ scale: 0.95 }}
+                                whileTap={{scale: 0.95}}
                             >
                                 OK
                             </motion.button>

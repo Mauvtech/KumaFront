@@ -11,6 +11,6 @@ export const handleAuthError = (
     alert("Access denied: You do not have the right permissions");
   } else {
     const errorMessage = error.response?.data?.message || error.message;
-    alert(`Error: ${errorMessage}`);
+    console.log(`Error: ${errorMessage}`)
   }
 };

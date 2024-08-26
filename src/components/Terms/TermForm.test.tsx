@@ -1,12 +1,12 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import {fireEvent, render, screen, waitFor} from '@testing-library/react';
+import {BrowserRouter} from 'react-router-dom';
 import TermForm from './TermForm';
-import { addTerm, updateTerm } from '../../services/termService';
-import { getCategories } from '../../services/categoryService';
-import { getThemes } from '../../services/themeService';
-import { getLanguages } from '../../services/languageService';
-import { AuthProvider } from '../../contexts/authContext';
+import {addTerm, updateTerm} from '../../services/termService/termService';
+import {getCategories} from '../../services/categoryService';
+import {getThemes} from '../../services/themeService';
+import {getLanguages} from '../../services/languageService';
+import {AuthProvider} from '../../contexts/authContext';
 
 // Mock the service functions
 jest.mock('../../services/termService', () => ({
@@ -39,16 +39,16 @@ describe('TermForm', () => {
         jest.clearAllMocks();
         // Mock implementations for the services
         (getCategories as jest.Mock).mockResolvedValue([
-            { _id: '1', name: 'Noun' },
-            { _id: '2', name: 'Verb' },
+            {_id: '1', name: 'Noun'},
+            {_id: '2', name: 'Verb'},
         ]);
         (getThemes as jest.Mock).mockResolvedValue([
-            { _id: '1', name: 'Nature' },
-            { _id: '2', name: 'Technology' },
+            {_id: '1', name: 'Nature'},
+            {_id: '2', name: 'Technology'},
         ]);
         (getLanguages as jest.Mock).mockResolvedValue([
-            { _id: '1', name: 'English', code: 'en' },
-            { _id: '2', name: 'French', code: 'fr' },
+            {_id: '1', name: 'English', code: 'en'},
+            {_id: '2', name: 'French', code: 'fr'},
         ]);
     });
 
@@ -63,7 +63,7 @@ describe('TermForm', () => {
     };
 
     it('renders the term form', async () => {
-        renderWithProviders(<TermForm />);
+        renderWithProviders(<TermForm/>);
 
         expect(await screen.findByLabelText(/term/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/translation/i)).toBeInTheDocument();
@@ -71,22 +71,22 @@ describe('TermForm', () => {
         expect(screen.getByLabelText(/grammatical category/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/theme/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/language/i)).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /add/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: /add/i})).toBeInTheDocument();
     });
 
     it('handles form submission for adding a term', async () => {
         (addTerm as jest.Mock).mockResolvedValue({});
 
-        renderWithProviders(<TermForm />);
+        renderWithProviders(<TermForm/>);
 
-        fireEvent.change(screen.getByLabelText(/term/i), { target: { value: 'Test Term' } });
-        fireEvent.change(screen.getByLabelText(/translation/i), { target: { value: 'Test Translation' } });
-        fireEvent.change(screen.getByLabelText(/definition/i), { target: { value: 'Test Definition' } });
-        fireEvent.change(screen.getByLabelText(/grammatical category/i), { target: { value: 'Noun' } });
-        fireEvent.change(screen.getByLabelText(/theme/i), { target: { value: 'Nature' } });
-        fireEvent.change(screen.getByLabelText(/language/i), { target: { value: 'English' } });
+        fireEvent.change(screen.getByLabelText(/term/i), {target: {value: 'Test Term'}});
+        fireEvent.change(screen.getByLabelText(/translation/i), {target: {value: 'Test Translation'}});
+        fireEvent.change(screen.getByLabelText(/definition/i), {target: {value: 'Test Definition'}});
+        fireEvent.change(screen.getByLabelText(/grammatical category/i), {target: {value: 'Noun'}});
+        fireEvent.change(screen.getByLabelText(/theme/i), {target: {value: 'Nature'}});
+        fireEvent.change(screen.getByLabelText(/language/i), {target: {value: 'English'}});
 
-        fireEvent.click(screen.getByRole('button', { name: /add/i }));
+        fireEvent.click(screen.getByRole('button', {name: /add/i}));
 
         await waitFor(() => expect(addTerm).toHaveBeenCalled());
         expect(mockNavigate).toHaveBeenCalledWith('/');
@@ -102,13 +102,13 @@ describe('TermForm', () => {
             grammaticalCategory: 'Noun',
             theme: 'Nature',
             language: 'English',
-        }} />);
+        }}/>);
 
-        fireEvent.change(screen.getByLabelText(/term/i), { target: { value: 'Updated Term' } });
-        fireEvent.change(screen.getByLabelText(/translation/i), { target: { value: 'Updated Translation' } });
-        fireEvent.change(screen.getByLabelText(/definition/i), { target: { value: 'Updated Definition' } });
+        fireEvent.change(screen.getByLabelText(/term/i), {target: {value: 'Updated Term'}});
+        fireEvent.change(screen.getByLabelText(/translation/i), {target: {value: 'Updated Translation'}});
+        fireEvent.change(screen.getByLabelText(/definition/i), {target: {value: 'Updated Definition'}});
 
-        fireEvent.click(screen.getByRole('button', { name: /edit/i }));
+        fireEvent.click(screen.getByRole('button', {name: /edit/i}));
 
         await waitFor(() => expect(updateTerm).toHaveBeenCalled());
         expect(mockNavigate).toHaveBeenCalledWith('/');
@@ -117,16 +117,16 @@ describe('TermForm', () => {
     it('displays error message on form submission failure', async () => {
         (addTerm as jest.Mock).mockRejectedValue(new Error('Failed to add term'));
 
-        renderWithProviders(<TermForm />);
+        renderWithProviders(<TermForm/>);
 
-        fireEvent.change(screen.getByLabelText(/term/i), { target: { value: 'Test Term' } });
-        fireEvent.change(screen.getByLabelText(/translation/i), { target: { value: 'Test Translation' } });
-        fireEvent.change(screen.getByLabelText(/definition/i), { target: { value: 'Test Definition' } });
-        fireEvent.change(screen.getByLabelText(/grammatical category/i), { target: { value: 'Noun' } });
-        fireEvent.change(screen.getByLabelText(/theme/i), { target: { value: 'Nature' } });
-        fireEvent.change(screen.getByLabelText(/language/i), { target: { value: 'English' } });
+        fireEvent.change(screen.getByLabelText(/term/i), {target: {value: 'Test Term'}});
+        fireEvent.change(screen.getByLabelText(/translation/i), {target: {value: 'Test Translation'}});
+        fireEvent.change(screen.getByLabelText(/definition/i), {target: {value: 'Test Definition'}});
+        fireEvent.change(screen.getByLabelText(/grammatical category/i), {target: {value: 'Noun'}});
+        fireEvent.change(screen.getByLabelText(/theme/i), {target: {value: 'Nature'}});
+        fireEvent.change(screen.getByLabelText(/language/i), {target: {value: 'English'}});
 
-        fireEvent.click(screen.getByRole('button', { name: /add/i }));
+        fireEvent.click(screen.getByRole('button', {name: /add/i}));
 
         expect(await screen.findByText(/an error occurred while submitting the term./i)).toBeInTheDocument();
     });

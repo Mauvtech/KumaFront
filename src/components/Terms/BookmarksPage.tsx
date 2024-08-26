@@ -1,22 +1,18 @@
-import React, { useEffect, useState, useCallback } from "react";
-import {
-    getBookmarks,
-    upvoteTerm,
-    downvoteTerm,
-    unbookmarkTerm,
-} from "../../services/termService";
-import { useAuth } from "../../contexts/authContext";
-import { useNavigate } from "react-router-dom";
+import React, {useCallback, useEffect, useState} from "react";
+import {downvoteTerm, upvoteTerm,} from "../../services/termService/termService";
+import {useAuth} from "../../contexts/authContext";
+import {useNavigate} from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import TermItem from "../Terms/TermItem";
+import {getBookmarks, unbookmarkTerm} from "../../services/termService/bookmarkService";
 
 const BookmarksPage: React.FC = () => {
     const [bookmarkedTerms, setBookmarkedTerms] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
-    const { user } = useAuth();
+    const {user} = useAuth();
     const navigate = useNavigate();
     const termsPerPage: number = 9;
 
@@ -61,7 +57,7 @@ const BookmarksPage: React.FC = () => {
                         const downvotedBy = term.downvotedBy.filter(
                             (userId: string) => userId !== user!._id
                         );
-                        return { ...term, upvotedBy, downvotedBy };
+                        return {...term, upvotedBy, downvotedBy};
                     }
                     return term;
                 })
@@ -84,7 +80,7 @@ const BookmarksPage: React.FC = () => {
                         const upvotedBy = term.upvotedBy.filter(
                             (userId: string) => userId !== user!._id
                         );
-                        return { ...term, upvotedBy, downvotedBy };
+                        return {...term, upvotedBy, downvotedBy};
                     }
                     return term;
                 })
@@ -115,18 +111,18 @@ const BookmarksPage: React.FC = () => {
                 </h3>
                 {loading ? (
                     <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {Array.from({ length: termsPerPage }).map((_, index) => (
+                        {Array.from({length: termsPerPage}).map((_, index) => (
                             <li
                                 key={index}
                                 className="flex flex-col justify-between mb-4 p-4 bg-backgroundHover rounded-lg shadow-neumorphic"
                             >
-                                <Skeleton height={30} width="80%" />
-                                <Skeleton height={20} width="60%" />
-                                <Skeleton height={20} width="100%" />
-                                <Skeleton height={20} width="90%" />
+                                <Skeleton height={30} width="80%"/>
+                                <Skeleton height={20} width="60%"/>
+                                <Skeleton height={20} width="100%"/>
+                                <Skeleton height={20} width="90%"/>
                                 <div className="mt-2">
-                                    <Skeleton height={20} width="30%" />
-                                    <Skeleton height={20} width="40%" />
+                                    <Skeleton height={20} width="30%"/>
+                                    <Skeleton height={20} width="40%"/>
                                 </div>
                             </li>
                         ))}
@@ -143,7 +139,8 @@ const BookmarksPage: React.FC = () => {
                                 user={user}
                                 handleUpvote={handleUpvote}
                                 handleDownvote={handleDownvote}
-                                handleBookmark={() => { }}
+                                handleBookmark={() => {
+                                }}
                                 handleUnbookmark={handleUnbookmark}
                             />
                         ))}
@@ -163,8 +160,8 @@ const Pagination: React.FC<{
     currentPage: number;
     totalPages: number;
     paginate: (pageNumber: number) => void;
-}> = ({ currentPage, totalPages, paginate }) => {
-    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+}> = ({currentPage, totalPages, paginate}) => {
+    const pageNumbers = Array.from({length: totalPages}, (_, i) => i + 1);
 
     return (
         <nav className="mt-4">
@@ -174,7 +171,7 @@ const Pagination: React.FC<{
                         <button
                             onClick={() => paginate(number)}
                             className={`px-3 py-2 leading-tight text-text bg-backgroundHover border border-background hover:bg-background focus:outline-none transition duration-200 rounded-lg shadow-lg ${currentPage === number ? "bg-primary text-white" : ""
-                                }`}
+                            }`}
                         >
                             {number}
                         </button>
