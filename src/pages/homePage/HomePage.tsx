@@ -25,18 +25,24 @@ import {ErrorResponse} from "../../utils/types";
 
 const termsPerPage: number = 9;
 
+
+export type HomePageFilters = {
+    category?: string;
+    theme?: string;
+    language?: string;
+    searchTerm?: string;
+}
+
+
 export default function HomePage() {
     const {user} = useAuth();
     const [terms, setTerms] = useState<Term[]>([]);
 
-    const [searchTerm, setSearchTerm] = useState<string>("");
     const [allFetchedTerms, setAllFetchedTerms] = useState<Term[]>([]); // Persistent state for all fetched terms
     const [categories, setCategories] = useState<Category[]>([]);
-    const [selectedCategory, setSelectedCategory] = useState<string>("");
     const [themes, setThemes] = useState<Theme[]>([]);
-    const [selectedTheme, setSelectedTheme] = useState<string>("");
     const [languages, setLanguages] = useState<Language[]>([]);
-    const [selectedLanguage, setSelectedLanguage] = useState<string>("");
+
     const [termsLoading, setTermsLoading] = useState<boolean>(true);
     const [filtersLoading, setFiltersLoading] = useState<boolean>(true);
     const [totalTerms, setTotalTerms] = useState<number>(0);
@@ -44,6 +50,8 @@ export default function HomePage() {
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
     const [showScrollDownIcon, setShowScrollDownIcon] = useState<boolean>(true);
+
+    const [filters, setFilters] = useState<HomePageFilters>({})
 
     // State for managing word slideshow
     const [currentWord, setCurrentWord] = useState<string>("LES MOTS.");
@@ -58,10 +66,10 @@ export default function HomePage() {
         setTermsLoading(true);
         try {
             const data = await getApprovedTerms({
-                category: selectedCategory,
-                theme: selectedTheme,
-                language: selectedLanguage,
-                searchTerm,
+                category: filters.category,
+                theme: filters.theme,
+                language: filters.language,
+                searchTerm: filters.searchTerm,
                 page: currentPage,
                 limit: termsPerPage,
             });
@@ -80,10 +88,7 @@ export default function HomePage() {
             setTermsLoading(false);
         }
     }, [
-        selectedCategory,
-        selectedTheme,
-        selectedLanguage,
-        searchTerm,
+        filters,
         currentPage,
         termsPerPage,
     ]);
@@ -277,21 +282,14 @@ export default function HomePage() {
             {/* Main Content */}
             <div className="max-w-screen-lg mx-auto mt-10 p-6 bg-background rounded-lg">
                 <WordSearch
-                    searchTerm={searchTerm}
-                    setSearchTerm={setSearchTerm}
+                    filters={filters}
+                    setFilters={setFilters}
                     setCurrentPage={setCurrentPage}
                     setTerms={setTerms}
                     setAllFetchedTerms={setAllFetchedTerms}
                     categories={categories}
                     themes={themes}
                     languages={languages}
-                    selectedCategory={selectedCategory}
-                    selectedTheme={selectedTheme}
-                    selectedLanguage={selectedLanguage}
-                    setSelectedCategory={setSelectedCategory}
-                    setSelectedTheme={setSelectedTheme}
-                    setSelectedLanguage={setSelectedLanguage}
-
                 />
 
                 {termsLoading && currentPage === 1 ? (
