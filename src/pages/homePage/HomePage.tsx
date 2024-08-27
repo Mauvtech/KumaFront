@@ -1,12 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {useInfiniteTerms,} from "../../services/term/termService";
 import "react-loading-skeleton/dist/skeleton.css";
-import {AnimatePresence} from "framer-motion";
 import CobeGlobe from "../../components/Common/CobeGlobe";
 import HomeDisplayWord from "./HomeDisplayWord";
-import ScrollToTopButton from "./ScrollToTopButton";
+import ScrollToTopButton from "../../components/scrollButtons/ScrollToTopButton";
 import WordStrip from "./WordStrip";
-import ScrollDownMouseIcon from "./ScrollDownMouseIcon";
+import ScrollDownMouseIcon from "../../components/scrollButtons/ScrollDownMouseIcon";
 import WordSearch from "./WordSearch";
 import ApprovedTermsList from "./ApprovedTermsList";
 
@@ -33,9 +32,6 @@ export const DEFAULT_TERM_PER_PAGE: number = 2;
 
 
 export default function HomePage() {
-    const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
-    const [showScrollDownIcon, setShowScrollDownIcon] = useState<boolean>(true);
-
     const [pageAndFilter, setPageAndFilter] = useState<TermPageAndFilter>({
         page: {number: 0, size: DEFAULT_TERM_PER_PAGE},
         filter: {}
@@ -45,32 +41,9 @@ export default function HomePage() {
         setPageAndFilter({...pageAndFilter, filter});
     }
 
-
     const {data: approvedTerms, isLoading: termsLoading, fetchNextPage} = useInfiniteTerms(pageAndFilter.filter)
 
     const terms = approvedTerms?.pages.map(page => page!!.content).flat()
-
-
-    // Show scroll-to-top button after a certain scroll distance
-    useEffect(() => {
-        const handleScroll = () => {
-            const scrollPosition = window.scrollY;
-            setShowScrollButton(scrollPosition > 300);
-            setShowScrollDownIcon(scrollPosition < 100);
-
-            if (
-                window.innerHeight + document.documentElement.scrollTop >=
-                document.documentElement.offsetHeight - 500
-            ) {
-                if (!termsLoading) {
-                    fetchNextPage();
-                }
-            }
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, [termsLoading, fetchNextPage]);
 
 
     if (!terms) return <div>Loading...</div>;
@@ -82,11 +55,8 @@ export default function HomePage() {
                 className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative">
                 <CobeGlobe/>
                 <HomeDisplayWord terms={terms}/>
-                <AnimatePresence>
-                    {showScrollDownIcon && (
-                        <ScrollDownMouseIcon/>
-                    )}
-                </AnimatePresence>
+
+                <ScrollDownMouseIcon/>
             </div>
 
             <WordStrip terms={terms}/>
@@ -96,14 +66,11 @@ export default function HomePage() {
                 <WordSearch
                     filters={pageAndFilter.filter}
                     setFilters={setFilter}
-
                 />
 
                 <ApprovedTermsList loading={termsLoading} terms={terms}/>
             </div>
-            <AnimatePresence>
-                {showScrollButton && <ScrollToTopButton/>}
-            </AnimatePresence>
+            <ScrollToTopButton/>
         </div>
     );
 }
