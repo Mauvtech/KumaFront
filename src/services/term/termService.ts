@@ -1,7 +1,7 @@
 import {api} from "../api";
 import {PaginatedTerm, paginatedTermForUserSchema} from "./termModel";
 import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
-import {Page, TermFilter} from "../../pages/homePage/HomePage";
+import {Page, TermPageAndFilter} from "../../pages/homePage/HomePage";
 
 export const addTerm = async (
     termData: {
@@ -23,14 +23,14 @@ export const getAllTerms = async (page: number = 1, limit: number = 10) => {
 
 };
 
-const getApprovedTerms = async (pageParam?: number, filter?: TermFilter): Promise<PaginatedTerm | void> => {
-    return api.get(`/terms?page=${pageParam}&size=4`,
+const getApprovedTerms = async (pageParam?: number, pageAndFilter?: TermPageAndFilter): Promise<PaginatedTerm | void> => {
+    return api.get(`/terms?page=${pageParam}&size=${pageAndFilter?.page.size}`,
         {
             params: {
-                category: filter?.category,
-                theme: filter?.theme,
-                language: filter?.language,
-                searchTerm: filter?.searchTerm
+                category: pageAndFilter?.filter?.category,
+                tag: pageAndFilter?.filter?.theme,
+                language: pageAndFilter?.filter?.language,
+                searchTerm: pageAndFilter?.filter?.searchTerm
             }
         }).then(res => paginatedTermForUserSchema.parse(res.data));
 };
@@ -129,10 +129,10 @@ type filteredAndPaginatedTerms = {
 }
 
 
-export function useInfiniteTerms(filter: TermFilter) {
+export function useInfiniteTerms(pageAndFilter: TermPageAndFilter) {
     return useInfiniteQuery({
-            queryKey: [APPROVED_TERMS_QUERY_KEY, filter],
-            queryFn: ({pageParam}) => getApprovedTerms(pageParam, filter),
+            queryKey: [APPROVED_TERMS_QUERY_KEY, pageAndFilter],
+            queryFn: ({pageParam}) => getApprovedTerms(pageParam, pageAndFilter),
             initialPageParam: 0,
             getNextPageParam: (lastPage) => lastPage!!.number < lastPage!!.totalPages - 1 ? lastPage!!.number + 1 : undefined,
         }

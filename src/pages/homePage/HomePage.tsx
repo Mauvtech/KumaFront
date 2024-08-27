@@ -40,7 +40,7 @@ export default function HomePage() {
     const setFilter = (filter: TermFilter) => setPageAndFilter({...pageAndFilter, filter});
 
 
-    const {data: approvedTerms, isLoading: termsLoading, fetchNextPage} = useInfiniteTerms(pageAndFilter.filter)
+    const {data: approvedTerms, isLoading: termsLoading, fetchNextPage} = useInfiniteTerms(pageAndFilter)
 
     const terms = approvedTerms?.pages.map(page => page!!.content).flat()
 
@@ -73,7 +73,6 @@ export default function HomePage() {
                     filters={pageAndFilter.filter}
                     setFilters={setFilter}
                 />
-
                 <ApprovedTermsList loading={termsLoading} terms={terms!}/>
             </div>
             <ScrollToTopButton/>
