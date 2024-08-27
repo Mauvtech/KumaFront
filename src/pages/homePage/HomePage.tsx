@@ -46,28 +46,10 @@ export default function HomePage() {
     }
 
 
-    // State for managing word slideshow
-    const [currentWord, setCurrentWord] = useState<string>("LES MOTS.");
-
-
     const {data: approvedTerms, isLoading: termsLoading, fetchNextPage} = useInfiniteTerms(pageAndFilter.filter)
 
     const terms = approvedTerms?.pages.map(page => page!!.content).flat()
 
-
-    // Slide show for words with smooth transitions
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (terms && terms.length > 0) {
-                // Shuffle the terms array
-                const shuffledTerms = [...terms].sort(() => 0.5 - Math.random());
-                const randomIndex = Math.floor(Math.random() * shuffledTerms.length);
-                setCurrentWord(shuffledTerms[randomIndex].term.term);
-            }
-        }, 3000); // Change word every 3 seconds
-
-        return () => clearInterval(interval);
-    }, [approvedTerms, terms]);
 
     // Show scroll-to-top button after a certain scroll distance
     useEffect(() => {
@@ -81,7 +63,6 @@ export default function HomePage() {
                 document.documentElement.offsetHeight - 500
             ) {
                 if (!termsLoading) {
-                    console.log("fetch next")
                     fetchNextPage();
                 }
             }
@@ -100,7 +81,7 @@ export default function HomePage() {
             <div
                 className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative">
                 <CobeGlobe/>
-                <HomeDisplayWord currentWord={currentWord}/>
+                <HomeDisplayWord terms={terms}/>
                 <AnimatePresence>
                     {showScrollDownIcon && (
                         <ScrollDownMouseIcon/>
@@ -108,7 +89,7 @@ export default function HomePage() {
                 </AnimatePresence>
             </div>
 
-            <WordStrip terms={terms ?? []}/>
+            <WordStrip terms={terms}/>
 
             {/* Main Content */}
             <div className="max-w-screen-lg mx-auto mt-10 p-6 bg-background rounded-lg">

@@ -1,5 +1,6 @@
 import {AnimatePresence, motion} from "framer-motion";
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {TermForUser} from "../../services/term/termModel";
 
 
 const wordVariants = {
@@ -8,9 +9,28 @@ const wordVariants = {
     exit: {opacity: 0, y: -20, scale: 1.05},
 };
 
-export default function HomeDisplayWord({currentWord}: {
-    currentWord: string
+export default function HomeDisplayWord({terms}: {
+    terms: TermForUser[]
 }) {
+    // State for managing word slideshow
+    const [currentWord, setCurrentWord] = useState<string>("LES MOTS.");
+
+
+    // Slide show for words with smooth transitions
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (terms && terms.length > 0) {
+                // Shuffle the terms array
+                const shuffledTerms = [...terms].sort(() => 0.5 - Math.random());
+                const randomIndex = Math.floor(Math.random() * shuffledTerms.length);
+                setCurrentWord(shuffledTerms[randomIndex].term.term);
+            }
+        }, 3000); // Change word every 3 seconds
+
+        return () => clearInterval(interval);
+    }, [terms]);
+
+
     return (
         <AnimatePresence mode="wait">
             <motion.h1
