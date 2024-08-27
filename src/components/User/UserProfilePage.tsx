@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
-import {getUserApprovedTerms} from '../../services/termService/termService';
+import {getUserApprovedTerms} from '../../services/term/termService';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import TermItem from '../Terms/TermItem';
@@ -22,17 +22,13 @@ const UserProfilePage: React.FC = () => {
 
     const fetchApprovedTerms = useCallback(async (username: string, page: number) => {
         setLoading(true);
-        try {
-            const data = await getUserApprovedTerms(username, page.toString(), termsPerPage.toString());
-            setApprovedTerms(data.terms);
-            setCurrentPage(data.currentPage);
-            setTotalPages(data.totalPages);
-            setTotalTerms(data.totalTerms);
-        } catch (error) {
-            console.error('Erreur de chargement des termes approuvés de l\'utilisateur', error);
-        } finally {
-            setLoading(false);
-        }
+        const data = await getUserApprovedTerms(username, page.toString(), termsPerPage.toString());
+        setApprovedTerms(data.terms);
+        setCurrentPage(data.currentPage);
+        setTotalPages(data.totalPages);
+        setTotalTerms(data.totalTerms);
+
+        setLoading(false);
     }, [termsPerPage]);
 
     useEffect(() => {
@@ -74,16 +70,7 @@ const UserProfilePage: React.FC = () => {
                             <TermItem
                                 isFeed={false}
                                 key={term._id}
-                                term={term}
-                                user={null} // Passer null car ce n'est pas le profil de l'utilisateur connecté
-                                handleUpvote={() => {
-                                }} // Vous pouvez gérer les upvotes si nécessaire
-                                handleDownvote={() => {
-                                }} // Vous pouvez gérer les downvotes si nécessaire
-                                handleBookmark={() => {
-                                }} // Vous pouvez gérer les bookmarks si nécessaire
-                                handleUnbookmark={() => {
-                                }} // Vous pouvez gérer les unbookmarks si nécessaire
+                                termForUser={term}
                             />
                         ))}
                     </ul>

@@ -1,6 +1,3 @@
-import {handleAuthError} from "../utils/handleAuthError";
-import {AxiosError} from "axios";
-import {ErrorResponse} from "../utils/types";
 import api from "./api";
 
 
@@ -10,27 +7,18 @@ export const getQuiz = async (
     language?: string,
     theme?: string
 ) => {
-    try {
-        const response = await api.get("/terms/quiz", {
-            params: {
-                number: numberOfQuestions,
-                grammaticalCategory,
-                language,
-                theme,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        handleAuthError(error as AxiosError<ErrorResponse>);
-    }
+    const response = await api.get("/terms/quiz", {
+        params: {
+            number: numberOfQuestions,
+            grammaticalCategory,
+            language,
+            theme,
+        },
+    });
+    return response.data;
 };
 
 export const getFlashcardById = async (id: string) => {
-    try {
-        const response = await api.get(`/terms/${id}/flashcard`);
-        return response.data;
-    } catch (error) {
-        handleAuthError(error as AxiosError<ErrorResponse>);
-    }
-
+    const response = await api.get(`/terms/${id}/flashcard`);
+    return response.data;
 }

@@ -1,14 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {addTerm, updateTerm} from '../../services/termService/termService';
-import {getCategories} from '../../services/categoryService';
-import {getThemes} from '../../services/themeService';
-import {getLanguages} from '../../services/languageService';
+import {addTerm} from '../../services/term/termService';
+import {useCategories} from '../../services/category/categoryService';
+import {useLanguages} from '../../services/language/languageService';
 import {useNavigate} from 'react-router-dom';
 import Selector from '../Common/Selector';
 import {AnimatePresence, motion} from 'framer-motion';
+import useTerms from "../../services/term/termMutationService";
+import {useTags} from "../../services/tag/tagService";
+import {capitalizeWord} from "../../utils/StringUtils";
 
 interface TermFormProps {
-    termId?: string;
+    termId?: number;
     initialData?: {
         term: string;
         translation: string;
@@ -48,33 +50,16 @@ const TermForm: React.FC<TermFormProps> = ({termId, initialData}) => {
     const [modalMessage, setModalMessage] = useState('');
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const categoriesData = await getCategories();
-                const themesData = await getThemes();
-                const languagesData = await getLanguages();
-                setCategories([...categoriesData, {_id: 'other', name: 'Other'}]);
-                setThemeOptions([...themesData, {_id: 'other', name: 'Other'}]);
-                setLanguageOptions(Array.isArray(languagesData) ? [...languagesData, {_id: 'other', name: 'Other', code: ''}] : []);
+    const {saveMutation} = useTerms()
 
-                if (categoriesData.length > 0 && !initialData?.grammaticalCategory) {
-                    setGrammaticalCategory(categoriesData[0].name);
-                }
-                if (themesData.length > 0 && !initialData?.theme) {
-                    setTheme(themesData[0].name);
-                }
-                if (languagesData.length > 0 && !initialData?.language) {
-                    setLanguage(languagesData[0].name);
-                }
-            } catch (error) {
-                console.error('Error loading data', error);
-                setError('Error loading data');
-            }
-        };
+    const {mutate: updateTerm} = saveMutation();
 
-        fetchData();
-    }, [initialData]);
+    const {data: fetchedCategories} = useCategories()
+
+    const {data: fetchedThemes} = useTags()
+
+    const {data: fetchedLanguages} = useLanguages()
+
 
     useEffect(() => {
         if (categories.length > 0 && !initialData?.grammaticalCategory) {
@@ -88,9 +73,6 @@ const TermForm: React.FC<TermFormProps> = ({termId, initialData}) => {
         }
     }, [categories, themeOptions, languageOptions, initialData]);
 
-    const capitalizeWord = (word: string): string => {
-        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -108,7 +90,7 @@ const TermForm: React.FC<TermFormProps> = ({termId, initialData}) => {
 
         try {
             if (termId) {
-                await updateTerm(termId, termData);
+                updateTerm({id: termId, request: termData});
             } else {
                 await addTerm(termData);
             }

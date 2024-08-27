@@ -1,105 +1,18 @@
-import React, {useCallback, useEffect, useState} from "react";
-import {downvoteTerm, upvoteTerm,} from "../../services/termService/termService";
+import React, {useState} from "react";
 import {useAuth} from "../../contexts/authContext";
-import {useNavigate} from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import TermItem from "../Terms/TermItem";
-import {getBookmarks, unbookmarkTerm} from "../../services/termService/bookmarkService";
+import Pagination from "./Pagination";
 
-const BookmarksPage: React.FC = () => {
+const termsPerPage: number = 9;
+
+export default function BookmarksPage() {
     const [bookmarkedTerms, setBookmarkedTerms] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
     const {user} = useAuth();
-    const navigate = useNavigate();
-    const termsPerPage: number = 9;
-
-    const fetchBookmarks = useCallback(
-        async (page: number) => {
-            setLoading(true);
-            try {
-                const data = await getBookmarks(
-                    page.toString(),
-                    termsPerPage.toString()
-                );
-                setBookmarkedTerms(data.bookmarks);
-                setCurrentPage(data.currentPage);
-                setTotalPages(data.totalPages);
-            } catch (error) {
-                console.error("Erreur de chargement des bookmarks", error);
-            } finally {
-                setLoading(false);
-            }
-        },
-        [termsPerPage]
-    );
-
-    useEffect(() => {
-        if (user) {
-            fetchBookmarks(currentPage);
-        } else {
-            navigate("/login");
-        }
-    }, [user, currentPage, fetchBookmarks, navigate]);
-
-    const handleUpvote = async (id: string) => {
-        try {
-            await upvoteTerm(id);
-            setBookmarkedTerms((prevTerms) =>
-                prevTerms.map((term) => {
-                    if (term._id === id) {
-                        const isUpvoted = term.upvotedBy.includes(user!._id);
-                        const upvotedBy = isUpvoted
-                            ? term.upvotedBy.filter((userId: string) => userId !== user!._id)
-                            : [...term.upvotedBy, user!._id];
-                        const downvotedBy = term.downvotedBy.filter(
-                            (userId: string) => userId !== user!._id
-                        );
-                        return {...term, upvotedBy, downvotedBy};
-                    }
-                    return term;
-                })
-            );
-        } catch (error) {
-            console.error("Erreur lors de l'upvote", error);
-        }
-    };
-
-    const handleDownvote = async (id: string) => {
-        try {
-            await downvoteTerm(id);
-            setBookmarkedTerms((prevTerms) =>
-                prevTerms.map((term) => {
-                    if (term._id === id) {
-                        const isDownvoted = term.downvotedBy.includes(user!._id);
-                        const downvotedBy = isDownvoted
-                            ? term.downvotedBy.filter((userId: string) => userId !== user!._id)
-                            : [...term.downvotedBy, user!._id];
-                        const upvotedBy = term.upvotedBy.filter(
-                            (userId: string) => userId !== user!._id
-                        );
-                        return {...term, upvotedBy, downvotedBy};
-                    }
-                    return term;
-                })
-            );
-        } catch (error) {
-            console.error("Erreur lors de l'downvote", error);
-        }
-    };
-
-    const handleUnbookmark = async (id: string) => {
-        try {
-            await unbookmarkTerm(id);
-            setBookmarkedTerms((prevTerms) =>
-                prevTerms.filter((term) => term._id !== id)
-            );
-        } catch (error) {
-            console.error("Erreur lors de l'unbookmark", error);
-        }
-    };
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -134,14 +47,8 @@ const BookmarksPage: React.FC = () => {
                         {bookmarkedTerms.map((term) => (
                             <TermItem
                                 isFeed={false}
-                                key={term._id}
-                                term={term}
-                                user={user}
-                                handleUpvote={handleUpvote}
-                                handleDownvote={handleDownvote}
-                                handleBookmark={() => {
-                                }}
-                                handleUnbookmark={handleUnbookmark}
+                                termForUser={term}
+                                key={term.id}
                             />
                         ))}
                     </ul>
@@ -155,31 +62,3 @@ const BookmarksPage: React.FC = () => {
         </div>
     );
 };
-
-const Pagination: React.FC<{
-    currentPage: number;
-    totalPages: number;
-    paginate: (pageNumber: number) => void;
-}> = ({currentPage, totalPages, paginate}) => {
-    const pageNumbers = Array.from({length: totalPages}, (_, i) => i + 1);
-
-    return (
-        <nav className="mt-4">
-            <ul className="inline-flex -space-x-px">
-                {pageNumbers.map((number) => (
-                    <li key={number}>
-                        <button
-                            onClick={() => paginate(number)}
-                            className={`px-3 py-2 leading-tight text-text bg-backgroundHover border border-background hover:bg-background focus:outline-none transition duration-200 rounded-lg shadow-lg ${currentPage === number ? "bg-primary text-white" : ""
-                            }`}
-                        >
-                            {number}
-                        </button>
-                    </li>
-                ))}
-            </ul>
-        </nav>
-    );
-};
-
-export default BookmarksPage;

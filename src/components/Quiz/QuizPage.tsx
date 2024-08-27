@@ -1,7 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {handleAuthError} from "../../utils/handleAuthError";
-import {AxiosError} from "axios";
-import {Term} from "../../models/termModel";
+import {Term} from "../../services/term/termModel";
 import {useLocation, useNavigate} from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -53,11 +51,8 @@ const QuizPage: React.FC = () => {
                 setCurrentFlashcard(flashcards[0]);
             }
         } catch (error) {
-            if (error instanceof AxiosError) {
-                handleAuthError(error);
-            } else {
-                console.error("Unexpected error:", error);
-            }
+
+            console.error("Unexpected error:", error);
         } finally {
             setLoading(false);
         }
@@ -208,7 +203,7 @@ const QuizPage: React.FC = () => {
                                     className={`text-xl font-bold mb-2 text-text ${isAnimating ? "opacity-0" : "opacity-100"
                                     } transition-opacity duration-500`}
                                 >
-                                    {currentFlashcard.translation}
+                                    {currentFlashcard.definition}
                                 </h3>
                                 {showDefinition && (
                                     <h3 className="text-xl text-text">

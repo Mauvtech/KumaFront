@@ -1,19 +1,34 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
-import {addComment, getTermById} from '../../services/termService/termService';
-import {AxiosError} from 'axios';
-import {handleAuthError} from '../../utils/handleAuthError';
-import {ErrorResponse} from '../../utils/types';
+import {addComment, getTermById} from '../../services/term/termService';
 import {useAuth} from '../../contexts/authContext';
-import {Term} from '../../models/termModel';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import {TermForUser} from "../../services/term/termModel";
+
+function useComments(id: string) {
+    return {
+        data: [
+            {
+                id: '1',
+                text: 'This is a comment',
+                createdAt: new Date(),
+                author: {
+                    id: '1',
+                    username: 'User1',
+                },
+            }
+        ]
+    }
+}
 
 const TermDetails: React.FC = () => {
     const {id} = useParams<{
         id: string
     }>();
-    const [term, setTerm] = useState<Term | null>(null);
+
+
+    const [termForUser, setTermForUser] = useState<TermForUser | null>(null);
     const [commentText, setCommentText] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [termLoading, setTermLoading] = useState<boolean>(true);
@@ -24,19 +39,18 @@ const TermDetails: React.FC = () => {
     useEffect(() => {
         const fetchTerm = async () => {
             if (id) {
-                try {
-                    const data = await getTermById(id);
-                    setTerm(data);
-                } catch (error) {
-                    handleAuthError(error as AxiosError<ErrorResponse>);
-                } finally {
-                    setTermLoading(false);
-                }
+                const data = await getTermById(id);
+                setTermForUser(data);
+                setTermLoading(false);
             }
         };
 
         fetchTerm();
     }, [id]);
+
+
+    const {data: fetchedComments} = useComments(id!!);
+
 
     const handleAddComment = async () => {
         if (!commentText.trim()) return;
@@ -48,7 +62,7 @@ const TermDetails: React.FC = () => {
             await addComment(id!, {text: commentText, createdAt: new Date()});
             setCommentText('');
             const updatedTerm = await getTermById(id!);
-            setTerm(updatedTerm);
+            setTermForUser(updatedTerm);
         } catch (error) {
             console.error('Erreur lors de l\'ajout du commentaire', error);
             setError('Une erreur est survenue lors de l\'ajout du commentaire.');
@@ -87,25 +101,25 @@ const TermDetails: React.FC = () => {
                 </div>
             ) : (
                 <>
-                    <h2 className="text-2xl font-bold mb-4 text-text">{term?.term}</h2>
+                    <h2 className="text-2xl font-bold mb-4 text-text">{termForUser?.term.term}</h2>
                     <div className="flex flex-wrap gap-2 mb-4">
                         <span className="bg-primaryLight text-primary text-xs px-2 rounded-full">
-                            {term?.grammaticalCategory.name}
+                            {termForUser?.term.grammaticalCategory.name}
                         </span>
                         <span className="bg-secondaryLight text-secondary text-xs px-2 rounded-full">
-                            {term?.theme.name}
+                            {termForUser?.term.tags[0].name}
                         </span>
                         <span className="bg-accentLight text-accent text-xs px-2 rounded-full">
-                            {term?.language.name} (Code: {term?.language.code})
+                            {termForUser?.term.language.name} (Code: {termForUser?.term.language.code})
                         </span>
                     </div>
                     <div className="mb-4 p-4 bg-backgroundHover rounded-lg shadow-neumorphic">
                         <p className="font-semibold text-text">Definition</p>
-                        <p>{term?.definition}</p>
+                        <p>{termForUser?.term.definition}</p>
                     </div>
                     <div className="mb-4 p-4 bg-backgroundHover rounded-lg shadow-neumorphic">
                         <p className="font-semibold text-text">Translation</p>
-                        <p>{term?.translation}</p>
+                        <p>{termForUser?.term.translation}</p>
                     </div>
                     <button onClick={() => navigate(-1)}
                             className="mt-4 p-3 bg-primary text-white rounded-lg shadow-neumorphic hover:bg-primaryLight focus:outline-none">
@@ -130,12 +144,12 @@ const TermDetails: React.FC = () => {
                     </div>
                     <div className="mt-8">
                         <h3 className="text-xl font-bold mb-4 text-text">Commentaires</h3>
-                        {term?.comments && term?.comments.length > 0 ? (
-                            term?.comments.map((comment, index) => (
+                        {fetchedComments && fetchedComments.length > 0 ? (
+                            fetchedComments.map((comment, index) => (
                                 <div key={index} className="mb-4 p-4 bg-backgroundHover rounded-lg shadow-neumorphic">
                                     <p className="text-sm text-secondary">{comment.author.username}</p>
                                     <p>{comment.text}</p>
-                                    <p className="text-xs text-text">{new Date(comment.createdAt).toLocaleDateString()}</p>
+                                    <p className="text-xs text-text">{comment.createdAt.toLocaleDateString()}</p>
                                 </div>
                             ))
                         ) : (

@@ -1,6 +1,6 @@
 import {motion, Variants} from "framer-motion";
 import React from "react";
-import {Term} from "../../models/termModel";
+import {TermForUser} from "../../services/term/termModel";
 
 
 export const verticalUpScrollVariants: Variants = {
@@ -27,9 +27,8 @@ export const verticalDownScrollVariants: Variants = {
     },
 };
 
-
 export default function WordStrip({terms}: {
-    terms: Term[]
+    terms: TermForUser[]
 }) {
     return (
         <>
@@ -40,20 +39,20 @@ export default function WordStrip({terms}: {
                     variants={verticalUpScrollVariants}
                     animate="animate"
                 >
-                    {terms.map((term, index) => (
+                    {terms.map((termForUser, index) => (
                         <div
                             key={`left-${index}`}
                             className="text-2xl text-primary transform rotate-90 whitespace-nowrap"
                         >
-                            {term.term}
+                            {termForUser.term.term}
                         </div>
                     ))}
-                    {terms.map((term, index) => (
+                    {terms.map((termForUser, index) => (
                         <div
                             key={`left-repeat-${index}`}
                             className="text-2xl text-primary transform rotate-90 whitespace-nowrap"
                         >
-                            {term.term}
+                            {termForUser.term.term}
                         </div>
                     ))}
                 </motion.div>
@@ -66,20 +65,20 @@ export default function WordStrip({terms}: {
                     variants={verticalDownScrollVariants}
                     animate="animate"
                 >
-                    {terms.map((term, index) => (
+                    {terms.map((termForUser, index) => (
                         <div
                             key={`right-${index}`}
                             className="text-2xl text-secondary transform rotate-90 whitespace-nowrap"
                         >
-                            {term.term}
+                            {termForUser.term.term}
                         </div>
                     ))}
-                    {terms.map((term, index) => (
+                    {terms.map((termForUser, index) => (
                         <div
                             key={`right-repeat-${index}`}
                             className="text-2xl text-secondary transform rotate-90 whitespace-nowrap"
                         >
-                            {term.term}
+                            {termForUser.term.term}
                         </div>
                     ))}
                 </motion.div>

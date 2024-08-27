@@ -19,6 +19,7 @@ import BookmarksPage from './components/Terms/BookmarksPage';
 import UserProfilePage from './components/User/UserProfilePage';
 import { Helmet } from 'react-helmet';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient()
 
@@ -76,7 +77,8 @@ function App() {
                             />
                             <Route
                                 path="/terms"
-                                element={<ProtectedRoute element={<TermsPage/>} allowedRoles={['admin', 'moderator']}/>}
+                                element={<ProtectedRoute element={<TermsPage/>}
+                                                         allowedRoles={['admin', 'moderator']}/>}
                             />
                             <Route path="/new-term" element={<ProtectedRoute element={<TermForm/>}/>}/>
                             <Route path="/update-profile" element={<ProtectedRoute element={<UpdateProfile/>}/>}/>
@@ -84,8 +86,8 @@ function App() {
                         </Routes>
                     </div>
                 </Router>
+                <ReactQueryDevtools initialIsOpen={false}/>
             </QueryClientProvider>
-
         </AuthProvider>
     );
 }

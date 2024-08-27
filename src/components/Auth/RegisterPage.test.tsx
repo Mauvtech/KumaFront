@@ -1,9 +1,9 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import {fireEvent, render, screen, waitFor} from '@testing-library/react';
+import {BrowserRouter} from 'react-router-dom';
 import RegisterPage from './RegisterPage';
-import { register } from '../../services/authService';
-import { AxiosError, AxiosRequestConfig, AxiosResponse, AxiosResponseHeaders } from 'axios';
+import {register} from '../../services/auth/authService';
+import {AxiosError, AxiosResponse, AxiosResponseHeaders} from 'axios';
 
 // Mock the authService functions
 jest.mock('../../services/authService', () => ({
@@ -32,18 +32,18 @@ describe('RegisterPage', () => {
     };
 
     it('renders the registration form', () => {
-        renderWithProviders(<RegisterPage />);
+        renderWithProviders(<RegisterPage/>);
 
         expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /sign up/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: /sign up/i})).toBeInTheDocument();
     });
 
     it('displays error messages when fields are empty', async () => {
-        renderWithProviders(<RegisterPage />);
+        renderWithProviders(<RegisterPage/>);
 
-        fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
+        fireEvent.click(screen.getByRole('button', {name: /sign up/i}));
 
         expect(await screen.findByText(/username is required/i)).toBeInTheDocument();
         expect(screen.getByText(/password is required/i)).toBeInTheDocument();
@@ -51,12 +51,12 @@ describe('RegisterPage', () => {
     });
 
     it('displays error when passwords do not match', async () => {
-        renderWithProviders(<RegisterPage />);
+        renderWithProviders(<RegisterPage/>);
 
-        fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'testuser' } });
-        fireEvent.change(screen.getByLabelText(/^password$/i), { target: { value: 'password123' } });
-        fireEvent.change(screen.getByLabelText(/confirm password/i), { target: { value: 'password456' } });
-        fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
+        fireEvent.change(screen.getByLabelText(/username/i), {target: {value: 'testuser'}});
+        fireEvent.change(screen.getByLabelText(/^password$/i), {target: {value: 'password123'}});
+        fireEvent.change(screen.getByLabelText(/confirm password/i), {target: {value: 'password456'}});
+        fireEvent.click(screen.getByRole('button', {name: /sign up/i}));
 
         expect(await screen.findByText(/passwords do not match/i)).toBeInTheDocument();
     });
@@ -65,12 +65,12 @@ describe('RegisterPage', () => {
         const mockRegister = jest.fn().mockResolvedValue({});
         (register as jest.Mock).mockImplementation(mockRegister);
 
-        renderWithProviders(<RegisterPage />);
+        renderWithProviders(<RegisterPage/>);
 
-        fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'testuser' } });
-        fireEvent.change(screen.getByLabelText(/^password$/i), { target: { value: 'password123' } });
-        fireEvent.change(screen.getByLabelText(/confirm password/i), { target: { value: 'password123' } });
-        fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
+        fireEvent.change(screen.getByLabelText(/username/i), {target: {value: 'testuser'}});
+        fireEvent.change(screen.getByLabelText(/^password$/i), {target: {value: 'password123'}});
+        fireEvent.change(screen.getByLabelText(/confirm password/i), {target: {value: 'password123'}});
+        fireEvent.click(screen.getByRole('button', {name: /sign up/i}));
 
         await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/login'));
     });
@@ -86,16 +86,16 @@ describe('RegisterPage', () => {
             headers: {},
         };
 
-        const error = new AxiosError('Registration failed', '400', { headers: {} as AxiosResponseHeaders } , errorResponse);
+        const error = new AxiosError('Registration failed', '400', {headers: {} as AxiosResponseHeaders}, errorResponse);
         const mockRegister = jest.fn().mockRejectedValue(error);
         (register as jest.Mock).mockImplementation(mockRegister);
 
-        renderWithProviders(<RegisterPage />);
+        renderWithProviders(<RegisterPage/>);
 
-        fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'testuser' } });
-        fireEvent.change(screen.getByLabelText(/^password$/i), { target: { value: 'password123' } });
-        fireEvent.change(screen.getByLabelText(/confirm password/i), { target: { value: 'password123' } });
-        fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
+        fireEvent.change(screen.getByLabelText(/username/i), {target: {value: 'testuser'}});
+        fireEvent.change(screen.getByLabelText(/^password$/i), {target: {value: 'password123'}});
+        fireEvent.change(screen.getByLabelText(/confirm password/i), {target: {value: 'password123'}});
+        fireEvent.click(screen.getByRole('button', {name: /sign up/i}));
 
         expect(await screen.findByText(/invalid credentials/i)).toBeInTheDocument();
     });

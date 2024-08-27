@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {approveTerm, getPendingTerms, rejectTerm,} from "../../services/termService/termService";
-import {getCurrentUser} from "../../services/authService";
+import {approveTerm, getPendingTerms, rejectTerm,} from "../../services/term/termService";
+import {getCurrentUser} from "../../services/auth/authService";
 import {useNavigate} from "react-router-dom";
-import {AxiosError} from "axios";
-import {handleAuthError} from "../../utils/handleAuthError";
 import {motion} from "framer-motion";
 
 const PendingTermsPage: React.FC = () => {
@@ -29,16 +27,14 @@ const PendingTermsPage: React.FC = () => {
                 setTerms(response);
             } catch (error) {
                 console.error("Erreur de chargement des termes en attente", error);
-                if (error instanceof AxiosError) {
-                    handleAuthError(error);
-                }
+
             }
         };
 
         fetchTerms();
     }, [user.token, navigate]);
 
-    const handleApprove = async (termId: string) => {
+    const handleApprove = async (termId: number) => {
         try {
             setLoading(true);
             const approveData = {
@@ -52,9 +48,7 @@ const PendingTermsPage: React.FC = () => {
             setTerms(terms.filter((term: any) => term._id !== termId));
         } catch (error) {
             console.error("Erreur d'approbation du terme", error);
-            if (error instanceof AxiosError) {
-                handleAuthError(error);
-            }
+
         } finally {
             setLoading(false);
         }
@@ -67,9 +61,7 @@ const PendingTermsPage: React.FC = () => {
             setTerms(terms.filter((term: any) => term._id !== termId));
         } catch (error) {
             console.error("Erreur de rejet du terme", error);
-            if (error instanceof AxiosError) {
-                handleAuthError(error);
-            }
+
         } finally {
             setLoading(false);
         }

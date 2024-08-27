@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {getUserProfile} from "../../services/userService";
-import {downvoteTerm, getAuthoredTerms, upvoteTerm} from "../../services/termService/termService";
+import {getAuthoredTerms} from "../../services/term/termService";
 import {useAuth} from "../../contexts/authContext";
 import {useNavigate} from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
@@ -41,7 +41,7 @@ const ProfilePage: React.FC = () => {
 
     useEffect(() => {
         const fetchUserProfile = async () => {
-            if (!user || !user.token) {
+            if (!user) {
                 navigate("/login");
                 return;
             }
@@ -66,45 +66,11 @@ const ProfilePage: React.FC = () => {
     }, [user, currentPage, fetchAuthoredTerms]);
 
     const handleUpvote = async (id: string) => {
-        try {
-            await upvoteTerm(id);
-            setAuthoredTerms((prevTerms) =>
-                prevTerms.map((term) => {
-                    if (term._id === id) {
-                        const isUpvoted = term.upvotedBy.includes(user!._id);
-                        const upvotedBy = isUpvoted
-                            ? term.upvotedBy.filter((userId: string) => userId !== user!._id)
-                            : [...term.upvotedBy, user!._id];
-                        const downvotedBy = term.downvotedBy.filter((userId: string) => userId !== user!._id);
-                        return {...term, upvotedBy, downvotedBy};
-                    }
-                    return term;
-                })
-            );
-        } catch (error) {
-            console.error("Erreur lors de l'upvote", error);
-        }
+        // TODO
     };
 
     const handleDownvote = async (id: string) => {
-        try {
-            await downvoteTerm(id);
-            setAuthoredTerms((prevTerms) =>
-                prevTerms.map((term) => {
-                    if (term._id === id) {
-                        const isDownvoted = term.downvotedBy.includes(user!._id);
-                        const downvotedBy = isDownvoted
-                            ? term.downvotedBy.filter((userId: string) => userId !== user!._id)
-                            : [...term.downvotedBy, user!._id];
-                        const upvotedBy = term.upvotedBy.filter((userId: string) => userId !== user!._id);
-                        return {...term, upvotedBy, downvotedBy};
-                    }
-                    return term;
-                })
-            );
-        } catch (error) {
-            console.error("Erreur lors de l'downvote", error);
-        }
+        // TODO
     };
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -164,15 +130,8 @@ const ProfilePage: React.FC = () => {
                         {authoredTerms.map((term) => (
                             <TermItem
                                 isFeed={false}
-                                key={term._id}
-                                term={term}
-                                user={user}
-                                handleUpvote={handleUpvote}
-                                handleDownvote={handleDownvote}
-                                handleBookmark={() => {
-                                }}
-                                handleUnbookmark={() => {
-                                }}
+                                key={term.id}
+                                termForUser={term}
                             />
                         ))}
                     </ul>
