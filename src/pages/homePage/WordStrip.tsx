@@ -27,6 +27,8 @@ export const verticalDownScrollVariants: Variants = {
     },
 };
 
+// TODO inutilement complexe, à passer en offline
+
 export default function WordStrip({terms}: {
     terms: TermForUser[]
 }) {
