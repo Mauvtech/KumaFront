@@ -5,7 +5,7 @@ import {login as loginService} from "../../services/auth/authService";
 import {AxiosError} from "axios";
 import {motion} from "framer-motion";
 
-const LoginPage: React.FC = () => {
+export default function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState<{
@@ -122,5 +122,3 @@ const LoginPage: React.FC = () => {
         </motion.form>
     );
 };
-
-export default LoginPage;

@@ -8,7 +8,6 @@ const RegisterPage: React.FC = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [role, setRole] = useState("user"); // Default role is 'user'
     const [errors, setErrors] = useState<{
         username?: string;
         password?: string;
@@ -51,7 +50,7 @@ const RegisterPage: React.FC = () => {
         }
 
         try {
-            await register({username, password, role});
+            await register({username, password});
             navigate("/login"); // Redirect to login page after successful registration
         } catch (error) {
             if (error instanceof AxiosError) {
