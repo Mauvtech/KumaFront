@@ -1,7 +1,7 @@
 import {api} from "../api";
 import {PaginatedTerm, paginatedTermForUserSchema} from "./termModel";
 import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
-import {Page, TermPageAndFilter} from "../../pages/homePage/HomePage";
+import {Page, TermFilter} from "../../pages/homePage/HomePage";
 
 export const addTerm = async (
     termData: {
@@ -23,12 +23,18 @@ export const getAllTerms = async (page: number = 1, limit: number = 10) => {
 
 };
 
-const getApprovedTerms = async ({page, filter}: TermPageAndFilter): Promise<PaginatedTerm | void> => {
-    return api.get(`/terms?page=${page.number}&size=${page.size}`, {
-        params: {
-            search: filter
-        },
-    }).then(res => paginatedTermForUserSchema.parse(res.data)
+const getApprovedTerms = async (pageParam?: number, filter?: TermFilter): Promise<PaginatedTerm | void> => {
+
+    console.log(pageParam)
+    return api.get(`/terms?page=${pageParam}&size=4`,
+        {
+            params: {
+                category: filter?.category,
+                theme: filter?.theme,
+                language: filter?.language,
+                searchTerm: filter?.searchTerm
+            }
+        }).then(res => paginatedTermForUserSchema.parse(res.data)
     ).catch((error) => {
         console.log(error)
     })
@@ -128,12 +134,12 @@ type filteredAndPaginatedTerms = {
 }
 
 
-export function useInfiniteTerms(pageAndFilter: TermPageAndFilter) {
+export function useInfiniteTerms(filter: TermFilter) {
     return useInfiniteQuery({
             queryKey: [APPROVED_TERMS_QUERY_KEY],
-            queryFn: () => getApprovedTerms(pageAndFilter),
+            queryFn: ({pageParam}) => getApprovedTerms(pageParam, filter),
             initialPageParam: 0,
-            getNextPageParam: (lastPage) => lastPage!!.number % lastPage!!.totalPages + 1,
+            getNextPageParam: (lastPage) => lastPage!!.number < lastPage!!.totalPages - 1 ? lastPage!!.number + 1 : undefined,
         }
     );
 }
@@ -142,7 +148,7 @@ export function useInfiniteTerms(pageAndFilter: TermPageAndFilter) {
 export function usePaginatedApprovedTerms(page: Page) {
     return useQuery({
         queryKey: [APPROVED_TERMS_QUERY_KEY, page],
-        queryFn: () => getApprovedTerms({page, filter: {}}),
+        queryFn: () => getApprovedTerms(page.number),
     });
 
 }

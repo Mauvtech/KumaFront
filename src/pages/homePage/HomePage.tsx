@@ -13,7 +13,7 @@ import WordSearch from "./WordSearch";
 import TermItemSkeleton from "./TermItemSkeleton";
 
 
-const termsPerPage: number = 9;
+const termsPerPage: number = 2;
 
 export type Page = {
     number: number;
@@ -57,10 +57,7 @@ export default function HomePage() {
         visible: {opacity: 1, y: 0, transition: {duration: 0.6}},
     };
 
-    const {data: approvedTerms, isLoading: termsLoading, fetchNextPage} = useInfiniteTerms(pageAndFilter)
-
-    console.log(approvedTerms)
-
+    const {data: approvedTerms, isLoading: termsLoading, fetchNextPage} = useInfiniteTerms(pageAndFilter.filter)
 
     const termes = approvedTerms?.pages.map(page => page!!.content).flat()
 
@@ -90,7 +87,8 @@ export default function HomePage() {
                 window.innerHeight + document.documentElement.scrollTop >=
                 document.documentElement.offsetHeight - 500
             ) {
-                if (hasMore && !termsLoading) {
+                if (!termsLoading) {
+                    console.log("fetch next")
                     fetchNextPage();
                 }
             }
