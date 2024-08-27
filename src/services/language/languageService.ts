@@ -11,8 +11,14 @@ export const getAllLanguages = async () => {
 };
 
 export const getLanguages = async () => {
-    const response = await api.get("/languages");
-    return z.array(languageSchema).parse(response.data)
+    return api.get("/languages").then(
+        (response) => {
+            return z.array(languageSchema).parse(response.data)
+        }).catch(
+        (error) => {
+            console.log(error)
+        }
+    )
 };
 
 export const addLanguage = async (

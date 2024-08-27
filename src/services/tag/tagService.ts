@@ -3,10 +3,16 @@ import {useQuery} from "@tanstack/react-query";
 import {tagSchema} from "./tagModel";
 import {z} from "zod";
 
-export const getTags = async () => {
-    const response = await api.get("/tags");
-    return z.array(tagSchema).parse(response.data)
 
+export const getTags = async () => {
+    return api.get("/tags").then(
+        (response) => {
+            return z.array(tagSchema).parse(response.data)
+        }).catch(
+        (error) => {
+            console.log(error)
+        }
+    )
 };
 
 

@@ -37,14 +37,22 @@ export default function HomePage() {
         filter: {}
     });
 
-    const setFilter = (filter: TermFilter) => {
-        setPageAndFilter({...pageAndFilter, filter});
-    }
+    const setFilter = (filter: TermFilter) => setPageAndFilter({...pageAndFilter, filter});
+
 
     const {data: approvedTerms, isLoading: termsLoading, fetchNextPage} = useInfiniteTerms(pageAndFilter.filter)
 
     const terms = approvedTerms?.pages.map(page => page!!.content).flat()
 
+
+    if (
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 500
+    ) {
+        if (!termsLoading) {
+            fetchNextPage();
+        }
+    }
 
     if (!terms) return <div>Loading...</div>;
 

@@ -1,10 +1,9 @@
 import {z} from "zod";
 
 export const languageSchema = z.object({
-    id: z.string(),
+    id: z.number(),
     name: z.string(),
     code: z.string(),
-    isApproved: z.boolean(),
 });
 
 export type Language = z.infer<typeof languageSchema>;

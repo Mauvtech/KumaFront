@@ -24,8 +24,6 @@ export const getAllTerms = async (page: number = 1, limit: number = 10) => {
 };
 
 const getApprovedTerms = async (pageParam?: number, filter?: TermFilter): Promise<PaginatedTerm | void> => {
-
-    console.log(pageParam)
     return api.get(`/terms?page=${pageParam}&size=4`,
         {
             params: {
@@ -34,10 +32,7 @@ const getApprovedTerms = async (pageParam?: number, filter?: TermFilter): Promis
                 language: filter?.language,
                 searchTerm: filter?.searchTerm
             }
-        }).then(res => paginatedTermForUserSchema.parse(res.data)
-    ).catch((error) => {
-        console.log(error)
-    })
+        }).then(res => paginatedTermForUserSchema.parse(res.data));
 };
 
 export const getPendingTerms = async () => {
