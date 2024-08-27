@@ -35,7 +35,6 @@ export type TermPageAndFilter = {
 
 
 export default function HomePage() {
-    const [hasMore] = useState<boolean>(true);
     const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
     const [showScrollDownIcon, setShowScrollDownIcon] = useState<boolean>(true);
 
@@ -96,7 +95,7 @@ export default function HomePage() {
 
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
-    }, [hasMore, termsLoading, fetchNextPage]);
+    }, [termsLoading, fetchNextPage]);
 
 
     if (!termes) return <div>Loading...</div>;
