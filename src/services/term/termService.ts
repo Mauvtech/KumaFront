@@ -24,7 +24,7 @@ export const getAllTerms = async (page: number = 1, limit: number = 10) => {
 };
 
 const getApprovedTerms = async (pageParam?: number, pageAndFilter?: TermPageAndFilter): Promise<PaginatedTerm | void> => {
-    return api.get(`/terms?page=${pageParam}&size=${pageAndFilter?.page.size}`,
+    return api.get(`/public/terms?page=${pageParam}&size=${pageAndFilter?.page.size}`,
         {
             params: {
                 category: pageAndFilter?.filter?.category,

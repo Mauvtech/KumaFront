@@ -23,7 +23,6 @@ export const login = (userData: {
 }) => {
     return api.post("/auth/login", userData).then((response) => {
         if (response.data.token) {
-            debugger
             const token = response.data.token;
             const decodedToken = jwtDecode<DecodedToken>(token);
             const {id, username, role} = decodedToken;

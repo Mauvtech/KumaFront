@@ -11,12 +11,13 @@ export const getAllLanguages = async () => {
 };
 
 export const getLanguages = async () => {
-    return api.get("/languages").then(
+    return api.get("/public/languages").then(
         (response) => {
             return z.array(languageSchema).parse(response.data)
         }).catch(
         (error) => {
             console.log(error)
+            throw error
         }
     )
 };

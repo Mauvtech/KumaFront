@@ -15,7 +15,7 @@ export const getAllCategories = async () => {
 };
 
 export const getCategories = async () => {
-    const response = await api.get("/categories");
+    const response = await api.get("/public/categories");
     return z.array(categorySchema).parse(response.data)
 };
 
