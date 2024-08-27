@@ -131,7 +131,7 @@ type filteredAndPaginatedTerms = {
 
 export function useInfiniteTerms(filter: TermFilter) {
     return useInfiniteQuery({
-            queryKey: [APPROVED_TERMS_QUERY_KEY],
+            queryKey: [APPROVED_TERMS_QUERY_KEY, filter],
             queryFn: ({pageParam}) => getApprovedTerms(pageParam, filter),
             initialPageParam: 0,
             getNextPageParam: (lastPage) => lastPage!!.number < lastPage!!.totalPages - 1 ? lastPage!!.number + 1 : undefined,

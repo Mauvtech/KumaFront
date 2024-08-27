@@ -28,7 +28,7 @@ export type TermPageAndFilter = {
     filter: TermFilter;
 }
 
-export const DEFAULT_TERM_PER_PAGE: number = 2;
+export const DEFAULT_TERM_PER_PAGE: number = 9;
 
 
 export default function HomePage() {
@@ -54,20 +54,18 @@ export default function HomePage() {
         }
     }
 
-    if (!terms) return <div>Loading...</div>;
-
 
     return (
         <div className="w-full bg-background">
             <div
                 className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative">
                 <CobeGlobe/>
-                <HomeDisplayWord terms={terms}/>
+                <HomeDisplayWord terms={terms ?? []}/>
 
                 <ScrollDownMouseIcon/>
             </div>
 
-            <WordStrip terms={terms}/>
+            <WordStrip terms={terms ?? []}/>
 
             {/* Main Content */}
             <div className="max-w-screen-lg mx-auto mt-10 p-6 bg-background rounded-lg">
@@ -76,7 +74,7 @@ export default function HomePage() {
                     setFilters={setFilter}
                 />
 
-                <ApprovedTermsList loading={termsLoading} terms={terms}/>
+                <ApprovedTermsList loading={termsLoading} terms={terms!}/>
             </div>
             <ScrollToTopButton/>
         </div>
