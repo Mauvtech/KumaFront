@@ -20,6 +20,7 @@ export type TermFilter = {
     theme?: string;
     language?: string;
     searchTerm?: string;
+    bookmarked?: boolean;
 }
 
 

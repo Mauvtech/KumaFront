@@ -2,7 +2,7 @@ import React from 'react';
 import {usePaginatedApprovedTerms} from "../../services/term/termService";
 
 export default function ApprovedTermsPage() {
-    const {data: approvedTerms} = usePaginatedApprovedTerms({number: 1, size: 50});
+    const {data: approvedTerms} = usePaginatedApprovedTerms({page: {number: 1, size: 50}, filter: {}});
 
     return (
         <div className="max-w-4xl mx-auto mt-10 p-4 bg-white shadow-md rounded-md">

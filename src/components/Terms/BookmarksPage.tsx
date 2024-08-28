@@ -1,20 +1,32 @@
 import React, {useState} from "react";
-import {useAuth} from "../../contexts/authContext";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import TermItem from "../Terms/TermItem";
 import Pagination from "./Pagination";
+import {usePaginatedApprovedTerms} from "../../services/term/termService";
+import {DEFAULT_TERM_PER_PAGE, TermPageAndFilter} from "../../pages/homePage/HomePage";
 
 const termsPerPage: number = 9;
 
 export default function BookmarksPage() {
-    const [bookmarkedTerms, setBookmarkedTerms] = useState<any[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const [totalPages, setTotalPages] = useState<number>(1);
-    const {user} = useAuth();
+    const [pageAndFilter, setPageAndFilter] = useState<TermPageAndFilter>({
+        page: {number: 0, size: DEFAULT_TERM_PER_PAGE},
+        filter: {
+            bookmarked: true
+        }
+    });
 
-    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+    const {data, isLoading} = usePaginatedApprovedTerms(pageAndFilter)
+
+    const bookmarkedTerms = data?.content;
+
+
+    function paginate() {
+        setPageAndFilter({
+            ...pageAndFilter,
+            page: {number: data!!.number + 1, size: DEFAULT_TERM_PER_PAGE},
+        });
+    }
 
     return (
         <div className="mt-10 flex flex-col justify-center items-center w-full">
@@ -22,7 +34,7 @@ export default function BookmarksPage() {
                 <h3 className="text-2xl font-bold mb-4 text-center text-text">
                     Bookmarked Terms
                 </h3>
-                {loading ? (
+                {isLoading ? (
                     <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {Array.from({length: termsPerPage}).map((_, index) => (
                             <li
@@ -40,24 +52,28 @@ export default function BookmarksPage() {
                             </li>
                         ))}
                     </ul>
-                ) : bookmarkedTerms.length === 0 ? (
+                ) : data && bookmarkedTerms!!.length === 0 ? (
                     <p className="text-center text-text">No bookmarks found.</p>
                 ) : (
-                    <ul className=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {bookmarkedTerms.map((term) => (
-                            <TermItem
-                                isFeed={false}
-                                termForUser={term}
-                                key={term.id}
-                            />
-                        ))}
-                    </ul>
+                    <>
+                        <ul className=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {bookmarkedTerms?.map((term) => (
+                                <TermItem
+                                    isFeed={false}
+                                    termForUser={term}
+                                    key={term.term.id}
+                                />
+                            ))}
+                        </ul>
+                        <Pagination
+                            currentPage={data?.number ?? 0}
+                            totalPages={data?.totalPages ?? 0}
+                            paginate={paginate}
+                        />
+                    </>
+
                 )}
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    paginate={paginate}
-                />
+
             </div>
         </div>
     );

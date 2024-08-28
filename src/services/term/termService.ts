@@ -1,7 +1,7 @@
 import {api} from "../api";
 import {PaginatedTerm, paginatedTermForUserSchema} from "./termModel";
 import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
-import {Page, TermPageAndFilter} from "../../pages/homePage/HomePage";
+import {TermPageAndFilter} from "../../pages/homePage/HomePage";
 
 export const addTerm = async (
     termData: {
@@ -30,7 +30,8 @@ const getApprovedTerms = async (pageParam?: number, pageAndFilter?: TermPageAndF
                 category: pageAndFilter?.filter?.category,
                 tag: pageAndFilter?.filter?.theme,
                 language: pageAndFilter?.filter?.language,
-                searchTerm: pageAndFilter?.filter?.searchTerm
+                searchTerm: pageAndFilter?.filter?.searchTerm,
+                bookmarked: pageAndFilter?.filter?.bookmarked,
             }
         }).then(res => paginatedTermForUserSchema.parse(res.data))
         .catch(err => {
@@ -142,10 +143,10 @@ export function useInfiniteTerms(pageAndFilter: TermPageAndFilter) {
 }
 
 
-export function usePaginatedApprovedTerms(page: Page) {
+export function usePaginatedApprovedTerms(filter: TermPageAndFilter) {
     return useQuery({
-        queryKey: [APPROVED_TERMS_QUERY_KEY, page],
-        queryFn: () => getApprovedTerms(page.number),
+        queryKey: [APPROVED_TERMS_QUERY_KEY, filter],
+        queryFn: () => getApprovedTerms(filter.page.number, filter),
     });
 
 }
