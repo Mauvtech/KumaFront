@@ -17,10 +17,25 @@ import QuizPage from './components/Quiz/QuizPage';
 import FlashcardSerieParams from './components/Quiz/FlashcardSerieParams';
 import BookmarksPage from './components/Terms/BookmarksPage';
 import UserProfilePage from './components/User/UserProfilePage';
+import { Helmet } from 'react-helmet';
 
 function App() {
   return (
     <AuthProvider>
+      <Helmet>
+        <title>Kuma - La Révolution dans l'Apprentissage des Langues et la Découverte Culturelle</title>
+        <meta name="description" content="Découvrez Kuma, la plateforme ultime pour l'apprentissage des langues, la découverte culturelle, et la promotion des experts. Rejoignez une communauté mondiale et contribuez à la préservation des langues." />
+        <meta name="keywords" content="apprentissage des langues, découverte culturelle, experts linguistiques, préservation des langues, communauté linguistique, éducation personnalisée" />
+
+        <meta property="og:title" content="Kuma - La Révolution dans l'Apprentissage des Langues et la Découverte Culturelle" />
+        <meta property="og:description" content="Kuma offre une expérience unique en combinant apprentissage personnalisé, promotion des experts, et un écosystème social dynamique. Rejoignez le mouvement et participez à la préservation des langues." />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="URL-to-your-image" />
+        <meta property="og:url" content="https://www.kumaverse.com" />
+
+        <link rel="canonical" href="https://www.kumaverse.com" />
+      </Helmet>
+
       <Router>
         <Navbar />
         <div className="min-h-screen w-full flex justify-center items-center  text-text font-sans">
