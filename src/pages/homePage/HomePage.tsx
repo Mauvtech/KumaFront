@@ -47,11 +47,9 @@ export default function HomePage() {
 
     if (
         window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - 500
+        document.documentElement.offsetHeight - 500 && !termsLoading
     ) {
-        if (!termsLoading) {
-            fetchNextPage();
-        }
+        fetchNextPage();
     }
 
 
@@ -73,7 +71,7 @@ export default function HomePage() {
                     filters={pageAndFilter.filter}
                     setFilters={setFilter}
                 />
-                <ApprovedTermsList loading={termsLoading} terms={terms!}/>
+                <ApprovedTermsList terms={terms} loading={termsLoading}/>
             </div>
             <ScrollToTopButton/>
         </div>

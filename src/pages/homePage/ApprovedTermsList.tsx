@@ -1,9 +1,8 @@
-import TermItemSkeleton from "./TermItemSkeleton";
 import {motion} from "framer-motion";
 import TermItem from "../../components/Terms/TermItem";
-import Skeleton from "react-loading-skeleton";
 import React from "react";
 import {TermForUser} from "../../services/term/termModel";
+import TermItemSkeleton from "./TermItemSkeleton";
 import {DEFAULT_TERM_PER_PAGE} from "./HomePage";
 
 const termVariants = {
@@ -12,12 +11,11 @@ const termVariants = {
 };
 
 type ApprovedTermsListProps = {
-    loading: boolean;
-    terms: TermForUser[]
+    terms?: TermForUser[],
+    loading: boolean,
 }
 
-export default function ApprovedTermsList({loading, terms}: ApprovedTermsListProps) {
-
+export default function ApprovedTermsList({terms, loading}: ApprovedTermsListProps) {
 
     if (loading) {
         return (
@@ -29,7 +27,7 @@ export default function ApprovedTermsList({loading, terms}: ApprovedTermsListPro
         )
     }
 
-    if (terms.length === 0) {
+    if (terms && terms.length === 0) {
         return <p className="text-center text-text">No terms found.</p>
     }
 
@@ -54,11 +52,6 @@ export default function ApprovedTermsList({loading, terms}: ApprovedTermsListPro
                     />
                 </motion.li>
             ))}
-            {loading && terms && terms.length > 1 && (
-                <li className="flex justify-center">
-                    <Skeleton height={35} width="90%"/>
-                </li>
-            )}
         </motion.ul>
     )
 

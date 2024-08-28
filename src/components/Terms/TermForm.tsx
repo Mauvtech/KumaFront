@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {addTerm} from '../../services/term/termService';
 import {useCategories} from '../../services/category/categoryService';
 import {useLanguages} from '../../services/language/languageService';
@@ -21,7 +21,7 @@ interface TermFormProps {
     };
 }
 
-const TermForm: React.FC<TermFormProps> = ({termId, initialData}) => {
+export default function TermForm({termId, initialData}: TermFormProps) {
     const [term, setTerm] = useState(initialData?.term || '');
     const [definition, setDefinition] = useState(initialData?.definition || '');
     const [translation, setTranslation] = useState(initialData?.translation || '');
@@ -31,19 +31,8 @@ const TermForm: React.FC<TermFormProps> = ({termId, initialData}) => {
     const [newCategory, setNewCategory] = useState('');
     const [newTheme, setNewTheme] = useState('');
     const [newLanguage, setNewLanguage] = useState('');
-    const [categories, setCategories] = useState<{
-        _id: string,
-        name: string
-    }[]>([]);
-    const [themeOptions, setThemeOptions] = useState<{
-        _id: string,
-        name: string
-    }[]>([]);
-    const [languageOptions, setLanguageOptions] = useState<{
-        _id: string,
-        name: string,
-        code: string
-    }[]>([]);
+
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
@@ -59,19 +48,6 @@ const TermForm: React.FC<TermFormProps> = ({termId, initialData}) => {
     const {data: fetchedThemes} = useTags()
 
     const {data: fetchedLanguages} = useLanguages()
-
-
-    useEffect(() => {
-        if (categories.length > 0 && !initialData?.grammaticalCategory) {
-            setGrammaticalCategory(categories[0].name);
-        }
-        if (themeOptions.length > 0 && !initialData?.theme) {
-            setTheme(themeOptions[0].name);
-        }
-        if (languageOptions.length > 0 && !initialData?.language) {
-            setLanguage(languageOptions[0].name);
-        }
-    }, [categories, themeOptions, languageOptions, initialData]);
 
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -164,7 +140,7 @@ const TermForm: React.FC<TermFormProps> = ({termId, initialData}) => {
                 }, true)}
                 <div className='flex sm:flex-row flex-col justify-center w-full gap-2'>
                     <Selector
-                        options={categories.map(category => category.name)}
+                        options={fetchedCategories?.map(category => category.name) ?? []}
                         selectedOption={grammaticalCategory}
                         onSelectOption={(option) => {
                             setGrammaticalCategory(option);
@@ -186,7 +162,7 @@ const TermForm: React.FC<TermFormProps> = ({termId, initialData}) => {
                     )}
 
                     <Selector
-                        options={themeOptions.map(theme => theme.name)}
+                        options={fetchedThemes?.map(theme => theme.name) ?? []}
                         selectedOption={theme}
                         onSelectOption={(option) => {
                             setTheme(option);
@@ -208,7 +184,7 @@ const TermForm: React.FC<TermFormProps> = ({termId, initialData}) => {
                     )}
 
                     <Selector
-                        options={languageOptions.map(language => language.name)}
+                        options={fetchedLanguages?.map(language => language.name) ?? []}
                         selectedOption={language}
                         onSelectOption={(option) => {
                             setLanguage(option);
@@ -271,6 +247,4 @@ const TermForm: React.FC<TermFormProps> = ({termId, initialData}) => {
             </AnimatePresence>
         </div>
     );
-};
-
-export default TermForm;
+}

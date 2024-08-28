@@ -32,13 +32,15 @@ const getApprovedTerms = async (pageParam?: number, pageAndFilter?: TermPageAndF
                 language: pageAndFilter?.filter?.language,
                 searchTerm: pageAndFilter?.filter?.searchTerm
             }
-        }).then(res => paginatedTermForUserSchema.parse(res.data));
+        }).then(res => paginatedTermForUserSchema.parse(res.data))
+        .catch(err => {
+            console.error(err);
+        })
 };
 
 export const getPendingTerms = async () => {
     const response = await api.get("/terms/pending");
     return response.data;
-
 };
 
 

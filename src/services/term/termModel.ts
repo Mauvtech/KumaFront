@@ -44,20 +44,3 @@ export const paginatedTermForUserSchema = createPaginatedResponseSchema(termForU
 export type Term = z.infer<typeof termSchema>;
 
 export type PaginatedTerm = z.infer<typeof paginatedTermForUserSchema>;
-
-/*export interface Term {
-    id: string;
-    term: string;
-    translation: string;
-    definition: string;
-    grammaticalCategory: Category;
-    theme: Theme;
-    author: User;
-    language: Language;
-    status: string;
-    isApproved: boolean;
-    bookmarkedBy: string[];
-    comments?: Comment[];
-    votes: number;
-}*/
-
