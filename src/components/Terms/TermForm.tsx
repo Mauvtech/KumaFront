@@ -2,12 +2,12 @@ import React, {useState} from 'react';
 import {addTerm} from '../../services/term/termService';
 import {useCategories} from '../../services/category/categoryService';
 import {useLanguages} from '../../services/language/languageService';
-import {useNavigate} from 'react-router-dom';
 import Selector from '../Common/Selector';
-import {AnimatePresence, motion} from 'framer-motion';
+import {motion} from 'framer-motion';
 import useTerms from "../../services/term/termMutationService";
 import {useTags} from "../../services/tag/tagService";
 import {capitalizeWord} from "../../utils/StringUtils";
+import AddTermValidationModal from "./AddTermValidationModal";
 
 interface TermFormProps {
     termId?: number;
@@ -36,8 +36,6 @@ export default function TermForm({termId, initialData}: TermFormProps) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
-    const [modalMessage, setModalMessage] = useState('');
-    const navigate = useNavigate();
 
     const {saveMutation} = useTerms()
 
@@ -70,7 +68,6 @@ export default function TermForm({termId, initialData}: TermFormProps) {
             } else {
                 await addTerm(termData);
             }
-            setModalMessage("Your term has been submitted successfully. A moderator is going to review it soon.");
             setShowModal(true);
         } catch (error) {
             console.error('Error submitting term', error);
@@ -78,11 +75,6 @@ export default function TermForm({termId, initialData}: TermFormProps) {
         } finally {
             setLoading(false);
         }
-    };
-
-    const handleCloseModal = () => {
-        setShowModal(false);
-        navigate('/');
     };
 
     const renderInput = (
@@ -216,35 +208,7 @@ export default function TermForm({termId, initialData}: TermFormProps) {
                     {loading ? 'Loading...' : termId ? 'Edit' : '+'}
                 </motion.button>
             </form>
-            <AnimatePresence>
-                {showModal && (
-                    <motion.div
-                        className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75"
-                        initial={{opacity: 0}}
-                        animate={{opacity: 1}}
-                        exit={{opacity: 0}}
-                        transition={{duration: 0.3}}
-                    >
-                        <motion.div
-                            className="bg-white p-6 rounded-lg shadow-lg text-center"
-                            initial={{scale: 0.8, opacity: 0}}
-                            animate={{scale: 1, opacity: 1}}
-                            exit={{scale: 0.8, opacity: 0}}
-                            transition={{duration: 0.3}}
-                        >
-                            <h2 className="text-xl font-bold mb-4">Success</h2>
-                            <p className="mb-4">{modalMessage}</p>
-                            <motion.button
-                                onClick={handleCloseModal}
-                                className="px-4 py-2 bg-primaryLight text-gray-600 rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
-                                whileTap={{scale: 0.95}}
-                            >
-                                OK
-                            </motion.button>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            <AddTermValidationModal open={showModal}/>
         </div>
     );
 }
