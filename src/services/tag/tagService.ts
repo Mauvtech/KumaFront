@@ -5,7 +5,7 @@ import {z} from "zod";
 
 
 export const getTags = async () => {
-    return api.get("/tags").then(
+    return api.get("/public/tags").then(
         (response) => {
             return z.array(tagSchema).parse(response.data)
         }).catch(

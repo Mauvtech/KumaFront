@@ -42,5 +42,12 @@ export default function useTerms() {
         })
     };
 
+    const addBookmark = useMutation({
+        mutationFn: (req: TermUpdateRequestWithId) => updateTerm(req.id, req.request),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: [TERM_QUERY_KEY]});
+        },
+    })
+
     return {saveMutation: useSaveMutation};
 }

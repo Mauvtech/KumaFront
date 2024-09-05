@@ -99,14 +99,7 @@ export const addComment = async (
     },) => {
     const response = await api.post(`/terms/${termId}/comment`, commentData);
     return response.data;
-
 };
-
-export const getVotes = async (termId: string) => {
-    const response = await api.get(`/terms/${termId}/votes`);
-    return response.data;
-
-}
 
 
 export const getAuthoredTerms = async (page: string, limit: string) => {
@@ -121,15 +114,6 @@ export const getUserApprovedTerms = async (username: string, page: string, limit
 }
 
 const APPROVED_TERMS_QUERY_KEY = 'approvedTerms';
-
-type filteredAndPaginatedTerms = {
-    category?: string;
-    theme?: string,
-    language?: string,
-    searchTerm?: string,
-    page: number,
-    limit: number,
-}
 
 
 export function useInfiniteTerms(pageAndFilter: TermPageAndFilter) {
