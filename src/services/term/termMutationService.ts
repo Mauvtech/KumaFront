@@ -1,6 +1,6 @@
 import api from "../api";
 import {useMutation, useQueryClient} from '@tanstack/react-query';
-import {Term} from "./termModel";
+import {Term, TermForUser, termForUserSchema} from "./termModel";
 import {AxiosResponse} from "axios";
 
 
@@ -49,5 +49,13 @@ export default function useTerms() {
         },
     })
 
-    return {saveMutation: useSaveMutation};
+    const getById = async (id: string) => {
+        return api.get(`/public/terms/${id}`).then(
+            (response: AxiosResponse<TermForUser>) => termForUserSchema.parse(response.data))
+    }
+
+    return {
+        saveMutation: useSaveMutation,
+        getById
+    };
 }

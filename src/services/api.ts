@@ -3,7 +3,7 @@ import {isTokenExpired, logout} from "./auth/authService";
 import {ErrorResponse} from "../utils/types";
 
 
-const apiBaseURL = process.env.REACT_APP_PROD_API_URL;
+const apiBaseURL = Config.apiBaseUrl
 
 if (!apiBaseURL) {
     throw new Error("API base URL not defined in environment variables");

@@ -11,13 +11,11 @@ import {AuthProvider} from './contexts/authContext';
 import UsersPage from './components/Admin/UsersPage';
 import TermsPage from './components/Admin/TermsPage';
 import ProtectedRoute from './components/ProtectedRoute';
-import TermDetails from './components/Terms/TermDetails';
+import TermDetails from './components/Terms/TermDetails/TermDetails';
 import UpdateProfile from './components/User/UpdateProfile';
-import QuizPage from './components/Quiz/QuizPage';
-import FlashcardSerieParams from './components/Quiz/FlashcardSerieParams';
 import BookmarksPage from './components/Terms/BookmarksPage';
 import UserProfilePage from './components/User/UserProfilePage';
-import { Helmet } from 'react-helmet';
+import {Helmet} from 'react-helmet';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
 
@@ -29,16 +27,20 @@ function App() {
         <AuthProvider>
             <Helmet>
                 <title>Kuma - La Révolution dans l'Apprentissage des Langues et la Découverte Culturelle</title>
-                <meta name="description" content="Découvrez Kuma, la plateforme ultime pour l'apprentissage des langues, la découverte culturelle, et la promotion des experts. Rejoignez une communauté mondiale et contribuez à la préservation des langues." />
-                <meta name="keywords" content="apprentissage des langues, découverte culturelle, experts linguistiques, préservation des langues, communauté linguistique, éducation personnalisée" />
+                <meta name="description"
+                      content="Découvrez Kuma, la plateforme ultime pour l'apprentissage des langues, la découverte culturelle, et la promotion des experts. Rejoignez une communauté mondiale et contribuez à la préservation des langues."/>
+                <meta name="keywords"
+                      content="apprentissage des langues, découverte culturelle, experts linguistiques, préservation des langues, communauté linguistique, éducation personnalisée"/>
 
-                <meta property="og:title" content="Kuma - La Révolution dans l'Apprentissage des Langues et la Découverte Culturelle" />
-                <meta property="og:description" content="Kuma offre une expérience unique en combinant apprentissage personnalisé, promotion des experts, et un écosystème social dynamique. Rejoignez le mouvement et participez à la préservation des langues." />
-                <meta property="og:type" content="website" />
-                <meta property="og:image" content="URL-to-your-image" />
-                <meta property="og:url" content="https://www.kumaverse.com" />
+                <meta property="og:title"
+                      content="Kuma - La Révolution dans l'Apprentissage des Langues et la Découverte Culturelle"/>
+                <meta property="og:description"
+                      content="Kuma offre une expérience unique en combinant apprentissage personnalisé, promotion des experts, et un écosystème social dynamique. Rejoignez le mouvement et participez à la préservation des langues."/>
+                <meta property="og:type" content="website"/>
+                <meta property="og:image" content="URL-to-your-image"/>
+                <meta property="og:url" content="https://www.kumaverse.com"/>
 
-                <link rel="canonical" href="https://www.kumaverse.com" />
+                <link rel="canonical" href="https://www.kumaverse.com"/>
             </Helmet>
 
             <QueryClientProvider client={queryClient}>
@@ -66,16 +68,6 @@ function App() {
                                 <Route
                                     path="/users"
                                     element={<ProtectedRoute element={<UsersPage/>} allowedRoles={['admin']}/>}
-                                />
-                                <Route
-                                    path="/terms/flashcard-serie"
-                                    element={<ProtectedRoute element={<FlashcardSerieParams/>}
-                                                             allowedRoles={['admin']}/>}
-                                />
-                                <Route
-                                    path="/terms/quiz"
-                                    element={<ProtectedRoute element={<QuizPage/>}
-                                                             allowedRoles={['admin']}/>}
                                 />
                                 <Route
                                     path="/terms"
