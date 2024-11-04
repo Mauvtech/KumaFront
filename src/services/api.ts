@@ -1,9 +1,10 @@
 import axios, {AxiosError, AxiosHeaders, InternalAxiosRequestConfig,} from "axios";
 import {isTokenExpired, logout} from "./auth/authService";
 import {ErrorResponse} from "../utils/types";
+import config from "../config";
 
 
-const apiBaseURL = Config.apiBaseUrl
+const apiBaseURL = config.apiBaseUrl
 
 if (!apiBaseURL) {
     throw new Error("API base URL not defined in environment variables");
