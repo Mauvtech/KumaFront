@@ -46,7 +46,7 @@ export async function updateConfig(newConfig) {
 
 // Example usage:
 const newConfig = {
-  apiUrl: process.env.REACT_APP_API_URL,
+  apiUrl: process.env.REACT_APP_PROD_API_URL,
   environment: "production",
   features: {
     featureA: true,
