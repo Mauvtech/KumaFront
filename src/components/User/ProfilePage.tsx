@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { getUserProfile } from "../../services/userService";
-import { downvoteTerm, getAuthoredTerms, upvoteTerm } from "../../services/termService";
-import { useAuth } from "../../contexts/authContext";
-import { useNavigate } from "react-router-dom";
+import React, {useCallback, useEffect, useState} from "react";
+import {getUserProfile} from "../../services/userService";
+import {getAuthoredTerms} from "../../services/term/termService";
+import {useAuth} from "../../contexts/authContext";
+import {useNavigate} from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import TermItem from "../Terms/TermItem";
-import { Pagination } from "../Common/Pagination";
+import {Pagination} from "../Common/Pagination";
 
 const ProfilePage: React.FC = () => {
     const [userProfile, setUserProfile] = useState<any>(null);
@@ -17,7 +17,7 @@ const ProfilePage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
     const [totalTerms, setTotalTerms] = useState<number>(0);
-    const { user } = useAuth();
+    const {user} = useAuth();
     const navigate = useNavigate();
     const termsPerPage: number = 10;
 
@@ -41,7 +41,7 @@ const ProfilePage: React.FC = () => {
 
     useEffect(() => {
         const fetchUserProfile = async () => {
-            if (!user || !user.token) {
+            if (!user) {
                 navigate("/login");
                 return;
             }
@@ -66,45 +66,11 @@ const ProfilePage: React.FC = () => {
     }, [user, currentPage, fetchAuthoredTerms]);
 
     const handleUpvote = async (id: string) => {
-        try {
-            await upvoteTerm(id);
-            setAuthoredTerms((prevTerms) =>
-                prevTerms.map((term) => {
-                    if (term._id === id) {
-                        const isUpvoted = term.upvotedBy.includes(user!._id);
-                        const upvotedBy = isUpvoted
-                            ? term.upvotedBy.filter((userId: string) => userId !== user!._id)
-                            : [...term.upvotedBy, user!._id];
-                        const downvotedBy = term.downvotedBy.filter((userId: string) => userId !== user!._id);
-                        return { ...term, upvotedBy, downvotedBy };
-                    }
-                    return term;
-                })
-            );
-        } catch (error) {
-            console.error("Erreur lors de l'upvote", error);
-        }
+        // TODO
     };
 
     const handleDownvote = async (id: string) => {
-        try {
-            await downvoteTerm(id);
-            setAuthoredTerms((prevTerms) =>
-                prevTerms.map((term) => {
-                    if (term._id === id) {
-                        const isDownvoted = term.downvotedBy.includes(user!._id);
-                        const downvotedBy = isDownvoted
-                            ? term.downvotedBy.filter((userId: string) => userId !== user!._id)
-                            : [...term.downvotedBy, user!._id];
-                        const upvotedBy = term.upvotedBy.filter((userId: string) => userId !== user!._id);
-                        return { ...term, upvotedBy, downvotedBy };
-                    }
-                    return term;
-                })
-            );
-        } catch (error) {
-            console.error("Erreur lors de l'downvote", error);
-        }
+        // TODO
     };
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -114,9 +80,9 @@ const ProfilePage: React.FC = () => {
             <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
                 {loading ? (
                     <>
-                        <Skeleton height={80} width="100%" />
-                        <Skeleton height={80} width="100%" />
-                        <Skeleton height={50} width="100%" />
+                        <Skeleton height={80} width="100%"/>
+                        <Skeleton height={80} width="100%"/>
+                        <Skeleton height={50} width="100%"/>
                     </>
                 ) : (
                     <>
@@ -141,18 +107,18 @@ const ProfilePage: React.FC = () => {
                 <h3 className="text-2xl font-bold mb-4 text-center text-text">Authored Terms</h3>
                 {termsLoading ? (
                     <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {Array.from({ length: termsPerPage }).map((_, index) => (
+                        {Array.from({length: termsPerPage}).map((_, index) => (
                             <li
                                 key={index}
                                 className="flex flex-col justify-between mb-4 p-4 bg-backgroundHover rounded-lg shadow-neumorphic"
                             >
-                                <Skeleton height={30} width="80%" />
-                                <Skeleton height={20} width="60%" />
-                                <Skeleton height={20} width="100%" />
-                                <Skeleton height={20} width="90%" />
+                                <Skeleton height={30} width="80%"/>
+                                <Skeleton height={20} width="60%"/>
+                                <Skeleton height={20} width="100%"/>
+                                <Skeleton height={20} width="90%"/>
                                 <div className="mt-2">
-                                    <Skeleton height={20} width="30%" />
-                                    <Skeleton height={20} width="40%" />
+                                    <Skeleton height={20} width="30%"/>
+                                    <Skeleton height={20} width="40%"/>
                                 </div>
                             </li>
                         ))}
@@ -164,13 +130,8 @@ const ProfilePage: React.FC = () => {
                         {authoredTerms.map((term) => (
                             <TermItem
                                 isFeed={false}
-                                key={term._id}
-                                term={term}
-                                user={user}
-                                handleUpvote={handleUpvote}
-                                handleDownvote={handleDownvote}
-                                handleBookmark={() => { }}
-                                handleUnbookmark={() => { }}
+                                key={term.id}
+                                termForUser={term}
                             />
                         ))}
                     </ul>

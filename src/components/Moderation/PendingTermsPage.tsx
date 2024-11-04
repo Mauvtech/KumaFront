@@ -1,14 +1,8 @@
-import React, { useEffect, useState } from "react";
-import {
-    getPendingTerms,
-    approveTerm,
-    rejectTerm,
-} from "../../services/termService";
-import { getCurrentUser } from "../../services/authService";
-import { useNavigate } from "react-router-dom";
-import { AxiosError } from "axios";
-import { handleAuthError } from "../../utils/handleAuthError";
-import { motion } from "framer-motion";
+import React, {useEffect, useState} from "react";
+import {approveTerm, getPendingTerms, rejectTerm,} from "../../services/term/termService";
+import {getCurrentUser} from "../../services/auth/authService";
+import {useNavigate} from "react-router-dom";
+import {motion} from "framer-motion";
 
 const PendingTermsPage: React.FC = () => {
     const [terms, setTerms] = useState<any[]>([]);
@@ -33,16 +27,14 @@ const PendingTermsPage: React.FC = () => {
                 setTerms(response);
             } catch (error) {
                 console.error("Erreur de chargement des termes en attente", error);
-                if (error instanceof AxiosError) {
-                    handleAuthError(error);
-                }
+
             }
         };
 
         fetchTerms();
     }, [user.token, navigate]);
 
-    const handleApprove = async (termId: string) => {
+    const handleApprove = async (termId: number) => {
         try {
             setLoading(true);
             const approveData = {
@@ -56,9 +48,7 @@ const PendingTermsPage: React.FC = () => {
             setTerms(terms.filter((term: any) => term._id !== termId));
         } catch (error) {
             console.error("Erreur d'approbation du terme", error);
-            if (error instanceof AxiosError) {
-                handleAuthError(error);
-            }
+
         } finally {
             setLoading(false);
         }
@@ -71,9 +61,7 @@ const PendingTermsPage: React.FC = () => {
             setTerms(terms.filter((term: any) => term._id !== termId));
         } catch (error) {
             console.error("Erreur de rejet du terme", error);
-            if (error instanceof AxiosError) {
-                handleAuthError(error);
-            }
+
         } finally {
             setLoading(false);
         }
@@ -82,9 +70,9 @@ const PendingTermsPage: React.FC = () => {
     return (
         <motion.div
             className="max-w-4xl mx-auto mt-10 p-4 bg-background rounded-lg shadow-neumorphic"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.5}}
         >
             <h2 className="text-2xl font-bold mb-4 text-text">Pending Terms</h2>
             {loading && <p className="text-text">Loading...</p>}
@@ -136,9 +124,9 @@ const PendingTermsPage: React.FC = () => {
                     <motion.li
                         key={term._id}
                         className="mb-4 p-4 bg-backgroundHover border-none rounded-lg shadow-inner transition-transform transform hover:scale-105"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, delay: 0.1 }}
+                        initial={{opacity: 0, y: 20}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{duration: 0.3, delay: 0.1}}
                     >
                         <h3 className="text-xl font-bold text-text">{term.term}</h3>
                         <p className="text-text">{term.definition}</p>

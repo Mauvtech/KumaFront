@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/authContext";
-import { login as loginService } from "../../services/authService";
-import { AxiosError } from "axios";
-import { motion } from "framer-motion";
+import React, {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {useAuth} from "../../contexts/authContext";
+import {login as loginService} from "../../services/auth/authService";
+import {AxiosError} from "axios";
+import {motion} from "framer-motion";
 
-const LoginPage: React.FC = () => {
+export default function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState<{
@@ -14,10 +14,13 @@ const LoginPage: React.FC = () => {
         general?: string;
     }>({});
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const {login} = useAuth();
 
     const validateForm = () => {
-        let formErrors: { username?: string; password?: string } = {};
+        let formErrors: {
+            username?: string;
+            password?: string
+        } = {};
 
         if (!username) {
             formErrors.username = "Username is required";
@@ -40,20 +43,20 @@ const LoginPage: React.FC = () => {
         }
 
         try {
-            const userData = await loginService({ username, password });
+            const userData = await loginService({username, password});
             if (userData) {
                 login(userData);
                 navigate("/");
             } else {
-                setErrors({ general: "Login failed" });
+                setErrors({general: "Login failed"});
                 console.error("Login failed");
             }
         } catch (error) {
             if (error instanceof AxiosError) {
                 if (error.response?.status === 400) {
-                    setErrors({ general: "Invalid credentials" });
+                    setErrors({general: "Invalid credentials"});
                 } else {
-                    setErrors({ general: "Login failed" });
+                    setErrors({general: "Login failed"});
                 }
             } else {
                 console.error("Login error", error);
@@ -65,9 +68,9 @@ const LoginPage: React.FC = () => {
         <motion.form
             onSubmit={handleLogin}
             className="max-w-md mx-auto mt-10 p-6 bg-background rounded-lg shadow-neumorphic"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.5}}
         >
             <h2 className="text-2xl font-bold mb-4 text-text">Login</h2>
             {errors.general && (
@@ -84,7 +87,7 @@ const LoginPage: React.FC = () => {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primaryLight ${errors.username ? "border-error" : ""
-                        }`}
+                    }`}
                     required
                 />
                 {errors.username && (
@@ -102,7 +105,7 @@ const LoginPage: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primaryLight ${errors.password ? "border-error" : ""
-                        }`}
+                    }`}
                     required
                 />
                 {errors.password && (
@@ -112,12 +115,10 @@ const LoginPage: React.FC = () => {
             <motion.button
                 type="submit"
                 className="w-full p-3 text-white rounded-lg bg-primary shadow-neumorphic hover:bg-primaryDark focus:outline-none transition-transform transform hover:scale-105"
-                whileTap={{ scale: 0.95 }}
+                whileTap={{scale: 0.95}}
             >
                 Login
             </motion.button>
         </motion.form>
     );
 };
-
-export default LoginPage;

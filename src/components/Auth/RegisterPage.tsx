@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import { register } from "../../services/authService";
-import { useNavigate } from "react-router-dom";
-import { AxiosError } from "axios";
-import { motion } from "framer-motion";
+import React, {useState} from "react";
+import {register} from "../../services/auth/authService";
+import {useNavigate} from "react-router-dom";
+import {AxiosError} from "axios";
+import {motion} from "framer-motion";
 
 const RegisterPage: React.FC = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [role, setRole] = useState("user"); // Default role is 'user'
     const [errors, setErrors] = useState<{
         username?: string;
         password?: string;
@@ -51,14 +50,14 @@ const RegisterPage: React.FC = () => {
         }
 
         try {
-            await register({ username, password, role });
+            await register({username, password});
             navigate("/login"); // Redirect to login page after successful registration
         } catch (error) {
             if (error instanceof AxiosError) {
                 if (error.response?.status === 400) {
-                    setErrors({ general: "Registration failed: Invalid credentials" });
+                    setErrors({general: "Registration failed: Invalid credentials"});
                 } else {
-                    setErrors({ general: "Registration failed" });
+                    setErrors({general: "Registration failed"});
                 }
             } else {
                 console.error("Registration error", error);
@@ -70,9 +69,9 @@ const RegisterPage: React.FC = () => {
         <motion.form
             onSubmit={handleRegister}
             className="max-w-md mx-auto mt-10 p-6 bg-background rounded-lg shadow-neumorphic"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.5}}
         >
             <h2 className="text-2xl font-bold mb-4 text-text">Sign Up</h2>
             {errors.general && (
@@ -88,7 +87,7 @@ const RegisterPage: React.FC = () => {
                     id="username"
                     onChange={(e) => setUsername(e.target.value)}
                     className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primaryLight ${errors.username ? "border-error" : ""
-                        }`}
+                    }`}
                     required
                 />
                 {errors.username && (
@@ -105,7 +104,7 @@ const RegisterPage: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primaryLight ${errors.password ? "border-error" : ""
-                        }`}
+                    }`}
                     required
                 />
                 {errors.password && (
@@ -122,7 +121,7 @@ const RegisterPage: React.FC = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primaryLight ${errors.confirmPassword ? "border-error" : ""
-                        }`}
+                    }`}
                     required
                 />
                 {errors.confirmPassword && (
@@ -132,7 +131,7 @@ const RegisterPage: React.FC = () => {
             <motion.button
                 type="submit"
                 className="w-full p-3 text-white rounded-lg bg-primary shadow-neumorphic hover:bg-primaryDark focus:outline-none transition-transform transform hover:scale-105"
-                whileTap={{ scale: 0.95 }}
+                whileTap={{scale: 0.95}}
             >
                 Sign Up
             </motion.button>

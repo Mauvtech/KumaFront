@@ -1,27 +1,27 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/authContext";
+import React, {useEffect, useRef, useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import {useAuth} from "../contexts/authContext";
 import {
-    FaUser,
-    FaSignOutAlt,
-    FaSignInAlt,
-    FaUserPlus,
-    FaPlus,
-    FaTachometerAlt,
-    FaListAlt,
-    FaLink, // Import the FaLink icon
-    FaChevronDown,
     FaBars,
-    FaTimes,
-    FaQuestion,
     FaBookmark,
+    FaChevronDown,
+    FaLink,
+    FaListAlt,
+    FaPlus,
+    FaQuestion,
+    FaSignInAlt,
+    FaSignOutAlt,
+    FaTachometerAlt,
+    FaTimes,
+    FaUser,
+    FaUserPlus,
 } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import {AnimatePresence, motion} from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 function Navbar() {
-    const { user, loading, logout } = useAuth();
+    const {user, loading, logout} = useAuth();
     const navigate = useNavigate();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -67,13 +67,13 @@ function Navbar() {
         closed: {
             opacity: 0,
             y: -10,
-            transition: { duration: 0.2 },
+            transition: {duration: 0.2},
             display: "none",
         },
         open: {
             opacity: 1,
             y: 0,
-            transition: { duration: 0.3 },
+            transition: {duration: 0.3},
             display: "block",
         },
     };
@@ -83,12 +83,12 @@ function Navbar() {
         closed: {
             opacity: 0,
             height: 0,
-            transition: { duration: 0.3 },
+            transition: {duration: 0.3},
         },
         open: {
             opacity: 1,
             height: "auto",
-            transition: { duration: 0.5 },
+            transition: {duration: 0.5},
         },
     };
 
@@ -102,15 +102,15 @@ function Navbar() {
                             to="/"
                             className="text-background text-xl font-bold flex items-center"
                         >
-                            <FaLink className="mr-2" />
+                            <FaLink className="mr-2"/>
                             KUMA
                         </Link>
                     </div>
                     <div className="hidden md:flex items-center space-x-6">
                         {loading ? (
                             <div className="text-background flex items-center">
-                                <Skeleton circle={true} height={40} width={40} />
-                                <Skeleton height={40} width={100} className="ml-2" />
+                                <Skeleton circle={true} height={40} width={40}/>
+                                <Skeleton height={40} width={100} className="ml-2"/>
                             </div>
                         ) : (
                             <>
@@ -118,16 +118,19 @@ function Navbar() {
                                     to="/new-term"
                                     className="text-background flex items-center hover:text-primary transition duration-300"
                                 >
-                                    <FaPlus className="mr-2" />
+                                    <FaPlus className="mr-2"/>
                                     New Term
                                 </Link>
+                                <span hidden>
                                 <Link
                                     to="/terms/flashcard-serie"
                                     className="text-background flex items-center hover:text-primary transition duration-300"
                                 >
-                                    <FaQuestion className="mr-2" />
+                                    <FaQuestion className="mr-2"/>
                                     Quiz
                                 </Link>
+                                </span>
+
                                 {user && (
                                     <>
                                         {user.role === "admin" && (
@@ -135,7 +138,7 @@ function Navbar() {
                                                 to="/dashboard"
                                                 className="text-background flex items-center hover:text-primary transition duration-300"
                                             >
-                                                <FaTachometerAlt className="mr-2" />
+                                                <FaTachometerAlt className="mr-2"/>
                                                 Dashboard
                                             </Link>
                                         )}
@@ -144,7 +147,7 @@ function Navbar() {
                                                 to="/terms"
                                                 className="text-background flex items-center hover:text-primary transition duration-300"
                                             >
-                                                <FaListAlt className="mr-2" />
+                                                <FaListAlt className="mr-2"/>
                                                 Term Management
                                             </Link>
                                         )}
@@ -152,7 +155,7 @@ function Navbar() {
                                             to="/bookmarks"
                                             className="text-background flex items-center hover:text-primary transition duration-300"
                                         >
-                                            <FaBookmark className="mr-2" />
+                                            <FaBookmark className="mr-2"/>
                                             Bookmarks
                                         </Link>
                                         <div className="relative" ref={dropdownRef}>
@@ -160,9 +163,9 @@ function Navbar() {
                                                 onClick={toggleDropdown}
                                                 className="text-background flex items-center focus:outline-none hover:text-primary transition duration-300"
                                             >
-                                                <FaUser className="mr-2" />
+                                                <FaUser className="mr-2"/>
                                                 <span>{user.username}</span>
-                                                <FaChevronDown className="ml-2" />
+                                                <FaChevronDown className="ml-2"/>
                                             </button>
                                             <AnimatePresence>
                                                 {dropdownOpen && (
@@ -178,14 +181,14 @@ function Navbar() {
                                                             to="/profile"
                                                             className="px-4 py-2 text-text hover:bg-secondary hover:text-background flex items-center"
                                                         >
-                                                            <FaUser className="mr-2" />
+                                                            <FaUser className="mr-2"/>
                                                             Profile
                                                         </Link>
                                                         <button
                                                             onClick={handleLogout}
                                                             className="w-full text-left px-4 py-2 text-text hover:bg-secondary hover:text-background flex items-center"
                                                         >
-                                                            <FaSignOutAlt className="mr-2" />
+                                                            <FaSignOutAlt className="mr-2"/>
                                                             Logout
                                                         </button>
                                                     </motion.div>
@@ -200,14 +203,14 @@ function Navbar() {
                                             to="/login"
                                             className="text-background flex items-center hover:text-primary transition duration-300"
                                         >
-                                            <FaSignInAlt className="mr-2" />
+                                            <FaSignInAlt className="mr-2"/>
                                             Login
                                         </Link>
                                         <Link
                                             to="/register"
                                             className="text-background flex items-center hover:text-primary transition duration-300"
                                         >
-                                            <FaUserPlus className="mr-2" />
+                                            <FaUserPlus className="mr-2"/>
                                             Signin
                                         </Link>
                                     </>
@@ -220,7 +223,7 @@ function Navbar() {
                             className="text-background focus:outline-none"
                             onClick={toggleMenu}
                         >
-                            {menuOpen ? <FaTimes /> : <FaBars />}
+                            {menuOpen ? <FaTimes/> : <FaBars/>}
                         </button>
                     </div>
                 </div>
@@ -238,8 +241,8 @@ function Navbar() {
                     >
                         {loading ? (
                             <div className="text-text flex items-center">
-                                <Skeleton circle={true} height={40} width={40} />
-                                <Skeleton height={40} width={100} className="ml-2" />
+                                <Skeleton circle={true} height={40} width={40}/>
+                                <Skeleton height={40} width={100} className="ml-2"/>
                             </div>
                         ) : (
                             <>
@@ -247,14 +250,14 @@ function Navbar() {
                                     to="/new-term"
                                     className="text-text flex items-center mt-4 hover:bg-primary hover:text-background transition duration-300"
                                 >
-                                    <FaPlus className="mr-2" />
+                                    <FaPlus className="mr-2"/>
                                     New Term
                                 </Link>
                                 <Link
                                     to="/terms/flashcard-serie"
                                     className="text-text flex items-center mt-4 hover:bg-primary hover:text-background transition duration-300"
                                 >
-                                    <FaQuestion className="mr-2" />
+                                    <FaQuestion className="mr-2"/>
                                     Quiz
                                 </Link>
                                 {user && (
@@ -264,7 +267,7 @@ function Navbar() {
                                                 to="/dashboard"
                                                 className="text-text flex items-center mt-4 hover:bg-primary hover:text-background transition duration-300"
                                             >
-                                                <FaTachometerAlt className="mr-2" />
+                                                <FaTachometerAlt className="mr-2"/>
                                                 Dashboard
                                             </Link>
                                         )}
@@ -273,7 +276,7 @@ function Navbar() {
                                                 to="/terms"
                                                 className="text-text flex items-center mt-4 hover:bg-primary hover:text-background transition duration-300"
                                             >
-                                                <FaListAlt className="mr-2" />
+                                                <FaListAlt className="mr-2"/>
                                                 Term Management
                                             </Link>
                                         )}
@@ -281,7 +284,7 @@ function Navbar() {
                                             to="/bookmarks"
                                             className="text-text flex items-center mt-4 hover:bg-primary hover:text-background transition duration-300"
                                         >
-                                            <FaBookmark className="mr-2" />
+                                            <FaBookmark className="mr-2"/>
                                             Bookmarks
                                         </Link>
                                         <div className="relative mt-4" ref={dropdownRef}>
@@ -289,9 +292,9 @@ function Navbar() {
                                                 onClick={toggleDropdown}
                                                 className="text-text flex items-center focus:outline-none hover:bg-primary hover:text-background transition duration-300"
                                             >
-                                                <FaUser className="mr-2" />
+                                                <FaUser className="mr-2"/>
                                                 <span>{user.username}</span>
-                                                <FaChevronDown className="ml-2" />
+                                                <FaChevronDown className="ml-2"/>
                                             </button>
                                             <AnimatePresence>
                                                 {dropdownOpen && (
@@ -307,14 +310,14 @@ function Navbar() {
                                                             to="/profile"
                                                             className=" px-4 py-2 text-text hover:bg-secondary hover:text-background flex items-center"
                                                         >
-                                                            <FaUser className="mr-2" />
+                                                            <FaUser className="mr-2"/>
                                                             Profile
                                                         </Link>
                                                         <button
                                                             onClick={handleLogout}
                                                             className="w-full text-left px-4 py-2 text-text hover:bg-secondary hover:text-background flex items-center"
                                                         >
-                                                            <FaSignOutAlt className="mr-2" />
+                                                            <FaSignOutAlt className="mr-2"/>
                                                             Logout
                                                         </button>
                                                     </motion.div>
@@ -329,14 +332,14 @@ function Navbar() {
                                             to="/login"
                                             className="text-text flex items-center mt-4 hover:bg-primary hover:text-background transition duration-300"
                                         >
-                                            <FaSignInAlt className="mr-2" />
+                                            <FaSignInAlt className="mr-2"/>
                                             Login
                                         </Link>
                                         <Link
                                             to="/register"
                                             className="text-text flex items-center mt-4 hover:bg-primary hover:text-background transition duration-300"
                                         >
-                                            <FaUserPlus className="mr-2" />
+                                            <FaUserPlus className="mr-2"/>
                                             Signin
                                         </Link>
                                     </>

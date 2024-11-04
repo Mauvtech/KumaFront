@@ -1,95 +1,53 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { getVotes } from "../../services/termService";
+import React from "react";
+import {Link} from "react-router-dom";
 import DownvoteIcon from "./DownvoteIcon";
 import UpvoteIcon from "./UpvoteIcon";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
-import { Term } from "../../models/termModel";
-import { User } from "../../models/userModel";
 import Avatar from "@mui/material/Avatar";
+import useTerms from "../../services/term/termMutationService";
+import {useAuth} from "../../contexts/authContext";
+import {TermForUser} from "../../services/term/termModel";
 
 interface TermItemProps {
-    term: Term;
-    user: User | null;
-    handleUpvote: (termId: string) => void;
-    handleDownvote: (termId: string) => void;
-    handleBookmark: (termId: string) => void;
-    handleUnbookmark: (termId: string) => void;
+    termForUser: TermForUser;
     isFeed: boolean;
 }
 
-const TermItem: React.FC<TermItemProps> = ({
-    term,
-    user,
-    handleUpvote,
-    handleDownvote,
-    handleBookmark,
-    handleUnbookmark,
-    isFeed,
-}) => {
-    const [votes, setVotes] = useState<{ upvotes: number; downvotes: number }>({
-        upvotes: 0,
-        downvotes: 0,
-    });
-    const [userHasUpvoted, setUserHasUpvoted] = useState(
-        user ? term.upvotedBy.includes(user._id) : false
-    );
-    const [userHasDownvoted, setUserHasDownvoted] = useState(
-        user ? term.downvotedBy.includes(user._id) : false
-    );
-    const [userHasBookmarked, setUserHasBookmarked] = useState(
-        user ? term.bookmarkedBy.includes(user._id) : false
-    );
+export default function TermItem({
+                                     termForUser,
+                                     isFeed,
+                                 }: TermItemProps) {
 
-    useEffect(() => {
-        const fetchVotes = async () => {
-            const data = await getVotes(term._id);
-            if (data) {
-                setVotes(data);
-            }
-        };
-        fetchVotes();
-    }, [term._id]);
+    const {saveMutation} = useTerms();
+
+    const {user}
+        = useAuth();
+
+    const {mutate} = saveMutation();
+
+    const handleDownvote = (id: number) => {
+        mutate({id, request: {upvote: false}});
+    };
+
+    const term = termForUser.term;
+
+    const handleBookmark = () => {
+        const id = term.id;
+        mutate({id, request: {bookmark: true}});
+    };
+
+    const handleUnbookmark = (id: number) => {
+        mutate({id, request: {bookmark: false}});
+    };
 
     const handleUpvoteClick = () => {
-        handleUpvote(term._id);
-        if (userHasUpvoted) {
-            setVotes((prevVotes) => ({ ...prevVotes, upvotes: prevVotes.upvotes - 1 }));
-        } else {
-            setVotes((prevVotes) => ({
-                ...prevVotes,
-                upvotes: prevVotes.upvotes + 1,
-                downvotes: userHasDownvoted ? prevVotes.downvotes - 1 : prevVotes.downvotes,
-            }));
-            setUserHasDownvoted(false);
-        }
-        setUserHasUpvoted(!userHasUpvoted);
+        const id = term.id
+        mutate({id, request: {upvote: true}});
     };
 
     const handleDownvoteClick = () => {
-        handleDownvote(term._id);
-        if (userHasDownvoted) {
-            setVotes((prevVotes) => ({ ...prevVotes, downvotes: prevVotes.downvotes - 1 }));
-        } else {
-            setVotes((prevVotes) => ({
-                ...prevVotes,
-                downvotes: prevVotes.downvotes + 1,
-                upvotes: userHasUpvoted ? prevVotes.upvotes - 1 : prevVotes.upvotes,
-            }));
-            setUserHasUpvoted(false);
-        }
-        setUserHasDownvoted(!userHasDownvoted);
-    };
-
-    const handleBookmarkClick = () => {
-        if (userHasBookmarked) {
-            handleUnbookmark(term._id);
-            setUserHasBookmarked(false);
-        } else {
-            handleBookmark(term._id);
-            setUserHasBookmarked(true);
-        }
+        handleDownvote(term.id);
     };
 
     const truncateDefinition = (definition: string) => {
@@ -129,17 +87,18 @@ const TermItem: React.FC<TermItemProps> = ({
         ? "text-sm md:text-base px-3 py-1"
         : "text-xs px-2 py-0.5";
 
+
     return (
         <li className={containerClasses}>
             <div className="flex items-center mb-4">
-                <Avatar alt={term.author.username} className={avatarClasses} />
+                <Avatar alt={term.author.username} className={avatarClasses}/>
                 <Link to={`/profile/${term.author.username}`} className="text-primary hover:underline truncate">
                     <h4 className={`font-semibold ${textClasses} text-text`}>{term.author.username}</h4>
                 </Link>
             </div>
             <div className="flex-1 flex flex-col justify-between mb-4 overflow-hidden">
                 <div>
-                    <Link to={`/terms/${term._id}`}>
+                    <Link to={`/terms/${term.id}`}>
                         <h3 className={`font-bold ${textClasses} text-text mb-2 truncate`}>{term.term}</h3>
                         <p className={`text-accent font-bold ${textClasses} mb-2 truncate`}>{term.translation}</p>
                         <p className={`${textClasses} text-text truncate`}>{truncateDefinition(term.definition)}</p>
@@ -165,39 +124,42 @@ const TermItem: React.FC<TermItemProps> = ({
                     <span
                         className={`inline-block bg-secondaryLight text-secondary ${labelClasses} rounded-full truncate`}
                     >
-                        {formatLabel(term.theme.name)}
+                        {formatLabel(term.tags.join())}
                     </span>
                 </div>
                 {user && (
                     <div className="flex items-center space-x-2">
                         <button
-                            onClick={handleBookmarkClick}
-                            className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${userHasBookmarked ? "text-warning" : "text-primary"
-                                } hover:bg-warningHover hover:text-warning shadow-neumorphic`}
+                            onClick={handleBookmark}
+                            className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${termForUser.userHasBookmarked ? "text-warning" : "text-primary"
+                            } hover:bg-warningHover hover:text-warning shadow-neumorphic`}
                         >
-                            {userHasBookmarked ? (
-                                <BookmarkIcon style={iconStyle} />
+                            {termForUser.userHasBookmarked ? (
+                                <BookmarkIcon style={iconStyle}/>
                             ) : (
-                                <BookmarkBorderIcon style={iconStyle} />
+                                <BookmarkBorderIcon style={iconStyle}/>
                             )}
                         </button>
                         <div className="flex items-center space-x-1">
-                            <span className={`${textClasses} text-success`}>{votes.upvotes}</span>
                             <button
                                 onClick={handleUpvoteClick}
-                                className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${userHasUpvoted ? "text-success" : "text-primary"
-                                    } hover:bg-successHover hover:text-success shadow-neumorphic`}
+                                className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${termForUser.userVote ? "text-success" : "text-primary"
+                                } hover:bg-successHover hover:text-success shadow-neumorphic`}
                             >
-                                <UpvoteIcon isUpvoted={userHasUpvoted} isFeed={isFeed} />
+                                <UpvoteIcon isUpvoted={termForUser.userVote === true} isFeed={isFeed}/>
                             </button>
+                            {
+                                term.voteCount > 0 ?
+                                    <span className={`${textClasses} text-success`}>{term.voteCount}</span> :
+                                    <span className={`${textClasses} text-error`}>{term.voteCount}</span>
+                            }
                             <button
                                 onClick={handleDownvoteClick}
-                                className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${userHasDownvoted ? "text-error" : "text-primary"
-                                    } hover:bg-errorHover hover:text-error shadow-neumorphic`}
+                                className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${!termForUser.userVote ? "text-error" : "text-primary"
+                                } hover:bg-errorHover hover:text-error shadow-neumorphic`}
                             >
-                                <DownvoteIcon isDownvoted={userHasDownvoted} isFeed={isFeed} />
+                                <DownvoteIcon isDownvoted={termForUser.userVote === false} isFeed={isFeed}/>
                             </button>
-                            <span className={`${textClasses} text-error`}>{votes.downvotes}</span>
                         </div>
                     </div>
                 )}
@@ -205,5 +167,3 @@ const TermItem: React.FC<TermItemProps> = ({
         </li>
     );
 };
-
-export default TermItem;
