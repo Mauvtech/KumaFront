@@ -84,7 +84,7 @@ const PendingTermsPage: React.FC = () => {
                         type="text"
                         value={language}
                         onChange={(e) => setLanguage(e.target.value)}
-                        className="w-full p-2 bg-backgroundHover border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-primaryLight"
+                        className="w-full p-2 bg-backgroundHover border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-primary-light"
                         required
                     />
                 </div>
@@ -94,7 +94,7 @@ const PendingTermsPage: React.FC = () => {
                         type="text"
                         value={languageCode}
                         onChange={(e) => setLanguageCode(e.target.value)}
-                        className="w-full p-2 bg-backgroundHover border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-primaryLight"
+                        className="w-full p-2 bg-backgroundHover border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-primary-light"
                         required
                     />
                 </div>
@@ -104,7 +104,7 @@ const PendingTermsPage: React.FC = () => {
                         type="text"
                         value={grammaticalCategory}
                         onChange={(e) => setGrammaticalCategory(e.target.value)}
-                        className="w-full p-2 bg-backgroundHover border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-primaryLight"
+                        className="w-full p-2 bg-backgroundHover border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-primary-light"
                         required
                     />
                 </div>
@@ -114,7 +114,7 @@ const PendingTermsPage: React.FC = () => {
                         type="text"
                         value={theme}
                         onChange={(e) => setTheme(e.target.value)}
-                        className="w-full p-2 bg-backgroundHover border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-primaryLight"
+                        className="w-full p-2 bg-backgroundHover border-none rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-primary-light"
                         required
                     />
                 </div>

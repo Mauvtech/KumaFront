@@ -1,5 +1,5 @@
 import {motion} from "framer-motion";
-import TermItem from "../../components/Terms/TermItem";
+import TermCard from "../../components/Terms/TermCard";
 import React from "react";
 import {TermForUser} from "../../services/term/termModel";
 import TermItemSkeleton from "./TermItemSkeleton";
@@ -46,9 +46,9 @@ export default function ApprovedTermsList({terms, loading}: ApprovedTermsListPro
         >
             {terms?.map((term) => (
                 <motion.li key={term.term.id} variants={termVariants}>
-                    <TermItem
+                    <TermCard
                         isFeed={true}
-                        termForUser={term}
+                        {...term}
                     />
                 </motion.li>
             ))}

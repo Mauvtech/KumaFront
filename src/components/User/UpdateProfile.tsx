@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { updateUserProfile } from '../../services/userService';
-import { useAuth } from '../../contexts/authContext';
+import React, {useState} from 'react';
+import {updateUserProfile} from '../../services/userService';
+import {useAuth} from '../../contexts/authContext';
 
 function UpdateProfile() {
-    const { user, setUser, logout } = useAuth();
+    const {user, setUser, logout} = useAuth();
     const [username, setUsername] = useState<string>(user?.username || '');
     const [password, setPassword] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
@@ -15,7 +15,7 @@ function UpdateProfile() {
         setError(null);
 
         try {
-            const updatedUser = await updateUserProfile({ username, password });
+            const updatedUser = await updateUserProfile({username, password});
             setUser(updatedUser);
             logout();
         } catch (error) {
@@ -27,7 +27,8 @@ function UpdateProfile() {
     };
 
     return (
-        <form onSubmit={handleUpdateProfile} className="max-w-md mx-auto mt-10 p-6 bg-background rounded-lg shadow-neumorphic">
+        <form onSubmit={handleUpdateProfile}
+              className="max-w-md mx-auto mt-10 p-6 bg-background rounded-lg shadow-neumorphic">
             <h2 className="text-2xl font-bold mb-4 text-text">Update Profile</h2>
             {error && <div className="mb-4 text-error">{error}</div>}
             <div className="mb-4">
@@ -52,7 +53,7 @@ function UpdateProfile() {
             </div>
             <button
                 type="submit"
-                className="w-full p-3 text-white rounded-lg bg-primary shadow-neumorphic hover:bg-primaryLight focus:outline-none"
+                className="w-full p-3 text-white rounded-lg bg-primary shadow-neumorphic hover:bg-primary-light focus:outline-none"
                 disabled={loading}
             >
                 {loading ? 'Loading...' : 'Update'}

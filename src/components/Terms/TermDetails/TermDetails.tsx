@@ -77,12 +77,12 @@ export default function TermDetails() {
                 <TermDetailsSkeleton/>
             ) : (
                 <>
-                    <h2 className="text-2xl font-bold mb-4 text-text">{fetchedTerm?.term.term}</h2>
+                    <h2 className="text-2xl font-bold mb-4 text-text">{fetchedTerm?.term.name}</h2>
                     <div className="flex flex-wrap gap-2 mb-4">
-                        <span className="bg-primaryLight text-primary text-xs px-2 rounded-full">
+                        <span className="bg-primary-light text-primary text-xs px-2 rounded-full">
                             {fetchedTerm?.term.grammaticalCategory.name}
                         </span>
-                        <span className="bg-secondaryLight text-secondary text-xs px-2 rounded-full">
+                        <span className="bg-secondary-light text-secondary text-xs px-2 rounded-full">
                             {fetchedTerm?.term.tags[0]?.name}
                         </span>
                         <span className="bg-accentLight text-accent text-xs px-2 rounded-full">
@@ -98,7 +98,7 @@ export default function TermDetails() {
                         <p>{fetchedTerm?.term.translation}</p>
                     </div>
                     <button onClick={() => navigate(-1)}
-                            className="mt-4 p-3 bg-primary text-white rounded-lg shadow-neumorphic hover:bg-primaryLight focus:outline-none">
+                            className="mt-4 p-3 bg-primary text-white rounded-lg shadow-neumorphic hover:bg-primary-light focus:outline-none">
                         Retour
                     </button>
                     <div className="mt-8">
@@ -112,7 +112,7 @@ export default function TermDetails() {
                         ></textarea>
                         <button
                             onClick={handleAddCommentClick}
-                            className="p-3 bg-primary text-white rounded-lg shadow-neumorphic hover:bg-primaryLight focus:outline-none"
+                            className="p-3 bg-primary text-white rounded-lg shadow-neumorphic hover:bg-primary-light focus:outline-none"
                             disabled={commentLoading}
                         >
                             {commentLoading ? 'Chargement...' : 'Ajouter Commentaire'}

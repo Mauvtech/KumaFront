@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { motion, Variants } from "framer-motion";
+import React, {useState} from "react";
+import {motion, Variants} from "framer-motion";
 
 interface SelectorProps {
     options: string[];
@@ -12,17 +12,17 @@ const itemVariants: Variants = {
     open: {
         opacity: 1,
         y: 0,
-        transition: { type: "spring", stiffness: 300, damping: 24 },
+        transition: {type: "spring", stiffness: 300, damping: 24},
     },
-    closed: { opacity: 0, y: 20, transition: { duration: 0.2 } },
+    closed: {opacity: 0, y: 20, transition: {duration: 0.2}},
 };
 
 const Selector: React.FC<SelectorProps> = ({
-    options,
-    selectedOption,
-    onSelectOption,
-    placeholder,
-}) => {
+                                               options,
+                                               selectedOption,
+                                               onSelectOption,
+                                               placeholder,
+                                           }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     // Helper function to abbreviate options for mobile devices
@@ -46,21 +46,21 @@ const Selector: React.FC<SelectorProps> = ({
             className="relative"
         >
             <motion.div
-                whileTap={{ scale: 0.97 }}
+                whileTap={{scale: 0.97}}
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center justify-center gap-1 w-full p-4 bg-secondary text-white font-bold rounded-lg shadow-lg min-w-[250px]"
             >
                 {selectedOption || placeholder}
                 <motion.div
                     variants={{
-                        open: { rotate: 180 },
-                        closed: { rotate: 0 },
+                        open: {rotate: 180},
+                        closed: {rotate: 0},
                     }}
-                    transition={{ duration: 0.2 }}
-                    style={{ originY: 0.55 }}
+                    transition={{duration: 0.2}}
+                    style={{originY: 0.55}}
                 >
                     <svg width="15" height="15" viewBox="0 0 20 20" className="ml-2">
-                        <path d="M0 7 L 20 7 L 10 16" fill="white" />
+                        <path d="M0 7 L 20 7 L 10 16" fill="white"/>
                     </svg>
                 </motion.div>
             </motion.div>
@@ -85,7 +85,7 @@ const Selector: React.FC<SelectorProps> = ({
                         },
                     },
                 }}
-                style={{ pointerEvents: isOpen ? "auto" : "none" }}
+                style={{pointerEvents: isOpen ? "auto" : "none"}}
                 className="absolute z-10 w-full mt-2 bg-background rounded-lg shadow-lg max-h-32 sm:max-h-48 overflow-y-auto"
             >
                 <div
@@ -95,7 +95,7 @@ const Selector: React.FC<SelectorProps> = ({
                         <motion.li
                             key={index}
                             variants={itemVariants}
-                            className="cursor-pointer p-2 hover:bg-primaryLight hover:text-secondary rounded-md text-white font-bold bg-secondary"
+                            className="cursor-pointer p-2 hover:bg-primary-light hover:text-secondary rounded-md text-white font-bold bg-secondary"
                             onClick={() => {
                                 onSelectOption(option);
                                 setIsOpen(false);

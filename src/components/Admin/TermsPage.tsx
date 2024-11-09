@@ -122,7 +122,7 @@ const TermsPage: React.FC<TermsPageProps> = ({setSelectedTerm}) => {
                     Array.from({length: 5}).map((_, index) => (
                         <tr
                             key={index}
-                            className="hover:bg-primaryLight transition-colors duration-300"
+                            className="hover:bg-primary-light transition-colors duration-300"
                         >
                             <td className="py-2 px-2 md:px-4 border-b">
                                 <Skeleton height={20} width={100}/>
@@ -148,7 +148,7 @@ const TermsPage: React.FC<TermsPageProps> = ({setSelectedTerm}) => {
                     terms.map((term) => (
                         <motion.tr
                             key={term.id}
-                            className="hover:bg-primaryLight transition-colors duration-300"
+                            className="hover:bg-primary-light transition-colors duration-300"
                             initial={{opacity: 0, y: 20}}
                             animate={{opacity: 1, y: 0}}
                             transition={{duration: 0.3, delay: 0.1}}

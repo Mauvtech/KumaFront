@@ -57,7 +57,7 @@ export default function HomePage() {
     return (
         <div className="w-full bg-background">
             <div
-                className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-primaryLight to-secondaryLight text-center relative">
+                className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-primary-light to-secondary-light text-center relative">
                 <CobeGlobe/>
                 <HomeDisplayWord terms={terms ?? []}/>
 

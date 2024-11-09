@@ -21,7 +21,7 @@ const languageSchema = z.object({
 
 export const termSchema = z.object({
     id: z.number(),
-    term: z.string(),
+    name: z.string(),
     language: languageSchema,
     definition: z.string(),
     translation: z.string(),
@@ -40,7 +40,10 @@ export const termForUserSchema = z.object({
 export type TermForUser = z.infer<typeof termForUserSchema>
 
 export const paginatedTermForUserSchema = createPaginatedResponseSchema(termForUserSchema);
+export const paginatedTermSchema = createPaginatedResponseSchema(termSchema);
+export type PaginatedTerm = z.infer<typeof paginatedTermSchema>;
+
 
 export type Term = z.infer<typeof termSchema>;
 
-export type PaginatedTerm = z.infer<typeof paginatedTermForUserSchema>;
+export type PaginatedTermForUser = z.infer<typeof paginatedTermForUserSchema>;
