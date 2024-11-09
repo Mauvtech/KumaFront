@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import TermItem from "../Terms/TermItem";
+import TermCard from "./TermCard";
 import Pagination from "./Pagination";
 import {usePaginatedApprovedTerms} from "../../services/term/termService";
 import {DEFAULT_TERM_PER_PAGE, TermPageAndFilter} from "../../pages/homePage/HomePage";
@@ -58,9 +58,9 @@ export default function BookmarksPage() {
                     <>
                         <ul className=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {bookmarkedTerms?.map((term) => (
-                                <TermItem
+                                <TermCard
                                     isFeed={false}
-                                    termForUser={term}
+                                    term={term.term}
                                     key={term.term.id}
                                 />
                             ))}

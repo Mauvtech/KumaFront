@@ -46,7 +46,7 @@ export default function WordStrip({terms}: {
                             key={`left-${index}`}
                             className="text-2xl text-primary transform rotate-90 whitespace-nowrap"
                         >
-                            {termForUser.term.term}
+                            {termForUser.term.name}
                         </div>
                     ))}
                     {terms.map((termForUser, index) => (
@@ -54,7 +54,7 @@ export default function WordStrip({terms}: {
                             key={`left-repeat-${index}`}
                             className="text-2xl text-primary transform rotate-90 whitespace-nowrap"
                         >
-                            {termForUser.term.term}
+                            {termForUser.term.name}
                         </div>
                     ))}
                 </motion.div>
@@ -72,7 +72,7 @@ export default function WordStrip({terms}: {
                             key={`right-${index}`}
                             className="text-2xl text-secondary transform rotate-90 whitespace-nowrap"
                         >
-                            {termForUser.term.term}
+                            {termForUser.term.name}
                         </div>
                     ))}
                     {terms.map((termForUser, index) => (
@@ -80,7 +80,7 @@ export default function WordStrip({terms}: {
                             key={`right-repeat-${index}`}
                             className="text-2xl text-secondary transform rotate-90 whitespace-nowrap"
                         >
-                            {termForUser.term.term}
+                            {termForUser.term.name}
                         </div>
                     ))}
                 </motion.div>

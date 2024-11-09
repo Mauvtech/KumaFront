@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useState } from "react";
-import { motion, useAnimation } from "framer-motion";
+import React, {useEffect, useRef, useState} from "react";
+import {motion, useAnimation} from "framer-motion";
 
 interface InputProps {
     value: string;
@@ -9,11 +9,11 @@ interface InputProps {
 }
 
 const Input: React.FC<InputProps> = ({
-    value,
-    onChange,
-    placeholder = "Start typing...",
-    type = "text",
-}) => {
+                                         value,
+                                         onChange,
+                                         placeholder = "Start typing...",
+                                         type = "text",
+                                     }) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [isFocused, setIsFocused] = useState(false);
     const [displayedText, setDisplayedText] = useState("");
@@ -72,7 +72,7 @@ const Input: React.FC<InputProps> = ({
                 onChange={onChange}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
-                className="w-full h-16 p-4 text-lg md:text-2xl lg:text-3xl bg-primaryLight text-text text-center mt-2 focus:outline-none rounded-lg transition-all duration-300 placeholder-transparent"
+                className="w-full h-16 p-4 text-lg md:text-2xl lg:text-3xl bg-primary-light text-text text-center mt-2 focus:outline-none rounded-lg transition-all duration-300 placeholder-transparent"
             />
             {!isFocused && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

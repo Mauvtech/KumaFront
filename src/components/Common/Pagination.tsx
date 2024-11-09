@@ -6,13 +6,13 @@ interface PaginationProps {
     totalPages: number;
 }
 
-export const Pagination: React.FC<PaginationProps> = ({ paginate, currentPage, totalPages }) => {
+export function Pagination({paginate, currentPage, totalPages}: PaginationProps) {
 
     const maxPagesToShow = 5;
 
     const getPageNumbers = () => {
         const pages = [];
-console.log("totalPages", totalPages)
+        console.log("totalPages", totalPages)
         if (totalPages <= maxPagesToShow) {
             for (let i = 1; i <= totalPages; i++) {
                 pages.push(i);
@@ -68,7 +68,8 @@ console.log("totalPages", totalPages)
                                 {number}
                             </button>
                         ) : (
-                            <span className="px-3 py-2 leading-tight text-text bg-background border border-gray-300 rounded-lg shadow-md flex items-center justify-center">
+                            <span
+                                className="px-3 py-2 leading-tight text-text bg-background border border-gray-300 rounded-lg shadow-md flex items-center justify-center">
                                 {number}
                             </span>
                         )}

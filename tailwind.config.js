@@ -1,16 +1,30 @@
 module.exports = {
     purge: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
-    darkMode: false,
+    darkMode: "media",
+    content: ["app/**/*.{ts,tsx}", "components/**/*.{ts,tsx}"],
     theme: {
+        container: {
+            center: true,
+            padding: "2rem",
+            screens: {
+                "2xl": "1400px",
+            },
+        },
         extend: {
             colors: {
-                primary: "#607D8B", // Blue Gray
-                primaryLight: "rgba(96, 125, 139, 0.1)", // Lightened Blue Gray for background
-                secondary: "#80CBC4", // Mint Green
-                secondaryLight: "rgba(128, 203, 196, 0.1)", // Lightened Mint Green for background
-                accent: "#64D8CB", // Stronger Mint Green
+                primary: {
+                    DEFAULT: "var(--primary)",
+                    foreground: "hsl(var(--primary-foreground))",
+                    light: "rgba(96, 125, 139, 0.1)"
+                },
+
+                secondary: {
+                    DEFAULT: "var(--secondary)",
+                    foreground: "hsl(var(--secondary-foreground))",
+                    light: "rgba(128, 203, 196, 0.1)"
+                },
+
                 accentLight: "rgba(100, 216, 203, 0.1)", // Lightened Stronger Mint Green for background
-                background: "#FAFAFA", // Very Light Gray
                 backgroundHover: "#F0F0F0", // Slightly darker Light Gray for hover
                 text: "#37474F", // Dark Gray
                 error: "#E57373", // Soft Red
@@ -20,6 +34,34 @@ module.exports = {
                 warning: "#FFB74D", // Soft Orange
                 warningHover: "rgba(255, 183, 77, 0.1)", // Lightened Orange for hover
                 info: "#64B5F6", // Soft Blue
+
+                border: "hsl(var(--border))",
+                input: "hsl(var(--input))",
+                ring: "hsl(var(--ring))",
+                background: "var(--background)",
+                foreground: "hsl(var(--foreground))",
+
+
+                destructive: {
+                    DEFAULT: "hsl(var(--destructive))",
+                    foreground: "hsl(var(--destructive-foreground))",
+                },
+                muted: {
+                    DEFAULT: "hsl(var(--muted))",
+                    foreground: "hsl(var(--muted-foreground))",
+                },
+                accent: {
+                    DEFAULT: "hsl(var(--accent))",
+                    foreground: "hsl(var(--accent-foreground))",
+                },
+                popover: {
+                    DEFAULT: "hsl(var(--popover))",
+                    foreground: "hsl(var(--popover-foreground))",
+                },
+                card: {
+                    DEFAULT: "hsl(var(--card))",
+                    foreground: "hsl(var(--card-foreground))",
+                },
             },
             fontFamily: {
                 sans: ["Poppins", "sans-serif"],
@@ -72,4 +114,5 @@ module.exports = {
             display: ["group-hover"],
         },
     },
+    plugins: [require("tailwindcss-animate")],
 };

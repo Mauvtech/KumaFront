@@ -7,15 +7,22 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import Avatar from "@mui/material/Avatar";
 import useTerms from "../../services/term/termMutationService";
 import {useAuth} from "../../contexts/authContext";
-import {TermForUser} from "../../services/term/termModel";
+import {Term} from "../../services/term/termModel";
+import clsx from "clsx";
 
 interface TermItemProps {
-    termForUser: TermForUser;
+    term: Term;
+    termUserData?: {
+        hasUpvoted: boolean;
+        hasDownvoted: boolean;
+        hasBookmarked: boolean;
+    };
     isFeed: boolean;
 }
 
-export default function TermItem({
-                                     termForUser,
+export default function TermCard({
+                                     term,
+                                     termUserData,
                                      isFeed,
                                  }: TermItemProps) {
 
@@ -30,7 +37,6 @@ export default function TermItem({
         mutate({id, request: {upvote: false}});
     };
 
-    const term = termForUser.term;
 
     const handleBookmark = () => {
         const id = term.id;
@@ -67,8 +73,8 @@ export default function TermItem({
     };
 
     const containerClasses = isFeed
-        ? "flex flex-col justify-between mb-4 p-6 bg-background rounded-lg shadow-md  transition-transform transform hover:scale-105 w-full md:w-[48%] lg:w-full xl:w-full h-[60vh] h-fit m-2 mx-auto overflow-hidden"
-        : "flex flex-col justify-between mb-4 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 w-full sm:w-[70%] md:w-[50%] lg:w-full mx-auto overflow-hidden";
+        ? "p-6 bg-background rounded-lg shadow-md  transition-transform transform hover:scale-105 w-full md:w-[48%] lg:w-full xl:w-full h-[60vh] h-fit m-2 mx-auto overflow-hidden"
+        : "p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 w-full sm:w-[70%] md:w-[50%] lg:w-full mx-auto overflow-hidden";
 
     const avatarClasses = isFeed ? "mr-4 w-16 h-16 md:w-20 md:h-20" : "mr-2 w-10 h-10";
 
@@ -89,7 +95,7 @@ export default function TermItem({
 
 
     return (
-        <li className={containerClasses}>
+        <li className={clsx("flex flex-col justify-between mb-4", containerClasses)}>
             <div className="flex items-center mb-4">
                 <Avatar alt={term.author.username} className={avatarClasses}/>
                 <Link to={`/profile/${term.author.username}`} className="text-primary hover:underline truncate">
@@ -99,7 +105,7 @@ export default function TermItem({
             <div className="flex-1 flex flex-col justify-between mb-4 overflow-hidden">
                 <div>
                     <Link to={`/terms/${term.id}`}>
-                        <h3 className={`font-bold ${textClasses} text-text mb-2 truncate`}>{term.term}</h3>
+                        <h3 className={`font-bold ${textClasses} text-text mb-2 truncate`}>{term.name}</h3>
                         <p className={`text-accent font-bold ${textClasses} mb-2 truncate`}>{term.translation}</p>
                         <p className={`${textClasses} text-text truncate`}>{truncateDefinition(term.definition)}</p>
                     </Link>
@@ -117,24 +123,24 @@ export default function TermItem({
             <div className="flex justify-between items-center">
                 <div className="flex items-center font-bold">
                     <span
-                        className={`inline-block bg-primaryLight text-primary ${labelClasses} rounded-full mr-2 truncate`}
+                        className={`inline-block bg-primary-light text-primary ${labelClasses} rounded-full mr-2 truncate`}
                     >
                         {formatLabel(term.grammaticalCategory.name)}
                     </span>
                     <span
-                        className={`inline-block bg-secondaryLight text-secondary ${labelClasses} rounded-full truncate`}
+                        className={`inline-block bg-secondary-light text-secondary ${labelClasses} rounded-full truncate`}
                     >
                         {formatLabel(term.tags.join())}
                     </span>
                 </div>
-                {user && (
+                {termUserData && (
                     <div className="flex items-center space-x-2">
                         <button
                             onClick={handleBookmark}
-                            className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${termForUser.userHasBookmarked ? "text-warning" : "text-primary"
+                            className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${termUserData.hasBookmarked ? "text-warning" : "text-primary"
                             } hover:bg-warningHover hover:text-warning shadow-neumorphic`}
                         >
-                            {termForUser.userHasBookmarked ? (
+                            {termUserData.hasBookmarked ? (
                                 <BookmarkIcon style={iconStyle}/>
                             ) : (
                                 <BookmarkBorderIcon style={iconStyle}/>
@@ -143,10 +149,10 @@ export default function TermItem({
                         <div className="flex items-center space-x-1">
                             <button
                                 onClick={handleUpvoteClick}
-                                className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${termForUser.userVote ? "text-success" : "text-primary"
+                                className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${termUserData.hasUpvoted ? "text-success" : "text-primary"
                                 } hover:bg-successHover hover:text-success shadow-neumorphic`}
                             >
-                                <UpvoteIcon isUpvoted={termForUser.userVote === true} isFeed={isFeed}/>
+                                <UpvoteIcon isUpvoted={termUserData.hasUpvoted} isFeed={isFeed}/>
                             </button>
                             {
                                 term.voteCount > 0 ?
@@ -155,10 +161,10 @@ export default function TermItem({
                             }
                             <button
                                 onClick={handleDownvoteClick}
-                                className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${!termForUser.userVote ? "text-error" : "text-primary"
+                                className={`flex justify-center items-center ${buttonSizeClasses} rounded-full focus:outline-none transition duration-200 ${!termUserData.hasDownvoted ? "text-error" : "text-primary"
                                 } hover:bg-errorHover hover:text-error shadow-neumorphic`}
                             >
-                                <DownvoteIcon isDownvoted={termForUser.userVote === false} isFeed={isFeed}/>
+                                <DownvoteIcon isDownvoted={termUserData.hasDownvoted} isFeed={isFeed}/>
                             </button>
                         </div>
                     </div>

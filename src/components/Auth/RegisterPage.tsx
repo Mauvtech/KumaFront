@@ -86,7 +86,7 @@ const RegisterPage: React.FC = () => {
                     value={username}
                     id="username"
                     onChange={(e) => setUsername(e.target.value)}
-                    className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primaryLight ${errors.username ? "border-error" : ""
+                    className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primary-light ${errors.username ? "border-error" : ""
                     }`}
                     required
                 />
@@ -103,7 +103,7 @@ const RegisterPage: React.FC = () => {
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primaryLight ${errors.password ? "border-error" : ""
+                    className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primary-light ${errors.password ? "border-error" : ""
                     }`}
                     required
                 />
@@ -120,7 +120,7 @@ const RegisterPage: React.FC = () => {
                     id="confirmPassword"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primaryLight ${errors.confirmPassword ? "border-error" : ""
+                    className={`w-full p-3 rounded-lg shadow-inner bg-backgroundHover focus:outline-none focus:ring-2 focus:ring-primary-light ${errors.confirmPassword ? "border-error" : ""
                     }`}
                     required
                 />

@@ -14,7 +14,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import TermDetails from './components/Terms/TermDetails/TermDetails';
 import UpdateProfile from './components/User/UpdateProfile';
 import BookmarksPage from './components/Terms/BookmarksPage';
-import UserProfilePage from './components/User/UserProfilePage';
 import {Helmet} from 'react-helmet';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
@@ -51,7 +50,7 @@ function App() {
                         <div className="min-h-screen w-full flex justify-center items-center  text-text font-sans">
                             <Routes>
                                 <Route path="/" element={<HomePage/>}/>
-                                <Route path="/profile/:username" element={<UserProfilePage/>}/>
+                                <Route path="/profile/:username" element={<ProfilePage/>}/>
                                 <Route path="/terms/:id" element={<TermDetails/>}/>
                                 <Route path="/login" element={<LoginPage/>}/>
                                 <Route path="/register" element={<RegisterPage/>}/>

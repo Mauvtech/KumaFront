@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { getStats } from "../../services/statsService";
-import { useAuth } from "../../contexts/authContext";
-import { Link, useNavigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {getStats} from "../../services/statsService";
+import {useAuth} from "../../contexts/authContext";
+import {Link, useNavigate} from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { motion } from "framer-motion";
+import {motion} from "framer-motion";
 
 const DashboardPage: React.FC = () => {
     const [stats, setStats] = useState<any>(null);
-    const { user, loading } = useAuth();
+    const {user, loading} = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -41,13 +41,13 @@ const DashboardPage: React.FC = () => {
                         .map((_, index) => (
                             <div
                                 key={index}
-                                className="p-4 bg-primaryLight rounded-lg shadow-neumorphic"
+                                className="p-4 bg-primary-light rounded-lg shadow-neumorphic"
                             >
                                 <h3 className="sm:text-lg font-bold text-text">
-                                    <Skeleton width={80} />
+                                    <Skeleton width={80}/>
                                 </h3>
                                 <p className="sm:text-xl text-text">
-                                    <Skeleton width={40} />
+                                    <Skeleton width={40}/>
                                 </p>
                             </div>
                         ))}
@@ -64,55 +64,55 @@ const DashboardPage: React.FC = () => {
             <h2 className="sm:text-4xl text-2xl font-bold mb-8 text-text">Dashboard</h2>
             <div className="grid grid-cols-3 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 <motion.div
-                    className="p-4 bg-primaryLight rounded-lg shadow-neumorphic"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
+                    className="p-4 bg-primary-light rounded-lg shadow-neumorphic"
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{duration: 0.5, delay: 0.1}}
                 >
                     <h3 className="sm:text-lg text-base font-bold text-text">Total Users</h3>
                     <p className="sm:text-2xl text-lg text-text">{stats.userCount}</p>
                 </motion.div>
                 <motion.div
                     className="p-4 bg-successLight rounded-lg shadow-neumorphic"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{duration: 0.5, delay: 0.2}}
                 >
                     <h3 className="sm:text-lg text-base font-bold text-text">Total Terms</h3>
                     <p className="sm:text-2xl text-lg text-text">{stats.termCount}</p>
                 </motion.div>
                 <motion.div
                     className="p-4 bg-yellow-200 rounded-lg shadow-neumorphic"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{duration: 0.5, delay: 0.3}}
                 >
                     <h3 className="sm:text-lg text-base font-bold text-text">Approved Terms</h3>
                     <p className="sm:text-2xl text-lg text-text">{stats.approvedTermCount}</p>
                 </motion.div>
                 <motion.div
                     className="p-4 bg-errorLight rounded-lg shadow-neumorphic"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.4 }}
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{duration: 0.5, delay: 0.4}}
                 >
                     <h3 className="sm:text-lg text-base font-bold text-text">Rejected Terms</h3>
                     <p className="sm:text-2xl text-lg text-text">{stats.rejectedTermCount}</p>
                 </motion.div>
                 <motion.div
                     className="p-4 bg-purple-200 rounded-lg shadow-neumorphic"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.5 }}
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{duration: 0.5, delay: 0.5}}
                 >
                     <h3 className="sm:text-lg text-base font-bold text-text">Pending Terms</h3>
                     <p className="sm:text-2xl text-lg text-text">{stats.pendingTermCount}</p>
                 </motion.div>
                 <motion.div
                     className="p-4 bg-orange-200 rounded-lg shadow-neumorphic"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.6 }}
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{duration: 0.5, delay: 0.6}}
                 >
                     <h3 className="sm:text-lg text-base font-bold text-text">Banned Users</h3>
                     <p className="sm:text-2xl text-lg text-text">{stats.bannedUserCount}</p>
@@ -121,18 +121,18 @@ const DashboardPage: React.FC = () => {
                     <>
                         <motion.div
                             className="p-4 bg-teal-200 rounded-lg shadow-neumorphic"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.7 }}
+                            initial={{opacity: 0, y: 20}}
+                            animate={{opacity: 1, y: 0}}
+                            transition={{duration: 0.5, delay: 0.7}}
                         >
                             <h3 className="sm:text-lg text-base font-bold text-text">Admin Count</h3>
                             <p className="sm:text-2xl text-lg text-text">{stats.adminCount}</p>
                         </motion.div>
                         <motion.div
                             className="p-4 bg-pink-200 rounded-lg shadow-neumorphic"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.8 }}
+                            initial={{opacity: 0, y: 20}}
+                            animate={{opacity: 1, y: 0}}
+                            transition={{duration: 0.5, delay: 0.8}}
                         >
                             <h3 className="sm:text-lg text-base font-bold text-text">Moderator Count</h3>
                             <p className="sm:text-2xl text-lg text-text">{stats.moderatorCount}</p>

@@ -1,10 +1,20 @@
 // src/services/userService.ts
 import api from "./api";
 
-export const getUserProfile = async () => {
+export type Profile = {
+    id: string;
+    username: string;
+    email: string;
+    role: string;
+    banned: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+
+export const getUserProfile = async (): Promise<Profile> => {
     const response = await api.get("/users/me");
     return response.data;
-
 };
 
 export const getUsers = async (page: number = 1, limit: number = 10) => {

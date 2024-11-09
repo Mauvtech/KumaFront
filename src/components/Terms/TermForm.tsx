@@ -80,7 +80,7 @@ export default function TermForm({termId, initialData}: TermFormProps) {
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className="w-full p-3 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full p-3 rounded-lg shadow-inner bg-primary-light focus:outline-none focus:ring-2 focus:ring-primary"
                     required
                 />
             ) : (
@@ -90,7 +90,7 @@ export default function TermForm({termId, initialData}: TermFormProps) {
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className="w-full p-3 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full p-3 rounded-lg shadow-inner bg-primary-light focus:outline-none focus:ring-2 focus:ring-primary"
                     required
                 />
             )}

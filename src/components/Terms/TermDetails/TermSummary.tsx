@@ -16,10 +16,10 @@ export function TermSummary({term, definition, grammaticalCategory, tags, langua
         <>
             <h2 className="text-2xl font-bold mb-4 text-text">{term}</h2>
             <div className="flex flex-wrap gap-2 mb-4">
-                        <span className="bg-primaryLight text-primary text-xs px-2 rounded-full">
+                        <span className="bg-primary-light text-primary text-xs px-2 rounded-full">
                             {grammaticalCategory}
                         </span>
-                <span className="bg-secondaryLight text-secondary text-xs px-2 rounded-full">
+                <span className="bg-secondary-light text-secondary text-xs px-2 rounded-full">
                             {tags.join()}
                         </span>
                 <span className="bg-accentLight text-accent text-xs px-2 rounded-full">

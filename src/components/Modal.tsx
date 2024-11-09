@@ -28,7 +28,7 @@ export function Modal({children, open, onOk, className}: {
                     <motion.button
                         onClick={onOk}
 
-                        className="px-4 py-2 bg-primaryLight text-gray-600 rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
+                        className="px-4 py-2 bg-primary-light text-gray-600 rounded-lg shadow-neumorphic transition-transform transform hover:scale-105 focus:outline-none"
                         whileTap={{scale: 0.95}}
                     >
                         OK

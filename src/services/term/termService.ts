@@ -1,5 +1,5 @@
 import {api} from "../api";
-import {PaginatedTerm, paginatedTermForUserSchema} from "./termModel";
+import {PaginatedTerm, PaginatedTermForUser, paginatedTermForUserSchema, paginatedTermSchema} from "./termModel";
 import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import {TermPageAndFilter} from "../../pages/homePage/HomePage";
 
@@ -23,7 +23,7 @@ export const getAllTerms = async (page: number = 1, limit: number = 10) => {
 
 };
 
-const getApprovedTerms = async (pageParam?: number, pageAndFilter?: TermPageAndFilter): Promise<PaginatedTerm | void> => {
+const getApprovedTerms = async (pageParam?: number, pageAndFilter?: TermPageAndFilter): Promise<PaginatedTermForUser | void> => {
     return api.get(`/public/terms?page=${pageParam}&size=${pageAndFilter?.page.size}`,
         {
             params: {
@@ -102,9 +102,10 @@ export const addComment = async (
 };
 
 
-export const getAuthoredTerms = async (page: string, limit: string) => {
-    const response = await api.get("/terms/authored", {params: {page, limit}});
-    return response.data;
+export const getAuthoredTerms = async (page: number, limit: number): Promise<PaginatedTerm> => {
+    return api.get("/terms/authored", {params: {page, limit}}).then(
+        res => paginatedTermSchema.parse(res.data)
+    );
 }
 
 export const getUserApprovedTerms = async (username: string, page: string, limit: string) => {

@@ -23,7 +23,7 @@ export default function HomeDisplayWord({terms}: {
                 // Shuffle the terms array
                 const shuffledTerms = [...terms].sort(() => 0.5 - Math.random());
                 const randomIndex = Math.floor(Math.random() * shuffledTerms.length);
-                setCurrentWord(shuffledTerms[randomIndex].term.term);
+                setCurrentWord(shuffledTerms[randomIndex].term.name);
             }
         }, 3000); // Change word every 3 seconds
 

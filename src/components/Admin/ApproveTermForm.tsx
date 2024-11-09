@@ -42,7 +42,7 @@ interface ApproveTermFormProps {
     onCancel: () => void;
 }
 
-const ApproveTermForm: React.FC<ApproveTermFormProps> = ({term, onCancel}) => {
+function ApproveTermForm({term, onCancel}: ApproveTermFormProps) {
     const [updatedTerm, setUpdatedTerm] = useState<Term>({...term});
     const [newCategory, setNewCategory] = useState<string>('');
     const [newTheme, setNewTheme] = useState<string>('');
