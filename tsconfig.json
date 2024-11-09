@@ -20,10 +20,12 @@
     "jsx": "react-jsx"
   },
   "include": [
-    "src"
+    "src",
+    "**/*.ts",
+    "**/*.tsx"
   ],
   "baseUrl": ".",
   "paths": {
-    "@/*": ["./*"]
+    "@/*": ["./src/*"]
   }
 }
