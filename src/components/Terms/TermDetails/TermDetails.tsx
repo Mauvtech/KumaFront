@@ -7,7 +7,7 @@ import useTerms from "../../../services/term/termMutationService";
 import {useQuery} from "@tanstack/react-query";
 import TermDetailsSkeleton from "./TermDetailsSkeleton";
 
-function useComments(id: string) {
+function useComments(id: string) { // TODO
     return {
         data: [
             {

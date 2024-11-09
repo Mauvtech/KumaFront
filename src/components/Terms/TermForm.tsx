@@ -1,13 +1,12 @@
 import React, {useState} from 'react';
-import {addTerm} from '../../services/term/termService';
 import {useCategories} from '../../services/category/categoryService';
 import {useLanguages} from '../../services/language/languageService';
 import Selector from '../Common/Selector';
 import {motion} from 'framer-motion';
-import useTerms from "../../services/term/termMutationService";
 import {useTags} from "../../services/tag/tagService";
 import {capitalizeWord} from "../../utils/StringUtils";
-import AddTermValidationModal from "./AddTermValidationModal";
+import TermCreationValidationModal from "./TermCreationValidationModal";
+import {TermSummary} from "./TermDetails/TermSummary";
 
 interface TermFormProps {
     termId?: number;
@@ -28,18 +27,11 @@ export default function TermForm({termId, initialData}: TermFormProps) {
     const [grammaticalCategory, setGrammaticalCategory] = useState(initialData?.grammaticalCategory || '');
     const [theme, setTheme] = useState(initialData?.theme || '');
     const [language, setLanguage] = useState(initialData?.language || '');
-    const [newCategory, setNewCategory] = useState('');
-    const [newTheme, setNewTheme] = useState('');
-    const [newLanguage, setNewLanguage] = useState('');
-
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [showModal, setShowModal] = useState(false);
+    const [termData, setTermData] = useState<TermSummary | null>(null)
 
-    const {saveMutation} = useTerms()
-
-    const {mutate: updateTerm} = saveMutation();
 
     const {data: fetchedCategories} = useCategories()
 
@@ -53,22 +45,17 @@ export default function TermForm({termId, initialData}: TermFormProps) {
         setLoading(true);
         setError(null);
 
-        const termData = {
+        const termData: TermSummary = {
             term,
             translation,
             definition,
-            grammaticalCategory: grammaticalCategory === 'Other' ? newCategory : grammaticalCategory,
-            theme: theme === 'Other' ? newTheme : theme,
-            language: language === 'Other' ? newLanguage : language,
+            grammaticalCategory: grammaticalCategory,
+            tags: [theme],
+            language: language,
         };
 
         try {
-            if (termId) {
-                updateTerm({id: termId, request: termData});
-            } else {
-                await addTerm(termData);
-            }
-            setShowModal(true);
+            setTermData(termData);
         } catch (error) {
             console.error('Error submitting term', error);
             setError('An error occurred while submitting the term.');
@@ -136,66 +123,27 @@ export default function TermForm({termId, initialData}: TermFormProps) {
                         selectedOption={grammaticalCategory}
                         onSelectOption={(option) => {
                             setGrammaticalCategory(option);
-                            setNewCategory('');
                         }}
                         placeholder="Select Grammatical Category"
                     />
-                    {grammaticalCategory === 'Other' && (
-                        <motion.input
-                            type="text"
-                            placeholder="New Grammatical Category"
-                            value={newCategory}
-                            onChange={(e) => setNewCategory(capitalizeWord(e.target.value))}
-                            className="w-full p-3 mt-2 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
-                            initial={{opacity: 0}}
-                            animate={{opacity: 1}}
-                            transition={{duration: 0.3}}
-                        />
-                    )}
 
                     <Selector
                         options={fetchedThemes?.map(theme => theme.name) ?? []}
                         selectedOption={theme}
                         onSelectOption={(option) => {
                             setTheme(option);
-                            setNewTheme('');
                         }}
                         placeholder="Select Theme"
                     />
-                    {theme === 'Other' && (
-                        <motion.input
-                            type="text"
-                            placeholder="New Theme"
-                            value={newTheme}
-                            onChange={(e) => setNewTheme(capitalizeWord(e.target.value))}
-                            className="w-full p-3 mt-2 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
-                            initial={{opacity: 0}}
-                            animate={{opacity: 1}}
-                            transition={{duration: 0.3}}
-                        />
-                    )}
 
                     <Selector
                         options={fetchedLanguages?.map(language => language.name) ?? []}
                         selectedOption={language}
                         onSelectOption={(option) => {
                             setLanguage(option);
-                            setNewLanguage('');
                         }}
                         placeholder="Select Language"
                     />
-                    {language === 'Other' && (
-                        <motion.input
-                            type="text"
-                            placeholder="New Language"
-                            value={newLanguage}
-                            onChange={(e) => setNewLanguage(capitalizeWord(e.target.value))}
-                            className="w-full p-3 mt-2 rounded-lg shadow-inner bg-primaryLight focus:outline-none focus:ring-2 focus:ring-primary"
-                            initial={{opacity: 0}}
-                            animate={{opacity: 1}}
-                            transition={{duration: 0.3}}
-                        />
-                    )}
 
                 </div>
                 <motion.button
@@ -208,7 +156,7 @@ export default function TermForm({termId, initialData}: TermFormProps) {
                     {loading ? 'Loading...' : termId ? 'Edit' : '+'}
                 </motion.button>
             </form>
-            <AddTermValidationModal open={showModal}/>
+            <TermCreationValidationModal term={termData}/>
         </div>
     );
 }
