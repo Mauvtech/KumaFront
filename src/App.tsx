@@ -1,7 +1,7 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import HomePage from './pages/homePage/HomePage';
-import ProfilePage from './components/User/ProfilePage';
+import ProfilePage from './pages/ProfilePage/ProfilePage';
 import DashboardPage from './components/Admin/DashboardPage';
 import LoginPage from './components/Auth/LoginPage';
 import RegisterPage from './components/Auth/RegisterPage';
@@ -12,11 +12,12 @@ import UsersPage from './components/Admin/UsersPage';
 import TermsPage from './components/Admin/TermsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import TermDetails from './components/Terms/TermDetails/TermDetails';
-import UpdateProfile from './components/User/UpdateProfile';
+import UpdateProfile from './pages/ProfilePage/UpdateProfile';
 import BookmarksPage from './components/Terms/BookmarksPage';
 import {Helmet} from 'react-helmet';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
+import QuizPage from "./pages/QuizPage/QuizPage";
 
 
 const queryClient = new QueryClient()
@@ -54,6 +55,7 @@ function App() {
                                 <Route path="/terms/:id" element={<TermDetails/>}/>
                                 <Route path="/login" element={<LoginPage/>}/>
                                 <Route path="/register" element={<RegisterPage/>}/>
+                                <Route path={"/quiz"} element={<QuizPage/>}/>
 
                                 {/* Protected Routes */}
                                 <Route

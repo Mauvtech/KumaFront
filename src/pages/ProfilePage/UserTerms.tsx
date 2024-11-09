@@ -2,8 +2,8 @@ import React, {useState} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {getAuthoredTerms} from "../../services/term/termService";
 import Skeleton from "react-loading-skeleton";
-import {Pagination} from "../Common/Pagination";
-import TermCard from "../Terms/TermCard";
+import {Pagination} from "../../components/Common/Pagination";
+import TermCard from "../../components/Terms/TermCard";
 
 export function UserTerms() {
     const [pagination, setPagination] = useState({page: 1, pageSize: 10});

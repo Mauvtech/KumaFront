@@ -1,12 +1,13 @@
 import api from "./api";
+import {Term} from "./term/termModel";
 
 
 export const getQuiz = async (
-    numberOfQuestions: string,
+    numberOfQuestions?: string,
     grammaticalCategory?: string,
     language?: string,
     theme?: string
-) => {
+): Promise<Term[]> => {
     const response = await api.get("/terms/quiz", {
         params: {
             number: numberOfQuestions,
@@ -17,8 +18,3 @@ export const getQuiz = async (
     });
     return response.data;
 };
-
-export const getFlashcardById = async (id: string) => {
-    const response = await api.get(`/terms/${id}/flashcard`);
-    return response.data;
-}
