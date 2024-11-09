@@ -85,7 +85,7 @@ export default function TermDetails() {
                         <span className="bg-secondary-light text-secondary text-xs px-2 rounded-full">
                             {fetchedTerm?.term.tags[0]?.name}
                         </span>
-                        <span className="bg-accentLight text-accent text-xs px-2 rounded-full">
+                        <span className="bg-accent-light text-accent text-xs px-2 rounded-full">
                             {fetchedTerm?.term.language.name} (Code: {fetchedTerm?.term.language.code})
                         </span>
                     </div>

@@ -113,7 +113,7 @@ export default function TermCard({
                 {term.language && (
                     <div className="mt-2">
                         <span
-                            className={`bg-accentLight text-accent font-bold ${labelClasses} rounded-full truncate`}
+                            className={`bg-accent-light text-accent font-bold ${labelClasses} rounded-full truncate`}
                         >
                             {formatLabel(`${term.language.name} (${term.language.code})`)}
                         </span>

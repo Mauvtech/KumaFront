@@ -94,13 +94,14 @@ function Navbar() {
 
     // Navbar styling with gradient and shadows
     return (
-        <nav className="fixed top-0 left-0 w-full z-20 bg-gradient-to-r from-primary via-secondary to-accent shadow-lg">
+        <nav
+            className="fixed top-0 left-0 w-full z-20 bg-gradient-to-r from-primary via-secondary to-accent shadow-lg">
             <div className=" mx-auto px-4 sm:px-6 lg:px-20">
                 <div className="flex justify-between items-center h-16">
                     <div className="flex-shrink-0">
                         <Link
                             to="/"
-                            className="text-primary text-xl font-bold flex items-center"
+                            className="text-background text-xl font-bold flex items-center"
                         >
                             <FaLink className="mr-2"/>
                             KUMA
@@ -116,7 +117,7 @@ function Navbar() {
                             <>
                                 <Link
                                     to="/new-term"
-                                    className="text-primary flex items-center hover:text-primary transition duration-300"
+                                    className="text-background flex items-center hover:text-primary transition duration-300"
                                 >
                                     <FaPlus className="mr-2"/>
                                     New Term
@@ -124,7 +125,7 @@ function Navbar() {
                                 <span hidden>
                                 <Link
                                     to="/terms/flashcard-serie"
-                                    className="text-primary flex items-center hover:text-primary transition duration-300"
+                                    className="text-background flex items-center hover:text-primary transition duration-300"
                                 >
                                     <FaQuestion className="mr-2"/>
                                     Quiz
@@ -136,7 +137,7 @@ function Navbar() {
                                         {user.role === "admin" && (
                                             <Link
                                                 to="/dashboard"
-                                                className="text-primary flex items-center hover:text-primary transition duration-300"
+                                                className="text-background flex items-center hover:text-primary transition duration-300"
                                             >
                                                 <FaTachometerAlt className="mr-2"/>
                                                 Dashboard
@@ -145,7 +146,7 @@ function Navbar() {
                                         {(user.role === "admin" || user.role === "moderator") && (
                                             <Link
                                                 to="/terms"
-                                                className="text-primary flex items-center hover:text-primary transition duration-300"
+                                                className="text-background flex items-center hover:text-primary transition duration-300"
                                             >
                                                 <FaListAlt className="mr-2"/>
                                                 Term Management
@@ -153,7 +154,7 @@ function Navbar() {
                                         )}
                                         <Link
                                             to="/bookmarks"
-                                            className="text-primary flex items-center hover:text-primary transition duration-300"
+                                            className="text-background flex items-center hover:text-primary transition duration-300"
                                         >
                                             <FaBookmark className="mr-2"/>
                                             Bookmarks
@@ -161,7 +162,7 @@ function Navbar() {
                                         <div className="relative" ref={dropdownRef}>
                                             <button
                                                 onClick={toggleDropdown}
-                                                className="text-primary flex items-center focus:outline-none hover:text-primary transition duration-300"
+                                                className="text-background flex items-center focus:outline-none hover:text-primary transition duration-300"
                                             >
                                                 <FaUser className="mr-2"/>
                                                 <span>{user.username}</span>
