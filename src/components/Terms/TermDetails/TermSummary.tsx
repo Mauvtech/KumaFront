@@ -22,7 +22,7 @@ export function TermSummary({term, definition, grammaticalCategory, tags, langua
                 <span className="bg-secondary-light text-secondary text-xs px-2 rounded-full">
                             {tags.join()}
                         </span>
-                <span className="bg-accentLight text-accent text-xs px-2 rounded-full">
+                <span className="bg-accent-light text-accent text-xs px-2 rounded-full">
                             {language}
                         </span>
             </div>

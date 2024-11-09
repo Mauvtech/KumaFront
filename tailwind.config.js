@@ -23,8 +23,12 @@ module.exports = {
                     foreground: "hsl(var(--secondary-foreground))",
                     light: "rgba(128, 203, 196, 0.1)"
                 },
+                accent: {
+                    DEFAULT: "var(--accent)",
+                    foreground: "hsl(var(--accent-foreground))",
+                    light: "rgba(100, 216, 203, 0.1)"
+                },
 
-                accentLight: "rgba(100, 216, 203, 0.1)", // Lightened Stronger Mint Green for background
                 backgroundHover: "#F0F0F0", // Slightly darker Light Gray for hover
                 text: "#37474F", // Dark Gray
                 error: "#E57373", // Soft Red
@@ -50,10 +54,7 @@ module.exports = {
                     DEFAULT: "hsl(var(--muted))",
                     foreground: "hsl(var(--muted-foreground))",
                 },
-                accent: {
-                    DEFAULT: "hsl(var(--accent))",
-                    foreground: "hsl(var(--accent-foreground))",
-                },
+
                 popover: {
                     DEFAULT: "hsl(var(--popover))",
                     foreground: "hsl(var(--popover-foreground))",
